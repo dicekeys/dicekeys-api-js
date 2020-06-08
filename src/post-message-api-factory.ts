@@ -52,7 +52,6 @@ class UnmarshallerForPostMessageResponse implements UnmsarshallerForResponse {
  * Private and internal to this module to prevent rogue code form accessing it.
  */
 var diceKeysAppWindow: Window | undefined;
-var diceKeysAppWindowReadyPromise: Promise<void> | undefined;
 var resolveDiceKeysAppWindowReadyPromise: () => any | undefined;
 
 /**
@@ -73,7 +72,8 @@ const pendingCallResolveFunctions = new Map<string,
  */
 export const handlePossibleResultMessage = (result: MessageEvent) => {
   if (result.origin.startsWith(apiUrl) && result.data === "ready") {
-    resolveDiceKeysAppWindowReadyPromise();
+    resolveDiceKeysAppWindowReadyPromise?.();
+    return;
   }
   const response = result.data as {[name: string]: string | Uint8Array};
   const requestId = response[Outputs.COMMON.requestId] as string;
@@ -102,7 +102,7 @@ var liseningViaHandlePossibleResultMessage: boolean = false;
  * Transmit reqeusts to a window running the DiceKeys app, creating that
  * window if necessary.
  */
-const transmitRequest: TransmitRequestFunction = (request): Promise<ApiMessage> => {
+const transmitRequest: TransmitRequestFunction = async (request): Promise<ApiMessage> => {
   if (!liseningViaHandlePossibleResultMessage) {
     // Set up the listener for the reponse
     window.addEventListener("message", (messageEvent) =>
@@ -111,9 +111,10 @@ const transmitRequest: TransmitRequestFunction = (request): Promise<ApiMessage> 
     liseningViaHandlePossibleResultMessage = true;
   }
   if (!diceKeysAppWindow || diceKeysAppWindow.closed) {
+    const diceKeysAppWindowReadyPromise = new Promise<void>( (resolve) => {resolveDiceKeysAppWindowReadyPromise = resolve} )
     // Need to create a new window to send API requests to
     diceKeysAppWindow = window.open(apiUrl, "dicekeys-api-window") ?? undefined;
-    diceKeysAppWindowReadyPromise = new Promise<void>( (resolve) => {resolveDiceKeysAppWindowReadyPromise = resolve} )
+    await diceKeysAppWindowReadyPromise!
   }
   // We'll use a promise to wait for the response, storing a resolve and
   // reject function so that the [[handlePossibleResultMessage]] function can
@@ -123,13 +124,11 @@ const transmitRequest: TransmitRequestFunction = (request): Promise<ApiMessage> 
       (resolve, reject) =>
         pendingCallResolveFunctions.set(request[Inputs.COMMON.requestId] as string, {resolve, reject})
     );
-  diceKeysAppWindowReadyPromise?.then( () => {
-    diceKeysAppWindow!.postMessage(request, apiUrl);
-  });
+  diceKeysAppWindow!.postMessage(request, apiUrl);
   // We now await the response, which will arrive via a message event,
   // be processed by [[handlePossibleResultMessage]], which will
   // cause the promise to be resolved or rejected.
-  return responseMessagePromise;
+  return await responseMessagePromise;
 }
 
 
