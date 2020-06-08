@@ -1,19 +1,28 @@
 {
   "name": "dicekeys-api-js",
   "version": "0.0.1",
-  "description": "DiceKeys Web API",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dicekeys/dicekeys-api-js.git"
+  "description": "DiceKeys API for Javascript",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scope": "@dicekeys/dicekeys-api-js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/dicekeys",
+    "access": "restricted"
   },
-  "scripts": {
-    "start": "npm run build:live",
-    "build": "tsc -p ."
-  },
-  "keywords": [],
+  "repository": "https://github.com/dicekeys/dicekeys-api-js.git",
   "author": "Stuart Schechter <stuart@dicekeys.com>",
-  "license": "UNLICENSED. All rights reserved",
+  "license": "NOT YET LICENSED",
+  "files": [
+    "/dist/",
+    "/src/",
+    "!/dist/tests/",
+    "!/src/tests/"
+  ],
+  "scripts": {
+    "prepare": "tsc",
+    "build": "tsc",
+    "build-docs": "typedoc && copyfiles --flat _config.yml docs/"
+  },
   "dependencies": {
     "@dicekeys/seeded-crypto-js": "^0.1.16"
   },
