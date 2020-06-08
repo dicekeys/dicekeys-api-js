@@ -1,0 +1,9 @@
+node_modules/
+.vscode/
+.vs/
+.cache/
+dist/
+dist-*/
+test-outputs/
+
+coverage/
