@@ -1,7 +1,8 @@
 import * as ApiFactory from "./api-factory";
 import * as ApiStrings from "./api-strings";
+import * as Exceptions from "./exceptions";
 import * as PostMessageApiFactory from "./post-message-api-factory";
-export {ApiFactory, ApiStrings, PostMessageApiFactory};
+export {ApiFactory, ApiStrings, Exceptions, PostMessageApiFactory};
 export * from "./derivation-options";
 export * from "./generate-signature-result";
 export * from "./post-message-api";

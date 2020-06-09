@@ -7,6 +7,10 @@ import {
   Outputs,
   Command,
 } from "./api-strings";
+import {
+  MissingResponseParameter,
+  restoreException
+} from "./exceptions";
 
 const apiUrl = "https://dicekeys.app";
 
@@ -34,12 +38,12 @@ class UnmarshallerForPostMessageResponse implements UnmsarshallerForResponse {
   }
   getStringParameter = (name: string): string =>
     this.getOptionalStringParameter(name) ??
-      (() => { throw new Error(`Missing parameter ${name}`); } )();
+      (() => { throw new MissingResponseParameter(name); } )();
 
   getBinaryParameter = (name: string): Uint8Array => {
     const val = this.dataObject[name]
     return typeof val === "object" && val instanceof Uint8Array ? val :
-      (() => { throw new Error(`Missing parameter ${name}`); } )();        
+      (() => { throw new MissingResponseParameter(name); } )();        
   }
 
 }
@@ -85,9 +89,9 @@ export const handlePossibleResultMessage = (result: MessageEvent) => {
     pendingCallResolveFunctions.delete(requestId);
     try {
       const exception = response[Outputs.COMMON.exception];
-      if (exception) {
-        const exceptionMessage = response[Outputs.COMMON.exceptionMessage];
-        throw new Error(`Exception: ${exception} with message ${exceptionMessage}`);
+      if (typeof exception === "string") {
+        const exceptionMessage = response[Outputs.COMMON.exceptionMessage] as string | undefined;
+        throw restoreException(exception, exceptionMessage);
       }
       resolveFn.resolve(result);
     } catch (e) {

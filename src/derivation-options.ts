@@ -1,5 +1,7 @@
 import {DerivationOptions as CryptoDerivationOptions} from "@dicekeys/seeded-crypto-js";
-
+import {
+  InvalidDerivationOptionsTypeFieldException
+} from "./exceptions";
 export const DerivableObjectNames = {
   "Secret": "Secret",
   "SigningKey": "SigningKey",
@@ -100,15 +102,6 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
 
 export type DerivationOptions = CryptoDerivationOptions & ApiDerivationOptions;
 
-export class InvalidDerivationOptionsTypeFieldException extends Error {
-  constructor(
-    public typeRequiredByOperation: DerivableObjectName,
-    public typeSpecifiedInDerivationOptions: DerivableObjectName
-  ) {
-    super(`Operation for type ${typeRequiredByOperation} cannot use derivation options with type ${typeSpecifiedInDerivationOptions}.`);
-  }
-}
-
 export const DerivationOptions = (
   derivationOptionsAsObjectOrJson?: string | DerivationOptions | null,
   typeRequiredByOperation?: DerivableObjectName
@@ -118,7 +111,7 @@ export const DerivationOptions = (
       derivationOptionsAsObjectOrJson :
       JSON.parse(derivationOptionsAsObjectOrJson ?? "{}") as DerivationOptions;
   if (typeRequiredByOperation && derivationOptions.type && derivationOptions.type !== typeRequiredByOperation) {
-    throw new InvalidDerivationOptionsTypeFieldException(typeRequiredByOperation, derivationOptions.type);
+    throw InvalidDerivationOptionsTypeFieldException.create(typeRequiredByOperation, derivationOptions.type);
   }
   return derivationOptions;
 }
