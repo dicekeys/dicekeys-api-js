@@ -3,10 +3,10 @@ import {
 } from "./derivation-options";
 
 export interface RequestForUsersConsent {
-    question: String,
+    question: string,
     actionButtonLabels: {
-      allow: String,
-      decline: String
+      allow: string,
+      decline: string
     }
 }
 
