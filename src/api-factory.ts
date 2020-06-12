@@ -26,7 +26,7 @@ export interface GenerateSignatureResult {
 export interface ApiClientImplementation{
   <T>(
     command: Command,
-    parameters: [string, string | Uint8Array | {toJson: () => string} | SeededCryptoJsObject ][],
+    parameters: [string, string | Uint8Array | PackagedSealedMessageFields ][],
     processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) => T | Promise<T>
   ): Promise<T>
 }

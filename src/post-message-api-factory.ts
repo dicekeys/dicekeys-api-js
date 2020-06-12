@@ -14,6 +14,7 @@ import {
 import {
   SeededCryptoJsObject
 } from "./seeded-crypto-object-fields";
+import { PackagedSealedMessageFields } from "@dicekeys/seeded-crypto-js";
 
 const apiUrl = "https://dicekeys.app";
 
@@ -44,7 +45,7 @@ class UnmarshallerForPostMessageResponse implements UnmsarshallerForResponse {
     this.getOptionalStringParameter(name) ??
       (() => { throw new MissingResponseParameter(name); } )();
 
-  getJsObjectParameter = <T extends SeededCryptoJsObject>(name: string): T =>{
+  getJsObjectParameter = <T extends SeededCryptoJsObject>(name: string): T => {
     const val = this.dataObject[name]
     return typeof val === "object" && (!(val instanceof Uint8Array)) ?
       val as T :
@@ -152,7 +153,7 @@ export const postMessageApiCallFactory = (
   transmitRequestFn: TransmitRequestFunction = transmitRequest,
 ) => async <T>(
   command: Command,
-  parameters: [string, string | Uint8Array | {toJson: () => string} | SeededCryptoJsObject ][],
+  parameters: [string, string | Uint8Array | PackagedSealedMessageFields ][],
   processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) => T | Promise<T>
 ) : Promise<T> => {
   if (!window.name || window.name === "view") {
@@ -176,10 +177,7 @@ export const postMessageApiCallFactory = (
   // by calling that toJson() function.
   parameters.forEach( ([name, value]) => {
     if (value == null) return;
-    requestObject[name] =
-      (typeof value === "object" && "toJson" in value) ?
-          value.toJson() :
-          value
+    requestObject[name] = value;
   });
   // We'll now transmit the request.  We use a transmitRequest function which
   // is set by the constructor to facilitate testing.  In production, all
