@@ -21,7 +21,7 @@ export type ApiMessage = MessageEvent & {data: {[name: string]: string | Uint8Ar
  * can substitute a custom transmitter to simulate postMessage reqeusts.
  */
 export interface TransmitRequestFunction {
-  (request: {[name: string]: string | Uint8Array}): Promise<ApiMessage>
+  (request: {[name: string]: string | Uint8Array | object}): Promise<ApiMessage>
 };
 
 /**
@@ -30,19 +30,26 @@ export interface TransmitRequestFunction {
  * to a request.
  */
 class UnmarshallerForPostMessageResponse implements UnmsarshallerForResponse {
-  constructor(private dataObject: {[name: string]: string | Uint8Array}) {}
+  constructor(private dataObject: {[name: string]: string | Uint8Array | object}) {}
   
   getOptionalStringParameter = (name: string): string | undefined => {
     const val = this.dataObject[name]
     return typeof val === "string" ? val : undefined;
   }
+
   getStringParameter = (name: string): string =>
     this.getOptionalStringParameter(name) ??
       (() => { throw new MissingResponseParameter(name); } )();
 
-  getBinaryParameter = (name: string): Uint8Array => {
+  getJsObjectParameter = <T extends object>(name: string): T =>{
     const val = this.dataObject[name]
-    return typeof val === "object" && val instanceof Uint8Array ? val :
+    return typeof val === "object" ? val as T :
+      (() => { throw new MissingResponseParameter(name); } )();        
+  }
+
+  getBinaryParameter = (name: string): Uint8Array => {
+    const val = this.getJsObjectParameter<Uint8Array>(name);
+    return val instanceof Uint8Array ? val :
       (() => { throw new MissingResponseParameter(name); } )();        
   }
 
@@ -140,7 +147,7 @@ export const postMessageApiCallFactory = (
   transmitRequestFn: TransmitRequestFunction = transmitRequest,
 ) => async <T>(
   command: Command,
-  parameters: [string, string | Uint8Array | {toJson: () => string} ][],
+  parameters: [string, string | Uint8Array | {toJson: () => string} | object ][],
   processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) => T | Promise<T>
 ) : Promise<T> => {
   if (!window.name || window.name === "view") {
@@ -154,7 +161,7 @@ export const postMessageApiCallFactory = (
   const requestId = generateRequestId();
   // Build a request as an object matching parameter names to
   // parameters, which can either be strings or byte arrays.
-  const requestObject = {} as {[name: string]: string | Uint8Array};
+  const requestObject = {} as {[name: string]: string | Uint8Array | object};
   // All requests contain a request ID and command name.
   requestObject[Inputs.COMMON.windowName] = window.name;
   requestObject[Inputs.COMMON.requestId] = requestId;
@@ -164,7 +171,7 @@ export const postMessageApiCallFactory = (
   // by calling that toJson() function.
   parameters.forEach( ([name, value]) => {
     if (value == null) return;
-    requestObject[ name] =
+    requestObject[name] =
       (typeof value === "object" && "toJson" in value) ?
           value.toJson() :
           value

@@ -1,32 +1,31 @@
 import {
-  PackagedSealedMessage,
-  Secret,
-  SealingKey,
-  SignatureVerificationKey,
-  SigningKey,
-  SymmetricKey,
-  UnsealingKey
-} from "@dicekeys/seeded-crypto-js";
-import {
   Inputs,
   Outputs,
   Command,
   Commands
 } from "./api-strings";
 import {
-  GenerateSignatureResult
-} from "./generate-signature-result";
-import {
-  SeededCryptoModulePromise
-} from "@dicekeys/seeded-crypto-js";
+  PackagedSealedMessageFields,
+  SecretFields,
+  SymmetricKeyFields,
+  UnsealingKeyFields,
+  SealingKeyFields,
+  SignatureVerificationKeyFields,
+  SigningKeyFields,
+} from "./seeded-crypto-object-fields"
 import {
   randomBytes
 } from "crypto";
 
+export interface GenerateSignatureResult {
+  signature: Uint8Array
+  signatureVerificationKey: SignatureVerificationKeyFields
+}
+
 export interface ApiClientImplementation{
   <T>(
     command: Command,
-    parameters: [string, string | Uint8Array | {toJson: () => string} ][],
+    parameters: [string, string | Uint8Array | {toJson: () => string} | object ][],
     processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) => T | Promise<T>
   ): Promise<T>
 }
@@ -34,6 +33,7 @@ export interface ApiClientImplementation{
 export interface UnmsarshallerForResponse {
   getOptionalStringParameter: (name: string) => string | undefined;
   getStringParameter: (name: string) => string;
+  getJsObjectParameter: <T extends object>(name: string) => T;
   getBinaryParameter: (name: string) => Uint8Array;
 }
 
@@ -54,7 +54,8 @@ export const generateRequestId = (): string => {
  * JSON format via [[derivationOptionsJson]].
  */
 
-export const generateSignatureFactory = (call: ApiClientImplementation) =>/**
+export const generateSignatureFactory = (call: ApiClientImplementation) =>
+/**
   * Sign a [[message]] using a public/private signing key pair derived
   * from the user's DiceKey and the derivation options specified in
   * JSON format via [[derivationOptionsJson]].
@@ -68,14 +69,13 @@ export const generateSignatureFactory = (call: ApiClientImplementation) =>/**
     [Inputs.generateSignature.derivationOptionsJson, derivationOptionsJson],
     [Inputs.generateSignature.message, message]
   ],
-  async p => {
-    const signature = p.getBinaryParameter(Outputs.generateSignature.signature)
-    const signatureVerificationKey = (await SeededCryptoModulePromise).SignatureVerificationKey.fromJson(
-      p.getStringParameter(Outputs.generateSignature.signatureVerificationKey));
+  p => {
+    const signature = p.getJsObjectParameter<Uint8Array>(Outputs.generateSignature.signature)
+    const signatureVerificationKey = p.getJsObjectParameter<SignatureVerificationKeyFields>(Outputs.generateSignature.signatureVerificationKey);
     return {
       signature,
       signatureVerificationKey
-    } as GenerateSignatureResult;
+    }
   })
 
   /**
@@ -85,12 +85,12 @@ export const generateSignatureFactory = (call: ApiClientImplementation) =>/**
    */
 export const getSecretFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<Secret> => call(
+): Promise<SecretFields> => call(
   Commands.getSecret,
   [
     [Inputs.getSecret.derivationOptionsJson, derivationOptionsJson]
   ],
-  async (p) => (await SeededCryptoModulePromise).Secret.fromJson(p.getStringParameter(Outputs.getSecret.secret))
+  (p) => p.getJsObjectParameter<SecretFields>(Outputs.getSecret.secret)
 );
 
 /**
@@ -102,12 +102,12 @@ export const getSecretFactory = (call: ApiClientImplementation) => (
  */
 export const getUnsealingKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<UnsealingKey> => call(
+): Promise<UnsealingKeyFields> => call(
   Commands.getUnsealingKey,
   [ 
     [Inputs.getUnsealingKey.derivationOptionsJson, derivationOptionsJson ]
   ],
-  async (p) => (await SeededCryptoModulePromise).UnsealingKey.fromJson(p.getStringParameter(Outputs.getUnsealingKey.unsealingKey))
+  async (p) => p.getJsObjectParameter<UnsealingKeyFields>(Outputs.getUnsealingKey.unsealingKey)
 );
 
 
@@ -120,12 +120,12 @@ export const getUnsealingKeyFactory = (call: ApiClientImplementation) => (
  */
 export const getSymmetricKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SymmetricKey> => call(
+): Promise<SymmetricKeyFields> => call(
   Commands.getSymmetricKey,
   [ 
     [Inputs.getUnsealingKey.derivationOptionsJson, derivationOptionsJson ]
   ],
-  async (p) => (await SeededCryptoModulePromise).SymmetricKey.fromJson(p.getStringParameter(Outputs.getSymmetricKey.symmetricKey))
+  async (p) => p.getJsObjectParameter<SymmetricKeyFields>(Outputs.getSymmetricKey.symmetricKey)
 );
 
 /**
@@ -137,12 +137,12 @@ export const getSymmetricKeyFactory = (call: ApiClientImplementation) => (
  */
 export const getSigningKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SigningKey> => call(
+): Promise<SigningKeyFields> => call(
   Commands.getSigningKey,
   [ 
     [Inputs.getUnsealingKey.derivationOptionsJson, derivationOptionsJson ]
   ],
-    async (p) => (await SeededCryptoModulePromise).SigningKey.fromJson(p.getStringParameter(Outputs.getSigningKey.signingKey))
+    async (p) => p.getJsObjectParameter<SigningKeyFields>(Outputs.getSigningKey.signingKey)
 );
 
 
@@ -153,10 +153,10 @@ export const getSigningKeyFactory = (call: ApiClientImplementation) => (
  */
 export const getSealingKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SealingKey> => call(
+): Promise<SealingKeyFields> => call(
   Commands.getSealingKey,
   [ [Inputs.getUnsealingKey.derivationOptionsJson, derivationOptionsJson ] ],
-  async (p) => (await SeededCryptoModulePromise).SealingKey.fromJson(p.getStringParameter(Outputs.getSealingKey.sealingKey))
+  async (p) => p.getJsObjectParameter<SealingKeyFields>(Outputs.getSealingKey.sealingKey)
 );
 
 
@@ -170,11 +170,11 @@ export const getSealingKeyFactory = (call: ApiClientImplementation) => (
  * @throws [CryptographicVerificationFailureException]
  */
 export const unsealWithUnsealingKeyFactory = (call: ApiClientImplementation) => (
-  packagedSealedMessage: PackagedSealedMessage
+  packagedSealedMessage: PackagedSealedMessageFields
 ): Promise<Uint8Array> => call(
   Commands.unsealWithUnsealingKey,
   [ [ Inputs.unsealWithUnsealingKey.packagedSealedMessage, packagedSealedMessage ]],
-  async (p) => p.getBinaryParameter(Outputs.unsealWithUnsealingKey.plaintext)
+  async (p) => p.getJsObjectParameter<Uint8Array>(Outputs.unsealWithUnsealingKey.plaintext)
 );
 
 /**
@@ -190,7 +190,7 @@ export const sealWithSymmetricKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string,
   plaintext: Uint8Array,
   unsealingInstructions: string = ""
-): Promise<PackagedSealedMessage> =>
+): Promise<PackagedSealedMessageFields> =>
   call(
     Commands.sealWithSymmetricKey, 
     [
@@ -198,8 +198,7 @@ export const sealWithSymmetricKeyFactory = (call: ApiClientImplementation) => (
       [Inputs.sealWithSymmetricKey.plaintext, plaintext],
       [Inputs.sealWithSymmetricKey.unsealingInstructions, unsealingInstructions]  
     ],
-    async (p) => (await SeededCryptoModulePromise).PackagedSealedMessage.fromJson(
-      p.getStringParameter(Outputs.sealWithSymmetricKey.packagedSealedMessage))
+    async (p) => p.getJsObjectParameter<PackagedSealedMessageFields>(Outputs.sealWithSymmetricKey.packagedSealedMessage)
   );
 
 /**
@@ -213,11 +212,11 @@ export const sealWithSymmetricKeyFactory = (call: ApiClientImplementation) => (
  * not be successfully unsealed, yielding a [org.dicekeys.crypto.seeded.CryptographicVerificationFailureException] exception.
  */
 export const unsealWithSymmetricKeyFactory = (call: ApiClientImplementation) => (
-  packagedSealedMessage: PackagedSealedMessage
+  packagedSealedMessage: PackagedSealedMessageFields
 ): Promise<Uint8Array> => call(
   Commands.unsealWithSymmetricKey,
   [ [Inputs.unsealWithSymmetricKey.packagedSealedMessage, packagedSealedMessage ] ],
-  async (p) => p.getBinaryParameter(Outputs.unsealWithSymmetricKey.plaintext)
+  async (p) => p.getJsObjectParameter<Uint8Array>(Outputs.unsealWithSymmetricKey.plaintext)
 );
     
 /**
@@ -226,9 +225,8 @@ export const unsealWithSymmetricKeyFactory = (call: ApiClientImplementation) => 
  */
 export const getSignatureVerificationKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SignatureVerificationKey> => call(
+): Promise<SignatureVerificationKeyFields> => call(
   Commands.getSignatureVerificationKey,
   [ [Inputs.getSignatureVerificationKey.derivationOptionsJson, derivationOptionsJson] ],
-  async (p) => (await SeededCryptoModulePromise).SignatureVerificationKey.fromJson(
-    p.getStringParameter(Outputs.getSignatureVerificationKey.signatureVerificationKey))
+  async (p) => p.getJsObjectParameter<SignatureVerificationKeyFields>(Outputs.getSignatureVerificationKey.signatureVerificationKey)
 );
