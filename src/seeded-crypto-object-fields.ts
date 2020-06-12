@@ -69,3 +69,13 @@ export interface UnsealingKeyFields extends SealingKeyFields {
    */
   readonly unsealingKeyBytes: Uint8Array;
 }
+
+
+export type SealedCryptoJsObject =
+  PackagedSealedMessageFields |
+  SecretFields | 
+  SymmetricKeyFields |
+  SealingKeyFields |
+  UnsealingKeyFields |
+  SigningKeyFields |
+  SignatureVerificationKeyFields;
