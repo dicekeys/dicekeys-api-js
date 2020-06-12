@@ -12,6 +12,7 @@ import {
   SealingKeyFields,
   SignatureVerificationKeyFields,
   SigningKeyFields,
+  SeededCryptoJsObject
 } from "./seeded-crypto-object-fields"
 import {
   randomBytes
@@ -25,7 +26,7 @@ export interface GenerateSignatureResult {
 export interface ApiClientImplementation{
   <T>(
     command: Command,
-    parameters: [string, string | Uint8Array | {toJson: () => string} | object ][],
+    parameters: [string, string | Uint8Array | {toJson: () => string} | SeededCryptoJsObject ][],
     processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) => T | Promise<T>
   ): Promise<T>
 }
@@ -33,7 +34,7 @@ export interface ApiClientImplementation{
 export interface UnmsarshallerForResponse {
   getOptionalStringParameter: (name: string) => string | undefined;
   getStringParameter: (name: string) => string;
-  getJsObjectParameter: <T extends object>(name: string) => T;
+  getJsObjectParameter: <T extends SeededCryptoJsObject>(name: string) => T;
   getBinaryParameter: (name: string) => Uint8Array;
 }
 
@@ -70,7 +71,7 @@ export const generateSignatureFactory = (call: ApiClientImplementation) =>
     [Inputs.generateSignature.message, message]
   ],
   p => {
-    const signature = p.getJsObjectParameter<Uint8Array>(Outputs.generateSignature.signature)
+    const signature = p.getBinaryParameter(Outputs.generateSignature.signature)
     const signatureVerificationKey = p.getJsObjectParameter<SignatureVerificationKeyFields>(Outputs.generateSignature.signatureVerificationKey);
     return {
       signature,
@@ -174,7 +175,7 @@ export const unsealWithUnsealingKeyFactory = (call: ApiClientImplementation) => 
 ): Promise<Uint8Array> => call(
   Commands.unsealWithUnsealingKey,
   [ [ Inputs.unsealWithUnsealingKey.packagedSealedMessage, packagedSealedMessage ]],
-  async (p) => p.getJsObjectParameter<Uint8Array>(Outputs.unsealWithUnsealingKey.plaintext)
+  async (p) => p.getBinaryParameter(Outputs.unsealWithUnsealingKey.plaintext)
 );
 
 /**
@@ -216,7 +217,7 @@ export const unsealWithSymmetricKeyFactory = (call: ApiClientImplementation) => 
 ): Promise<Uint8Array> => call(
   Commands.unsealWithSymmetricKey,
   [ [Inputs.unsealWithSymmetricKey.packagedSealedMessage, packagedSealedMessage ] ],
-  async (p) => p.getJsObjectParameter<Uint8Array>(Outputs.unsealWithSymmetricKey.plaintext)
+  async (p) => p.getBinaryParameter(Outputs.unsealWithSymmetricKey.plaintext)
 );
     
 /**

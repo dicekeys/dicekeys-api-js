@@ -11,6 +11,9 @@ import {
   MissingResponseParameter,
   restoreException
 } from "./exceptions";
+import {
+  SeededCryptoJsObject
+} from "./seeded-crypto-object-fields";
 
 const apiUrl = "https://dicekeys.app";
 
@@ -21,7 +24,7 @@ export type ApiMessage = MessageEvent & {data: {[name: string]: string | Uint8Ar
  * can substitute a custom transmitter to simulate postMessage reqeusts.
  */
 export interface TransmitRequestFunction {
-  (request: {[name: string]: string | Uint8Array | object}): Promise<ApiMessage>
+  (request: {[name: string]: string | Uint8Array | SeededCryptoJsObject}): Promise<ApiMessage>
 };
 
 /**
@@ -30,7 +33,7 @@ export interface TransmitRequestFunction {
  * to a request.
  */
 class UnmarshallerForPostMessageResponse implements UnmsarshallerForResponse {
-  constructor(private dataObject: {[name: string]: string | Uint8Array | object}) {}
+  constructor(private dataObject: {[name: string]: string | Uint8Array | SeededCryptoJsObject}) {}
   
   getOptionalStringParameter = (name: string): string | undefined => {
     const val = this.dataObject[name]
@@ -41,15 +44,17 @@ class UnmarshallerForPostMessageResponse implements UnmsarshallerForResponse {
     this.getOptionalStringParameter(name) ??
       (() => { throw new MissingResponseParameter(name); } )();
 
-  getJsObjectParameter = <T extends object>(name: string): T =>{
+  getJsObjectParameter = <T extends SeededCryptoJsObject>(name: string): T =>{
     const val = this.dataObject[name]
-    return typeof val === "object" ? val as T :
+    return typeof val === "object" && (!(val instanceof Uint8Array)) ?
+      val as T :
       (() => { throw new MissingResponseParameter(name); } )();        
   }
 
   getBinaryParameter = (name: string): Uint8Array => {
-    const val = this.getJsObjectParameter<Uint8Array>(name);
-    return val instanceof Uint8Array ? val :
+    const val = this.dataObject[name]
+    return (typeof val === "object" &&  (val instanceof Uint8Array)) ?
+      val :
       (() => { throw new MissingResponseParameter(name); } )();        
   }
 
@@ -147,7 +152,7 @@ export const postMessageApiCallFactory = (
   transmitRequestFn: TransmitRequestFunction = transmitRequest,
 ) => async <T>(
   command: Command,
-  parameters: [string, string | Uint8Array | {toJson: () => string} | object ][],
+  parameters: [string, string | Uint8Array | {toJson: () => string} | SeededCryptoJsObject ][],
   processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) => T | Promise<T>
 ) : Promise<T> => {
   if (!window.name || window.name === "view") {
@@ -161,7 +166,7 @@ export const postMessageApiCallFactory = (
   const requestId = generateRequestId();
   // Build a request as an object matching parameter names to
   // parameters, which can either be strings or byte arrays.
-  const requestObject = {} as {[name: string]: string | Uint8Array | object};
+  const requestObject = {} as {[name: string]: string | Uint8Array | SeededCryptoJsObject};
   // All requests contain a request ID and command name.
   requestObject[Inputs.COMMON.windowName] = window.name;
   requestObject[Inputs.COMMON.requestId] = requestId;
