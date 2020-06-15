@@ -1,3 +1,8 @@
+export class ClientNotAuthorizedException extends Error {}
+
+export class UserDeclinedToAuthorizeOperation extends Error {}
+
+
 export class InvalidDerivationOptionsTypeFieldException extends Error {
   static create(
     typeRequiredByOperation: string,
@@ -35,10 +40,14 @@ export class UserCancelledLoadingDiceKey extends Error {
 }
 
 export const restoreException = (name: string, message?: string): Error => {
-  if (name === InvalidDerivationOptionsTypeFieldException.name) {
+  if (name === ClientNotAuthorizedException.name) {
+    return new ClientNotAuthorizedException(message)    
+  } else if (name === InvalidDerivationOptionsTypeFieldException.name) {
     return new InvalidDerivationOptionsTypeFieldException(message);
   } else if (name === UserCancelledLoadingDiceKey.name) {
     return new UserCancelledLoadingDiceKey(message);
+  } else if (name === UserDeclinedToAuthorizeOperation.name) {
+    return new UserDeclinedToAuthorizeOperation(message);
   } else if (name === MissingParameter.name) {
     return new MissingParameter(message);
   } else {
