@@ -227,10 +227,10 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
   excludeOrientationOfFaces?: boolean;
 }
 
-export type DerivationOptions = CryptoDerivationOptions & ApiDerivationOptions;
+export type DerivationOptions = CryptoDerivationOptions & ApiDerivationOptions & {[key:string]: any};
 
 export const DerivationOptions = (
-  derivationOptionsAsObjectOrJson?: string | DerivationOptions | null,
+  derivationOptionsAsObjectOrJson?: string | null | DerivationOptions,
   typeRequiredByOperation?: DerivableObjectName
 ): DerivationOptions => {
   const derivationOptions = 
