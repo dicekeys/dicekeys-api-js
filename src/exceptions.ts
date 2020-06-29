@@ -39,19 +39,38 @@ export class UserCancelledLoadingDiceKey extends Error {
   }
 }
 
-export const restoreException = (name: string, message?: string): Error => {
-  if (name === ClientNotAuthorizedException.name) {
-    return new ClientNotAuthorizedException(message)    
-  } else if (name === InvalidDerivationOptionsTypeFieldException.name) {
-    return new InvalidDerivationOptionsTypeFieldException(message);
-  } else if (name === UserCancelledLoadingDiceKey.name) {
-    return new UserCancelledLoadingDiceKey(message);
-  } else if (name === UserDeclinedToAuthorizeOperation.name) {
-    return new UserDeclinedToAuthorizeOperation(message);
-  } else if (name === MissingParameter.name) {
-    return new MissingParameter(message);
-  } else {
-    return new UnknownException(name, message);
+export class InvalidCommand extends Error {
+  static create(message: string = `Invalid API Command`) {
+    new InvalidCommand(message)
   }
+}
+
+const Exceptions = [
+  ClientNotAuthorizedException,
+  InvalidDerivationOptionsTypeFieldException,
+  UserCancelledLoadingDiceKey,
+  UserDeclinedToAuthorizeOperation,
+  MissingParameter,
+  MissingResponseParameter,
+  InvalidCommand
+];
+
+/**
+ * Restore a serialized exception from it's name and message.
+ * @param name The exception name
+ * @param message The exception's message.
+ */
+export const restoreException = (name: string, message?: string): Error => {
+  // Search known exceptions
+  for (const exception of Exceptions) {
+    if (exception.name === name) {
+      // The exception's name matches a known exception.
+      // Re-constitute it.
+      return new exception(message);
+    }
+  }
+  // The exception is not among the list of known exceptions, so
+  // generate an UnknwonException.
+  return new UnknownException(name, message);
 }
 
