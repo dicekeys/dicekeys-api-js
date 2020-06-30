@@ -164,9 +164,18 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
    * A string that may be added by the DiceKeys app to help users remember which
    * seed (DiceKey) they used to derive a key or secret.
    * 
-   * e.g. `My DiceKey with corners letters S, W, D, and C.`
+   * e.g. `My DiceKey labeled "Personal Accounts".`
    */
   seedHint?: string;
+
+  /**
+   * A specific seed hint consisting of the letters at the four corners of
+   * the DiceKey, in clockwise order from whereever the user initially
+   * scanned as the top-left corner.
+   * 
+   * The array must be a string consisting of four uppercase characters
+   */
+  cornerLetters?: string;
 
 
   /**
