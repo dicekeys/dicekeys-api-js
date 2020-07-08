@@ -4,6 +4,7 @@ const plaintext = "plaintext";
 const command = "command";
 const respondTo = "respondTo";
 const authToken = "authToken";
+const password = "password";
 const derivationOptionsJson = "derivationOptionsJson";
 const packagedSealedMessage = "packagedSealedMessage";
 const exception = "exception";
@@ -15,7 +16,8 @@ const signingKey = "signingKey";
 const symmetricKey = "symmetricKey";
 const unsealingKey = "unsealingKey";
 const signatureVerificationKey = "signatureVerificationKey";
-
+const wordList = "wordList";
+const wordLimit = "wordLimit";
 
 const withDerivationOptions = {
   derivationOptionsJson
@@ -24,6 +26,13 @@ const withDerivationOptions = {
 const getObject = {
   ...withDerivationOptions
 } as const;
+
+const getPassword = {
+  ...getObject,
+  wordList,
+  wordLimit,
+} as const;
+
 const unsealingInstructions = "unsealingInstructions";
 const unseal = {
   packagedSealedMessage
@@ -33,6 +42,7 @@ const unseal = {
 export const Commands = (() => {
   const getAuthToken = "getAuthToken";
   const generateSignature = "generateSignature";
+  const getPassword = "getPassword";
   const getSealingKey = "getSealingKey";
   const getSecret = "getSecret";
   const getSignatureVerificationKey = "getSignatureVerificationKey";
@@ -45,6 +55,7 @@ export const Commands = (() => {
   return {
     getAuthToken,
     generateSignature,
+    getPassword,
     getSealingKey,
     getSecret,
     getSignatureVerificationKey,
@@ -77,6 +88,7 @@ export const Inputs = {
     message: "message"
   } as const,
 
+  getPassword,
   getSealingKey: getObject,
   getSecret: getObject,
   getSignatureVerificationKey: getObject,
@@ -109,6 +121,10 @@ export const Outputs = {
 
   getAuthToken: {
     authToken
+  } as const,
+
+  getPassword: {
+    password
   } as const,
 
   getSealingKey: {
