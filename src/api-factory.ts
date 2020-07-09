@@ -1,12 +1,11 @@
 import {
   Inputs,
   Outputs,
-  Command,
-  Commands
+  Commands,
 } from "./api-strings";
+import * as ApiMessages from "./api-messages";
 import {
   PackagedSealedMessageFields,
-  DerivedPasswordWithDerivationOptionsJson,
   SecretFields,
   SymmetricKeyFields,
   UnsealingKeyFields,
@@ -25,11 +24,11 @@ export interface GenerateSignatureResult {
 }
 
 export interface ApiClientImplementation{
-  <T>(
-    command: Command,
-    parameters: [string, string | Uint8Array | PackagedSealedMessageFields ][],
-    processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) => T | Promise<T>
-  ): Promise<T>
+  <METHOD extends ApiMessages.ApiMethod>(
+    request: ApiMessages.REQUEST_OF<METHOD>,
+    processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) =>
+      ApiMessages.RESPONSE_OF<METHOD> | Promise<ApiMessages.RESPONSE_OF<METHOD>>
+  ): Promise<ApiMessages.RESPONSE_OF<METHOD>>
 }
 
 export interface UnmsarshallerForResponse {
@@ -62,23 +61,20 @@ export const generateSignatureFactory = (call: ApiClientImplementation) =>
   * from the user's DiceKey and the derivation options specified in
   * JSON format via [[derivationOptionsJson]].
   */
-  async  (
+  (
     derivationOptionsJson: string,
     message: Uint8Array
-  ): Promise<GenerateSignatureResult> => call(
-  Commands.generateSignature,
-  [
-    [Inputs.generateSignature.derivationOptionsJson, derivationOptionsJson],
-    [Inputs.generateSignature.message, message]
-  ],
-  p => {
-    const signature = p.getBinaryParameter(Outputs.generateSignature.signature)
-    const signatureVerificationKey = p.getJsObjectParameter<SignatureVerificationKeyFields>(Outputs.generateSignature.signatureVerificationKey);
-    return {
-      signature,
-      signatureVerificationKey
-    }
-  })
+  ) => call(
+    {
+      command: Commands.generateSignature,
+      derivationOptionsJson,
+      message
+    },
+    p => ({
+      signature: p.getBinaryParameter(Outputs.generateSignature.signature),
+      signatureVerificationKey: p.getJsObjectParameter<SignatureVerificationKeyFields>(Outputs.generateSignature.signatureVerificationKey)
+    })
+  )
 
   /**
    * Derive a pseudo-random cryptographic [Secret] from the user's DiceKey and
@@ -87,27 +83,30 @@ export const generateSignatureFactory = (call: ApiClientImplementation) =>
    */
 export const getSecretFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SecretFields> => call(
-  Commands.getSecret,
-  [
-    [Inputs.getSecret.derivationOptionsJson, derivationOptionsJson]
-  ],
-  (p) => p.getJsObjectParameter<SecretFields>(Outputs.getSecret.secret)
+) => call<ApiMessages.GetSecret>(
+  {
+    command: Commands.getSecret,
+    derivationOptionsJson
+  },
+  p => p.getJsObjectParameter<SecretFields>(Outputs.getSecret.secret)
 );
 
 export const getPasswordFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string,
   wordLimit?: number
-): Promise<DerivedPasswordWithDerivationOptionsJson> => call(
-  Commands.getPassword,
-  [
-    [Inputs.getPassword.derivationOptionsJson, derivationOptionsJson],
+) => call<ApiMessages.GetPassword>(
+  {
+    command: Commands.getPassword,
+    derivationOptionsJson,
     ...( wordLimit  != null ?
-      [[Inputs.getPassword.wordLimit, wordLimit.toString()] as [string, string]] :
-      []
+      {[Inputs.getPassword.wordLimit]: wordLimit} :
+      {}
     )    
-  ],
-  (p) => JSON.parse( p.getStringParameter(Outputs.getPassword.passwordWithDerivationOptionsJson)) as DerivedPasswordWithDerivationOptionsJson
+  },
+  p => ({
+    password: p.getStringParameter(Outputs.getPassword.password),
+    derivationOptionsJson: p.getStringParameter(Outputs.getPassword.derivationOptionsJson)
+  })
 );
 
 /**
@@ -119,12 +118,12 @@ export const getPasswordFactory = (call: ApiClientImplementation) => (
  */
 export const getUnsealingKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<UnsealingKeyFields> => call(
-  Commands.getUnsealingKey,
-  [ 
-    [Inputs.getUnsealingKey.derivationOptionsJson, derivationOptionsJson ]
-  ],
-  async (p) => p.getJsObjectParameter<UnsealingKeyFields>(Outputs.getUnsealingKey.unsealingKey)
+) => call<ApiMessages.GetUnsealingKey>(
+  {
+    command: Commands.getUnsealingKey,
+    derivationOptionsJson
+  },
+  p => p.getJsObjectParameter<UnsealingKeyFields>(Outputs.getUnsealingKey.unsealingKey)
 );
 
 
@@ -137,12 +136,12 @@ export const getUnsealingKeyFactory = (call: ApiClientImplementation) => (
  */
 export const getSymmetricKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SymmetricKeyFields> => call(
-  Commands.getSymmetricKey,
-  [ 
-    [Inputs.getUnsealingKey.derivationOptionsJson, derivationOptionsJson ]
-  ],
-  async (p) => p.getJsObjectParameter<SymmetricKeyFields>(Outputs.getSymmetricKey.symmetricKey)
+) => call<ApiMessages.GetSymmetricKey>(
+  {
+    command: Commands.getSymmetricKey,
+    derivationOptionsJson
+  },
+  p => p.getJsObjectParameter<SymmetricKeyFields>(Outputs.getSymmetricKey.symmetricKey)
 );
 
 /**
@@ -154,14 +153,13 @@ export const getSymmetricKeyFactory = (call: ApiClientImplementation) => (
  */
 export const getSigningKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SigningKeyFields> => call(
-  Commands.getSigningKey,
-  [ 
-    [Inputs.getUnsealingKey.derivationOptionsJson, derivationOptionsJson ]
-  ],
-    async (p) => p.getJsObjectParameter<SigningKeyFields>(Outputs.getSigningKey.signingKey)
+) => call<ApiMessages.GetSigningKey>(
+  {
+    command: Commands.getSigningKey,
+    derivationOptionsJson
+  },
+  p => p.getJsObjectParameter<SigningKeyFields>(Outputs.getSigningKey.signingKey)
 );
-
 
 /**
  * Get a [SealingKey] derived from the user's DiceKey and the [ApiDerivationOptions] specified
@@ -170,10 +168,12 @@ export const getSigningKeyFactory = (call: ApiClientImplementation) => (
  */
 export const getSealingKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SealingKeyFields> => call(
-  Commands.getSealingKey,
-  [ [Inputs.getUnsealingKey.derivationOptionsJson, derivationOptionsJson ] ],
-  async (p) => p.getJsObjectParameter<SealingKeyFields>(Outputs.getSealingKey.sealingKey)
+) => call<ApiMessages.GetSealingKey>(
+  {
+    command: Commands.getSealingKey,
+    derivationOptionsJson
+  },
+   p => p.getJsObjectParameter<SealingKeyFields>(Outputs.getSealingKey.sealingKey)
 );
 
 
@@ -188,10 +188,12 @@ export const getSealingKeyFactory = (call: ApiClientImplementation) => (
  */
 export const unsealWithUnsealingKeyFactory = (call: ApiClientImplementation) => (
   packagedSealedMessage: PackagedSealedMessageFields
-): Promise<Uint8Array> => call(
-  Commands.unsealWithUnsealingKey,
-  [ [ Inputs.unsealWithUnsealingKey.packagedSealedMessage, packagedSealedMessage ]],
-  async (p) => p.getBinaryParameter(Outputs.unsealWithUnsealingKey.plaintext)
+) => call<ApiMessages.UnsealWithUnsealingKey>(
+  {
+    command: Commands.unsealWithUnsealingKey,
+    packagedSealedMessage
+  },
+  p => p.getBinaryParameter(Outputs.unsealWithUnsealingKey.plaintext)
 );
 
 /**
@@ -207,15 +209,15 @@ export const sealWithSymmetricKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string,
   plaintext: Uint8Array,
   unsealingInstructions: string = ""
-): Promise<PackagedSealedMessageFields> =>
-  call(
-    Commands.sealWithSymmetricKey, 
-    [
-      [Inputs.sealWithSymmetricKey.derivationOptionsJson, derivationOptionsJson],
-      [Inputs.sealWithSymmetricKey.plaintext, plaintext],
-      [Inputs.sealWithSymmetricKey.unsealingInstructions, unsealingInstructions]  
-    ],
-    async (p) => p.getJsObjectParameter<PackagedSealedMessageFields>(Outputs.sealWithSymmetricKey.packagedSealedMessage)
+) =>
+  call<ApiMessages.SealWithSymmetricKey>(
+    {
+      command: Commands.sealWithSymmetricKey, 
+      derivationOptionsJson,
+      plaintext,
+      unsealingInstructions  
+    },
+    p => p.getJsObjectParameter<PackagedSealedMessageFields>(Outputs.sealWithSymmetricKey.packagedSealedMessage)
   );
 
 /**
@@ -230,10 +232,12 @@ export const sealWithSymmetricKeyFactory = (call: ApiClientImplementation) => (
  */
 export const unsealWithSymmetricKeyFactory = (call: ApiClientImplementation) => (
   packagedSealedMessage: PackagedSealedMessageFields
-): Promise<Uint8Array> => call(
-  Commands.unsealWithSymmetricKey,
-  [ [Inputs.unsealWithSymmetricKey.packagedSealedMessage, packagedSealedMessage ] ],
-  async (p) => p.getBinaryParameter(Outputs.unsealWithSymmetricKey.plaintext)
+) => call<ApiMessages.UnsealWithSymmetricKey>(
+  {
+    command: Commands.unsealWithSymmetricKey,
+    packagedSealedMessage,
+  },
+  p => p.getBinaryParameter(Outputs.unsealWithSymmetricKey.plaintext)
 );
     
 /**
@@ -242,8 +246,10 @@ export const unsealWithSymmetricKeyFactory = (call: ApiClientImplementation) => 
  */
 export const getSignatureVerificationKeyFactory = (call: ApiClientImplementation) => (
   derivationOptionsJson: string
-): Promise<SignatureVerificationKeyFields> => call(
-  Commands.getSignatureVerificationKey,
-  [ [Inputs.getSignatureVerificationKey.derivationOptionsJson, derivationOptionsJson] ],
-  async (p) => p.getJsObjectParameter<SignatureVerificationKeyFields>(Outputs.getSignatureVerificationKey.signatureVerificationKey)
+): Promise<SignatureVerificationKeyFields> => call<ApiMessages.GetSignatureVerificationKey>(
+  {
+    command: Commands.getSignatureVerificationKey,
+    derivationOptionsJson
+  },
+  p => p.getJsObjectParameter<SignatureVerificationKeyFields>(Outputs.getSignatureVerificationKey.signatureVerificationKey)
 );

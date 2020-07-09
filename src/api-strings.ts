@@ -4,7 +4,8 @@ const plaintext = "plaintext";
 const command = "command";
 const respondTo = "respondTo";
 const authToken = "authToken";
-const passwordWithDerivationOptionsJson = "passwordWithDerivationOptionsJson";
+const password = "password";
+//const passwordWithDerivationOptionsJson = "passwordWithDerivationOptionsJson";
 const derivationOptionsJson = "derivationOptionsJson";
 const packagedSealedMessage = "packagedSealedMessage";
 const exception = "exception";
@@ -32,10 +33,9 @@ const getPassword = {
 } as const;
 
 const unsealingInstructions = "unsealingInstructions";
-const unseal = {
+const unsealInput = {
   packagedSealedMessage
 } as const;
-
 
 export const Commands = (() => {
   const getAuthToken = "getAuthToken";
@@ -66,15 +66,18 @@ export const Commands = (() => {
    } as const;
 })();
 export type Command = keyof typeof Commands;
-export type NonMetaCommands = Exclude<Command,"getAuthToken">;
+export type NonMetaCommand = Exclude<Command,"getAuthToken">;
 export const isCommand = (str: string | undefined): str is Command =>
   str != null && str in Commands;
 
 export const Inputs = {
   COMMON: {
-    windowName,
+    // For tracking requests, but invisible to command-handling code
     requestId,
     command,
+    // For message-based API
+    windowName,
+    // For URL-based API
     respondTo,
     authToken,
   } as const,
@@ -101,8 +104,8 @@ export const Inputs = {
     unsealingInstructions
   } as const,
 
-  unsealWithSymmetricKey: {...unseal} as const,
-  unsealWithUnsealingKey: {...unseal} as const,
+  unsealWithSymmetricKey: {...unsealInput} as const,
+  unsealWithUnsealingKey: {...unsealInput} as const,
 
 }
 
@@ -123,7 +126,9 @@ export const Outputs = {
   } as const,
 
   getPassword: {
-    passwordWithDerivationOptionsJson
+    derivationOptionsJson,
+    password
+//    passwordWithDerivationOptionsJson
   } as const,
 
   getSealingKey: {
@@ -162,3 +167,4 @@ export const Outputs = {
     plaintext
   } as const,
 }
+

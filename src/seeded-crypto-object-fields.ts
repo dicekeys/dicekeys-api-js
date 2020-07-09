@@ -27,13 +27,6 @@ export interface DerivedSecretFields {
   readonly derivationOptionsJson: string;    
 }
 
-export interface DerivedPasswordWithDerivationOptionsJson extends DerivedSecretFields {
-  /**
-   * The array of bytes that constitutes the derived secret.
-   */
-  readonly password: string;
-}
-
 export interface SealingKeyFields extends DerivedSecretFields {
   /**
    * The raw key bytes of the sealing key.
@@ -80,7 +73,7 @@ export interface UnsealingKeyFields extends SealingKeyFields {
 
 export type SeededCryptoJsObject =
   PackagedSealedMessageFields |
-  DerivedPasswordWithDerivationOptionsJson |
+//  DerivedPasswordWithDerivationOptionsJson |
   SecretFields | 
   SymmetricKeyFields |
   SealingKeyFields |

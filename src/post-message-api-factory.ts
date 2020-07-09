@@ -1,11 +1,11 @@
 import {
   UnmsarshallerForResponse,
   generateRequestId,
-} from "./api-factory"
+} from "./api-factory";
+import * as ApiMessages from "./api-messages";
 import {
   Inputs,
-  Outputs,
-  Command,
+  Outputs
 } from "./api-strings";
 import {
   MissingResponseParameter,
@@ -14,18 +14,23 @@ import {
 import {
   SeededCryptoJsObject
 } from "./seeded-crypto-object-fields";
-import { PackagedSealedMessageFields } from "@dicekeys/seeded-crypto-js";
 
 const apiUrl = "https://dicekeys.app";
 
-export type ApiMessage = MessageEvent & {data: {[name: string]: string | Uint8Array}};
+export type ApiMessage = MessageEvent & {data: {[name: string]: string | number | Uint8Array}};
+
+export type PostMessageRequestMessage<METHOD extends ApiMessages.ApiMethod = ApiMessages.ApiMethod> =
+  ApiMessages.REQUEST_OF<METHOD> & {
+  requestId: string;
+  windowName: string;
+};
 
 /**
  * Typing for the transmit function, so that our unit testing framework
  * can substitute a custom transmitter to simulate postMessage reqeusts.
  */
 export interface TransmitRequestFunction {
-  (request: {[name: string]: string | Uint8Array | SeededCryptoJsObject}): Promise<ApiMessage>
+  (request: PostMessageRequestMessage<any>): Promise<ApiMessage>
 };
 
 /**
@@ -151,11 +156,11 @@ const transmitRequest: TransmitRequestFunction = async (request): Promise<ApiMes
 
 export const postMessageApiCallFactory = (
   transmitRequestFn: TransmitRequestFunction = transmitRequest,
-) => async <T>(
-  command: Command,
-  parameters: [string, string | Uint8Array | PackagedSealedMessageFields ][],
-  processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) => T | Promise<T>
-) : Promise<T> => {
+) => async <METHOD extends ApiMessages.ApiMethod>(
+  request: ApiMessages.REQUEST_OF<METHOD>,
+  processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) =>
+    ApiMessages.RESPONSE_OF<METHOD> | Promise<ApiMessages.RESPONSE_OF<METHOD>>
+) : Promise<ApiMessages.RESPONSE_OF<METHOD>> => {
   if (!window.name || window.name === "view") {
     // This window needs a name so that the window we're calling can
     // refer to it by name.
@@ -167,18 +172,15 @@ export const postMessageApiCallFactory = (
   const requestId = generateRequestId();
   // Build a request as an object matching parameter names to
   // parameters, which can either be strings or byte arrays.
-  const requestObject = {} as {[name: string]: string | Uint8Array | SeededCryptoJsObject};
-  // All requests contain a request ID and command name.
-  requestObject[Inputs.COMMON.windowName] = window.name;
-  requestObject[Inputs.COMMON.requestId] = requestId;
-  requestObject[Inputs.COMMON.command] = command;
-  // Copy all parameters into the object.  Parameters which are
-  // objects that have a toJson() function should be turned into strings
-  // by calling that toJson() function.
-  parameters.forEach( ([name, value]) => {
-    if (value == null) return;
-    requestObject[name] = value;
-  });
+  const windowName = window.name;
+  const metaParameters = {
+    requestId,
+    windowName,
+  }
+  const requestObject: PostMessageRequestMessage<METHOD> = {
+    ...request,
+    ...metaParameters,
+  };
   // We'll now transmit the request.  We use a transmitRequest function which
   // is set by the constructor to facilitate testing.  In production, all
   // that does is call the [[defaultTransmitRequest]], which creates a window
