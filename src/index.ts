@@ -5,7 +5,6 @@ import * as PostMessageApiFactory from "./post-message-api-factory";
 import * as WordLists from "./word-lists";
 export {ApiFactory, ApiStrings, Exceptions, PostMessageApiFactory, WordLists};
 export * from "./derivation-options";
-export * from "./generate-signature-result";
 export * from "./post-message-api";
 export * from "./secret-to-words";
 export * from "./unsealing-instructions";
