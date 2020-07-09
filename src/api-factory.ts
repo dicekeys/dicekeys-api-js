@@ -18,11 +18,6 @@ import {
   randomBytes
 } from "crypto";
 
-export interface GenerateSignatureResult {
-  signature: Uint8Array
-  signatureVerificationKey: SignatureVerificationKeyFields
-}
-
 export interface ApiClientImplementation{
   <METHOD extends ApiMessages.ApiMethod>(
     request: ApiMessages.REQUEST_OF<METHOD>,
@@ -64,7 +59,7 @@ export const generateSignatureFactory = (call: ApiClientImplementation) =>
   (
     derivationOptionsJson: string,
     message: Uint8Array
-  ) => call(
+  ) => call<ApiMessages.GenerateSignature>(
     {
       command: Commands.generateSignature,
       derivationOptionsJson,
