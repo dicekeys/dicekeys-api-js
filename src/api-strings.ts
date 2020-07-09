@@ -16,7 +16,6 @@ const signingKey = "signingKey";
 const symmetricKey = "symmetricKey";
 const unsealingKey = "unsealingKey";
 const signatureVerificationKey = "signatureVerificationKey";
-const wordList = "wordList";
 const wordLimit = "wordLimit";
 
 const withDerivationOptions = {
@@ -29,7 +28,6 @@ const getObject = {
 
 const getPassword = {
   ...getObject,
-  wordList,
   wordLimit,
 } as const;
 
