@@ -66,6 +66,7 @@ export const Commands = (() => {
    } as const;
 })();
 export type Command = keyof typeof Commands;
+export type NonMetaCommands = Exclude<Command,"getAuthToken">;
 export const isCommand = (str: string | undefined): str is Command =>
   str != null && str in Commands;
 

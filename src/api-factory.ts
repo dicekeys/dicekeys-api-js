@@ -96,13 +96,18 @@ export const getSecretFactory = (call: ApiClientImplementation) => (
 );
 
 export const getPasswordFactory = (call: ApiClientImplementation) => (
-  derivationOptionsJson: string
+  derivationOptionsJson: string,
+  wordLimit?: number
 ): Promise<DerivedPasswordWithDerivationOptionsJson> => call(
   Commands.getPassword,
   [
-    [Inputs.getPassword.derivationOptionsJson, derivationOptionsJson]
+    [Inputs.getPassword.derivationOptionsJson, derivationOptionsJson],
+    ...( wordLimit  != null ?
+      [[Inputs.getPassword.wordLimit, wordLimit.toString()] as [string, string]] :
+      []
+    )    
   ],
-  (p) => p.getJsObjectParameter<DerivedPasswordWithDerivationOptionsJson>(Outputs.getPassword.passwordWithDerivationOptionsJson)
+  (p) => JSON.parse( p.getStringParameter(Outputs.getPassword.passwordWithDerivationOptionsJson)) as DerivedPasswordWithDerivationOptionsJson
 );
 
 /**
