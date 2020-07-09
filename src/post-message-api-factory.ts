@@ -1,5 +1,4 @@
 import {
-  UnmsarshallerForResponse,
   generateRequestId,
 } from "./api-factory";
 import * as ApiMessages from "./api-messages";
@@ -8,63 +7,37 @@ import {
   Outputs
 } from "./api-strings";
 import {
-  MissingResponseParameter,
   restoreException
 } from "./exceptions";
-import {
-  SeededCryptoJsObject
-} from "./seeded-crypto-object-fields";
 
 const apiUrl = "https://dicekeys.app";
 
-export type ApiMessage = MessageEvent & {data: {[name: string]: string | number | Uint8Array}};
+//export type ApiMessage = MessageEvent & {data: {[name: string]: string | number | Uint8Array}};
+type PostMessageRequestMessage<METHOD extends ApiMessages.ApiMethod> = {
+  [Inputs.COMMON.requestId]: string,
+  [Inputs.COMMON.windowName]: string
+} & ApiMessages.REQUEST_OF<METHOD>;
 
-export type PostMessageRequestMessage<METHOD extends ApiMessages.ApiMethod = ApiMessages.ApiMethod> =
-  ApiMessages.REQUEST_OF<METHOD> & {
-  requestId: string;
-  windowName: string;
-};
+
+interface MarshalledException {
+  [Outputs.COMMON.exception]: string;
+  [Outputs.COMMON.exceptionMessage]: string;
+}
+
+type PostMessageResponseMessage<METHOD extends ApiMessages.ApiMethod> = {
+  [Outputs.COMMON.requestId]: string,
+} & ( ApiMessages.RESPONSE_OF<METHOD> | MarshalledException );
+
 
 /**
  * Typing for the transmit function, so that our unit testing framework
  * can substitute a custom transmitter to simulate postMessage reqeusts.
  */
 export interface TransmitRequestFunction {
-  (request: PostMessageRequestMessage<any>): Promise<ApiMessage>
+  <METHOD extends ApiMessages.ApiMethod>(
+    request: PostMessageRequestMessage<METHOD>
+  ): Promise<ApiMessages.RESPONSE_OF<METHOD>>
 };
-
-/**
- * Create response-marshalling functions for post-message responses
- * @param dataObject the message.Data field of the DiceKeys app's response
- * to a request.
- */
-class UnmarshallerForPostMessageResponse implements UnmsarshallerForResponse {
-  constructor(private dataObject: {[name: string]: string | Uint8Array | SeededCryptoJsObject}) {}
-  
-  getOptionalStringParameter = (name: string): string | undefined => {
-    const val = this.dataObject[name]
-    return typeof val === "string" ? val : undefined;
-  }
-
-  getStringParameter = (name: string): string =>
-    this.getOptionalStringParameter(name) ??
-      (() => { throw new MissingResponseParameter(name); } )();
-
-  getJsObjectParameter = <T extends SeededCryptoJsObject>(name: string): T => {
-    const val = this.dataObject[name]
-    return typeof val === "object" && (!(val instanceof Uint8Array)) ?
-      val as T :
-      (() => { throw new MissingResponseParameter(name); } )();        
-  }
-
-  getBinaryParameter = (name: string): Uint8Array => {
-    const val = this.dataObject[name]
-    return (typeof val === "object" &&  (val instanceof Uint8Array)) ?
-      val :
-      (() => { throw new MissingResponseParameter(name); } )();        
-  }
-
-}
 
 
 /**
@@ -85,7 +58,7 @@ var resolveDiceKeysAppWindowReadyPromise: () => any | undefined;
  */
 const pendingCallResolveFunctions = new Map<string, 
   {
-    resolve: (response: MessageEvent & {data: {[name: string]: string | Uint8Array}}) => any,
+    resolve: (response: ApiMessages.ApiResponse) => any,
     reject: (err: any) => any
 }>();
 
@@ -97,21 +70,19 @@ export const handlePossibleResultMessage = (result: MessageEvent) => {
     resolveDiceKeysAppWindowReadyPromise?.();
     return;
   }
-  const response = result.data as {[name: string]: string | Uint8Array};
-  const requestId = response[Outputs.COMMON.requestId] as string;
-  // FIXME -- validate origin is the Dicekeys app for good measure,
+  const {requestId, ...response} = result.data as PostMessageResponseMessage<ApiMessages.ApiMethod>;
+    // FIXME -- validate origin is the Dicekeys app for good measure,
   // or treat the RequestId as an authentication key since it's strong enough?
   // Will do latter for now.
   if (requestId && pendingCallResolveFunctions.has(requestId)) {
     const resolveFn = pendingCallResolveFunctions.get(requestId)!;
     pendingCallResolveFunctions.delete(requestId);
     try {
-      const exception = response[Outputs.COMMON.exception];
-      if (typeof exception === "string") {
-        const exceptionMessage = response[Outputs.COMMON.exceptionMessage] as string | undefined;
-        throw restoreException(exception, exceptionMessage);
+      if ("exception" in response && typeof response.exception === "string") {
+        throw restoreException(response.exception, response.exceptionMessage);
+      } else {
+        resolveFn.resolve(response as ApiMessages.RESPONSE_OF<ApiMessages.ApiMethod>);
       }
-      resolveFn.resolve(result);
     } catch (e) {
       resolveFn.reject(e);
     }
@@ -124,7 +95,10 @@ var liseningViaHandlePossibleResultMessage: boolean = false;
  * Transmit reqeusts to a window running the DiceKeys app, creating that
  * window if necessary.
  */
-const transmitRequest: TransmitRequestFunction = async (request): Promise<ApiMessage> => {
+const transmitRequest: TransmitRequestFunction = async <
+METHOD extends ApiMessages.ApiMethod>(
+  request: PostMessageRequestMessage<METHOD>
+): Promise<ApiMessages.RESPONSE_OF<METHOD>> => {
   if (!liseningViaHandlePossibleResultMessage) {
     // Set up the listener for the reponse
     window.addEventListener("message", (messageEvent) =>
@@ -142,7 +116,7 @@ const transmitRequest: TransmitRequestFunction = async (request): Promise<ApiMes
   // reject function so that the [[handlePossibleResultMessage]] function can
   // find them by the requestId.
   const responseMessagePromise =
-    new Promise<ApiMessage>(
+    new Promise<ApiMessages.RESPONSE_OF<METHOD>>(
       (resolve, reject) =>
         pendingCallResolveFunctions.set(request[Inputs.COMMON.requestId] as string, {resolve, reject})
     );
@@ -158,8 +132,6 @@ export const postMessageApiCallFactory = (
   transmitRequestFn: TransmitRequestFunction = transmitRequest,
 ) => async <METHOD extends ApiMessages.ApiMethod>(
   request: ApiMessages.REQUEST_OF<METHOD>,
-  processResponse: (unmarshallerForResponse: UnmsarshallerForResponse) =>
-    ApiMessages.RESPONSE_OF<METHOD> | Promise<ApiMessages.RESPONSE_OF<METHOD>>
 ) : Promise<ApiMessages.RESPONSE_OF<METHOD>> => {
   if (!window.name || window.name === "view") {
     // This window needs a name so that the window we're calling can
@@ -185,13 +157,5 @@ export const postMessageApiCallFactory = (
   // is set by the constructor to facilitate testing.  In production, all
   // that does is call the [[defaultTransmitRequest]], which creates a window
   // for the DiceKey app if necessary and sends a postMessage to the app.
-  const result = await transmitRequestFn(requestObject);
-
-  // Create the unmsarshalling functions needed so that our data-format-agnostic
-  // processResponse function can access the response fields.
-  const unmarshallingFunctions = new UnmarshallerForPostMessageResponse(result.data);
-
-  // Let the inherited processResponse function turn the response into
-  // whatever response type the caller was expecting.
-  return await processResponse(unmarshallingFunctions);
+  return await transmitRequestFn(requestObject);
 }
