@@ -2,6 +2,9 @@ import {DerivationOptions as CryptoDerivationOptions} from "@dicekeys/seeded-cry
 import {
   InvalidDerivationOptionsTypeFieldException
 } from "./exceptions";
+import {
+  WordListName
+} from "./word-lists";
 export const DerivableObjectNames = {
   "Secret": "Secret",
   "SigningKey": "SigningKey",
@@ -177,7 +180,6 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
    */
   cornerLetters?: string;
 
-
   /**
    * The DiceKeys app will want to get a user's consent before deriving a
    * secret on behalf of an app.
@@ -234,6 +236,26 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
 
     */
   excludeOrientationOfFaces?: boolean;
+
+  /**
+   * When generating a [Secret] that will be converted to a password, this
+   * field stores the name of the word list to use to convert it to a password.
+   * 
+   * If this field is set, the specified word list will be used to turn the
+   * secret into a password if getPassword is called.
+   * 
+   * If the field is not set and the derivation options are mutable, the
+   * DiceKeys app should allow the user to choose from a set of word lists
+   * to match the user's preference of language and vocabulary size once
+   * more than one word list is avaialble.  The DiceKeys app will then
+   * return a derivationOptionsJson string with the wordList field set
+   * to the user's chosen word list.
+   * 
+   * If the derivation options are not mutable and this field is not set, the
+   * DiceKeys app will default to the en_1024_words_5_chars_max_20200709 word list.
+   */
+  wordList?: WordListName;
+
 }
 
 export type DerivationOptions = CryptoDerivationOptions & ApiDerivationOptions & {[key:string]: any};

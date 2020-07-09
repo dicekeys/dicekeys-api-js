@@ -1,4 +1,4 @@
-export const Words_5_1024 = [
+export const en_1024_words_5_chars_max_20200709 = [
   "abide",
 	"acids",
 	"acre",

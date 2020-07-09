@@ -24,6 +24,12 @@ export class MissingResponseParameter extends Error {
   }
 }
 
+export class WordListNotFound extends Error {
+  static create(wordListName: string) {
+    return new WordListNotFound(`Could not generate password using the following word list as it could not be found '${wordListName}'.`);
+  }
+}
+
 export class UnknownException extends Error {
   constructor(
     public readonly exceptionName: string,
@@ -52,6 +58,7 @@ const Exceptions = [
   UserDeclinedToAuthorizeOperation,
   MissingParameter,
   MissingResponseParameter,
+  WordListNotFound,
   InvalidCommand
 ];
 

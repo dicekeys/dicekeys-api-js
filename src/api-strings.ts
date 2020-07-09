@@ -4,7 +4,7 @@ const plaintext = "plaintext";
 const command = "command";
 const respondTo = "respondTo";
 const authToken = "authToken";
-const password = "password";
+const passwordWithDerivationOptionsJson = "passwordWithDerivationOptionsJson";
 const derivationOptionsJson = "derivationOptionsJson";
 const packagedSealedMessage = "packagedSealedMessage";
 const exception = "exception";
@@ -124,7 +124,7 @@ export const Outputs = {
   } as const,
 
   getPassword: {
-    password
+    passwordWithDerivationOptionsJson
   } as const,
 
   getSealingKey: {

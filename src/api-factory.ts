@@ -6,6 +6,7 @@ import {
 } from "./api-strings";
 import {
   PackagedSealedMessageFields,
+  DerivedPasswordWithDerivationOptionsJson,
   SecretFields,
   SymmetricKeyFields,
   UnsealingKeyFields,
@@ -92,6 +93,16 @@ export const getSecretFactory = (call: ApiClientImplementation) => (
     [Inputs.getSecret.derivationOptionsJson, derivationOptionsJson]
   ],
   (p) => p.getJsObjectParameter<SecretFields>(Outputs.getSecret.secret)
+);
+
+export const getPasswordFactory = (call: ApiClientImplementation) => (
+  derivationOptionsJson: string
+): Promise<DerivedPasswordWithDerivationOptionsJson> => call(
+  Commands.getPassword,
+  [
+    [Inputs.getPassword.derivationOptionsJson, derivationOptionsJson]
+  ],
+  (p) => p.getJsObjectParameter<DerivedPasswordWithDerivationOptionsJson>(Outputs.getPassword.passwordWithDerivationOptionsJson)
 );
 
 /**

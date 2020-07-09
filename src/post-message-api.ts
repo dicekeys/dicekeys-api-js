@@ -3,6 +3,7 @@ import {
   generateSignatureFactory,
   getSealingKeyFactory,
   getSecretFactory,
+  getPasswordFactory,
   getSignatureVerificationKeyFactory,
   getSigningKeyFactory,
   getSymmetricKeyFactory,
@@ -25,6 +26,7 @@ const callPostMessageApi = postMessageApiCallFactory();
 export const generateSignature = generateSignatureFactory(callPostMessageApi);
 export const getSealingKey = getSealingKeyFactory(callPostMessageApi);
 export const getSecret = getSecretFactory(callPostMessageApi);
+export const getPassword = getPasswordFactory(callPostMessageApi);
 export const getSignatureVerificationKey = getSignatureVerificationKeyFactory(callPostMessageApi);
 export const getSigningKey = getSigningKeyFactory(callPostMessageApi);
 export const getSymmetricKey = getSymmetricKeyFactory(callPostMessageApi);
