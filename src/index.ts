@@ -3,7 +3,7 @@ import * as ApiStrings from "./api-strings";
 import * as Exceptions from "./exceptions";
 import * as PostMessageApiFactory from "./post-message-api-factory";
 import * as WordLists from "./word-lists";
-import * as ApiMessages from "./api-messages";
+import * as ApiMessages from "./api-calls";
 export {ApiFactory, ApiStrings, Exceptions, PostMessageApiFactory, WordLists, ApiMessages};
 export * from "./derivation-options";
 export * from "./post-message-api";

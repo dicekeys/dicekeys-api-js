@@ -13,50 +13,36 @@ import {
   SymmetricKeyFields
 } from "./seeded-crypto-object-fields";
 
-interface ApiRequestBase<COMMAND extends Command> {
+interface ApiParametersBase<COMMAND extends Command> {
   command: COMMAND
 }
 
-interface RequestWithDerivationOptions<COMMAND extends Command> extends ApiRequestBase<COMMAND> {
+interface ParametersWithDerivationOptions<COMMAND extends Command> extends ApiParametersBase<COMMAND> {
   derivationOptionsJson: string
 }
 
-export interface GetPasswordRequest extends RequestWithDerivationOptions<"getPassword"> {
+export interface GetPasswordRequest extends ParametersWithDerivationOptions<"getPassword"> {
   [Inputs.getPassword.wordLimit]?: number
 }
-export interface GetSecretRequest extends RequestWithDerivationOptions<"getSecret"> {}
-export interface GetSignatureVerificationKeyRequest extends RequestWithDerivationOptions<"getSignatureVerificationKey"> {}
-export interface GetSigningKeyRequest extends RequestWithDerivationOptions<"getSigningKey"> {}
-export interface GetSealingKeyRequest extends RequestWithDerivationOptions<"getSealingKey"> {}
-export interface GetUnsealingKeyRequest extends RequestWithDerivationOptions<"getUnsealingKey"> {}
-export interface GetSymmetricKeyRequest extends RequestWithDerivationOptions<"getSymmetricKey"> {}
-export interface UnsealWithSymmetricKeyRequest extends ApiRequestBase<"unsealWithSymmetricKey"> {
+export interface GetSecretRequest extends ParametersWithDerivationOptions<"getSecret"> {}
+export interface GetSignatureVerificationKeyRequest extends ParametersWithDerivationOptions<"getSignatureVerificationKey"> {}
+export interface GetSigningKeyRequest extends ParametersWithDerivationOptions<"getSigningKey"> {}
+export interface GetSealingKeyRequest extends ParametersWithDerivationOptions<"getSealingKey"> {}
+export interface GetUnsealingKeyRequest extends ParametersWithDerivationOptions<"getUnsealingKey"> {}
+export interface GetSymmetricKeyRequest extends ParametersWithDerivationOptions<"getSymmetricKey"> {}
+export interface UnsealWithSymmetricKeyRequest extends ApiParametersBase<"unsealWithSymmetricKey"> {
   [Inputs.unsealWithSymmetricKey.packagedSealedMessage]: PackagedSealedMessageFields;
 }
-export interface UnsealWithUnsealingKeyRequest extends ApiRequestBase<"unsealWithUnsealingKey"> {
+export interface UnsealWithUnsealingKeyRequest extends ApiParametersBase<"unsealWithUnsealingKey"> {
   [Inputs.unsealWithUnsealingKey.packagedSealedMessage]: PackagedSealedMessageFields;
 }
-export interface SealWithSymmetricKeyRequest extends RequestWithDerivationOptions<"sealWithSymmetricKey"> {
+export interface SealWithSymmetricKeyRequest extends ParametersWithDerivationOptions<"sealWithSymmetricKey"> {
   plaintext: Uint8Array;
   unsealingInstructions?: string
 }
-export interface GenerateSignatureRequest extends RequestWithDerivationOptions<"generateSignature"> {
+export interface GenerateSignatureRequest extends ParametersWithDerivationOptions<"generateSignature"> {
   message: Uint8Array;
 }
-//interface GetAuthTokenRequest extends ApiRequestBase<"getAuthToken"> {}
-
-type ApiRequestType =
-  GetPasswordRequest |
-  GetSecretRequest |
-  GetSignatureVerificationKeyRequest |
-  GetSigningKeyRequest |
-  GetSealingKeyRequest |
-  GetUnsealingKeyRequest |
-  GetSymmetricKeyRequest |
-  UnsealWithSymmetricKeyRequest |
-  UnsealWithUnsealingKeyRequest |
-  SealWithSymmetricKeyRequest |
-  GenerateSignatureRequest;
 
 export interface GetPasswordResponse {
   [Outputs.getPassword.password]: string,
@@ -74,25 +60,16 @@ export type GetUnsealingKeyResponse= UnsealingKeyFields;
 export type GetSymmetricKeyResponse = SymmetricKeyFields;
 export type UnsealWithSymmetricKeyResponse = Uint8Array;
 export type UnsealWithUnsealingKeyResponse = Uint8Array;
-export type SealWithSymmetricKeyResponse =PackagedSealedMessageFields;
-
-type ApiResponseType =
-  GetPasswordResponse |
-  GetSecretResponse |
-  GetSignatureVerificationKeyResponse |
-  GetSigningKeyResponse |
-  GetSealingKeyResponse |
-  GetUnsealingKeyResponse |
-  GetSymmetricKeyResponse |
-  UnsealWithSymmetricKeyResponse |
-  UnsealWithUnsealingKeyResponse |
-  SealWithSymmetricKeyResponse |
-  GenerateSignatureResponse;
+export type SealWithSymmetricKeyResponse = PackagedSealedMessageFields;
 
 
-interface ApiRequestAndResponse<REQUEST extends ApiRequestType, RESPONSE extends ApiResponseType> {
-  request: REQUEST;
-  response: RESPONSE;
+
+// interface ApiRequestAndResponse<REQUEST extends ApiRequestType, RESPONSE extends ApiResponseType> {
+//   request: REQUEST;
+//   response: RESPONSE;
+// }
+interface ApiRequestAndResponse<PARAMETERS, RESULT> {
+  (parameters: PARAMETERS) : Promise<RESULT>
 }
 
 export interface GetPassword extends ApiRequestAndResponse<GetPasswordRequest, GetPasswordResponse> {}
@@ -107,7 +84,7 @@ export interface UnsealWithUnsealingKey extends ApiRequestAndResponse<UnsealWith
 export interface SealWithSymmetricKey extends ApiRequestAndResponse<SealWithSymmetricKeyRequest, SealWithSymmetricKeyResponse> {}
 export interface GenerateSignature extends ApiRequestAndResponse<GenerateSignatureRequest, GenerateSignatureResponse> {}
 
-export type ApiMethod =
+export type ApiCall =
   GetPassword |
   GetSecret |
   GetSignatureVerificationKey |
@@ -119,7 +96,9 @@ export type ApiMethod =
   UnsealWithUnsealingKey |
   SealWithSymmetricKey |
   GenerateSignature;
-export type REQUEST_OF<METHOD extends ApiMethod> = METHOD["request"];
-export type RESPONSE_OF<METHOD extends ApiMethod> = METHOD["response"];
-export type ApiRequest = REQUEST_OF<ApiMethod>
-export type ApiResponse = RESPONSE_OF<ApiMethod>
+export type ApiCallObject<METHOD extends ApiCall = ApiCall> = Parameters<METHOD>[0];
+export type ApiCommand<METHOD extends ApiCall = ApiCall> = Parameters<METHOD>[0]["command"];
+export type ApiCallParameters<METHOD extends ApiCall = ApiCall> = Omit<ApiCallObject<METHOD>, "command">
+type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
+export type ApiCallPromisedResult<METHOD extends ApiCall = ApiCall> = ReturnType<METHOD>;
+export type ApiCallResult<METHOD extends ApiCall = ApiCall> = ThenArg<ApiCallPromisedResult<METHOD>>;

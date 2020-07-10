@@ -1,7 +1,7 @@
 import {
   generateRequestId,
 } from "./api-factory";
-import * as ApiMessages from "./api-messages";
+import * as ApiMessages from "./api-calls";
 import {
   Inputs,
   Outputs
@@ -13,20 +13,19 @@ import {
 const apiUrl = "https://dicekeys.app";
 
 //export type ApiMessage = MessageEvent & {data: {[name: string]: string | number | Uint8Array}};
-type PostMessageRequestMessage<METHOD extends ApiMessages.ApiMethod> = {
+type PostMessageRequestMessage<METHOD extends ApiMessages.ApiCall> = {
   [Inputs.COMMON.requestId]: string,
   [Inputs.COMMON.windowName]: string
-} & ApiMessages.REQUEST_OF<METHOD>;
-
+} & ApiMessages.ApiCallObject<METHOD>;
 
 interface MarshalledException {
   [Outputs.COMMON.exception]: string;
   [Outputs.COMMON.exceptionMessage]: string;
 }
 
-type PostMessageResponseMessage<METHOD extends ApiMessages.ApiMethod> = {
+type PostMessageResponseMessage<METHOD extends ApiMessages.ApiCall> = {
   [Outputs.COMMON.requestId]: string,
-} & ( ApiMessages.RESPONSE_OF<METHOD> | MarshalledException );
+} & ( ApiMessages.ApiCallResult<METHOD> | MarshalledException );
 
 
 /**
@@ -34,9 +33,9 @@ type PostMessageResponseMessage<METHOD extends ApiMessages.ApiMethod> = {
  * can substitute a custom transmitter to simulate postMessage reqeusts.
  */
 export interface TransmitRequestFunction {
-  <METHOD extends ApiMessages.ApiMethod>(
+  <METHOD extends ApiMessages.ApiCall>(
     request: PostMessageRequestMessage<METHOD>
-  ): Promise<ApiMessages.RESPONSE_OF<METHOD>>
+  ): Promise<ApiMessages.ApiCallResult<METHOD>>
 };
 
 
@@ -58,7 +57,7 @@ var resolveDiceKeysAppWindowReadyPromise: () => any | undefined;
  */
 const pendingCallResolveFunctions = new Map<string, 
   {
-    resolve: (response: ApiMessages.ApiResponse) => any,
+    resolve: (response: any) => any,
     reject: (err: any) => any
 }>();
 
@@ -70,7 +69,7 @@ export const handlePossibleResultMessage = (result: MessageEvent) => {
     resolveDiceKeysAppWindowReadyPromise?.();
     return;
   }
-  const {requestId, ...response} = result.data as PostMessageResponseMessage<ApiMessages.ApiMethod>;
+  const {requestId, ...response} = result.data as PostMessageResponseMessage<ApiMessages.ApiCall>;
     // FIXME -- validate origin is the Dicekeys app for good measure,
   // or treat the RequestId as an authentication key since it's strong enough?
   // Will do latter for now.
@@ -81,14 +80,14 @@ export const handlePossibleResultMessage = (result: MessageEvent) => {
       if ("exception" in response && typeof response.exception === "string") {
         throw restoreException(response.exception, response.exceptionMessage);
       } else {
-        resolveFn.resolve(response as ApiMessages.RESPONSE_OF<ApiMessages.ApiMethod>);
+        resolveFn.resolve(response as ApiMessages.ApiCallResult<ApiMessages.ApiCall>);
       }
     } catch (e) {
       resolveFn.reject(e);
     }
   }
 }
-var liseningViaHandlePossibleResultMessage: boolean = false;
+var alreadyListeningForResultMessages: boolean = false;
 
 
 /**
@@ -96,15 +95,16 @@ var liseningViaHandlePossibleResultMessage: boolean = false;
  * window if necessary.
  */
 const transmitRequest: TransmitRequestFunction = async <
-METHOD extends ApiMessages.ApiMethod>(
+  METHOD extends ApiMessages.ApiCall
+>(
   request: PostMessageRequestMessage<METHOD>
-): Promise<ApiMessages.RESPONSE_OF<METHOD>> => {
-  if (!liseningViaHandlePossibleResultMessage) {
-    // Set up the listener for the reponse
+): Promise<ApiMessages.ApiCallResult<METHOD>> => {
+  if (!alreadyListeningForResultMessages) {
+    // Set up the listener for the response if one is not yet running
     window.addEventListener("message", (messageEvent) =>
       handlePossibleResultMessage(messageEvent)
     );
-    liseningViaHandlePossibleResultMessage = true;
+    alreadyListeningForResultMessages = true;
   }
   if (!diceKeysAppWindow || diceKeysAppWindow.closed) {
     const diceKeysAppWindowReadyPromise = new Promise<void>( (resolve) => {resolveDiceKeysAppWindowReadyPromise = resolve} )
@@ -116,7 +116,7 @@ METHOD extends ApiMessages.ApiMethod>(
   // reject function so that the [[handlePossibleResultMessage]] function can
   // find them by the requestId.
   const responseMessagePromise =
-    new Promise<ApiMessages.RESPONSE_OF<METHOD>>(
+    new Promise<ApiMessages.ApiCallResult<METHOD>>(
       (resolve, reject) =>
         pendingCallResolveFunctions.set(request[Inputs.COMMON.requestId] as string, {resolve, reject})
     );
@@ -130,9 +130,9 @@ METHOD extends ApiMessages.ApiMethod>(
 
 export const postMessageApiCallFactory = (
   transmitRequestFn: TransmitRequestFunction = transmitRequest,
-) => async <METHOD extends ApiMessages.ApiMethod>(
-  request: ApiMessages.REQUEST_OF<METHOD>,
-) : Promise<ApiMessages.RESPONSE_OF<METHOD>> => {
+) => async <METHOD extends ApiMessages.ApiCall>(
+  request: ApiMessages.ApiCallObject<METHOD>,
+) : Promise<ApiMessages.ApiCallResult<METHOD>> => {
   if (!window.name || window.name === "view") {
     // This window needs a name so that the window we're calling can
     // refer to it by name.
