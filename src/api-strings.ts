@@ -19,6 +19,47 @@ const unsealingKey = "unsealingKey";
 const signatureVerificationKey = "signatureVerificationKey";
 const wordLimit = "wordLimit";
 
+
+export const Commands = (() => {
+  const generateSignature = "generateSignature";
+  const getPassword = "getPassword";
+  const getSealingKey = "getSealingKey";
+  const getSecret = "getSecret";
+  const getSignatureVerificationKey = "getSignatureVerificationKey";
+  const getSigningKey = "getSigningKey";
+  const getSymmetricKey = "getSymmetricKey";
+  const getUnsealingKey = "getUnsealingKey";
+  const sealWithSymmetricKey = "sealWithSymmetricKey";
+  const unsealWithSymmetricKey = "unsealWithSymmetricKey";
+  const unsealWithUnsealingKey = "unsealWithUnsealingKey";
+  return {
+    generateSignature,
+    getPassword,
+    getSealingKey,
+    getSecret,
+    getSignatureVerificationKey,
+    getSigningKey,
+    getSymmetricKey,
+    getUnsealingKey,
+    sealWithSymmetricKey,
+    unsealWithSymmetricKey,
+    unsealWithUnsealingKey,
+   } as const;
+})();
+export const MetaCommands = (() => {
+  const getAuthToken = "getAuthToken";
+  return {
+    getAuthToken,
+   } as const;
+})();
+
+export type Command = keyof typeof Commands;
+export type MetaCommand = keyof typeof MetaCommands;
+export const isCommand = (str: string | undefined): str is Command =>
+  str != null && str in Commands;
+export const isMetaCommand = (str: string | undefined): str is MetaCommand =>
+  str != null && str in MetaCommands;
+
 const withDerivationOptions = {
   derivationOptionsJson
 } as const;
@@ -37,38 +78,6 @@ const unsealInput = {
   packagedSealedMessage
 } as const;
 
-export const Commands = (() => {
-  const getAuthToken = "getAuthToken";
-  const generateSignature = "generateSignature";
-  const getPassword = "getPassword";
-  const getSealingKey = "getSealingKey";
-  const getSecret = "getSecret";
-  const getSignatureVerificationKey = "getSignatureVerificationKey";
-  const getSigningKey = "getSigningKey";
-  const getSymmetricKey = "getSymmetricKey";
-  const getUnsealingKey = "getUnsealingKey";
-  const sealWithSymmetricKey = "sealWithSymmetricKey";
-  const unsealWithSymmetricKey = "unsealWithSymmetricKey";
-  const unsealWithUnsealingKey = "unsealWithUnsealingKey";
-  return {
-    getAuthToken,
-    generateSignature,
-    getPassword,
-    getSealingKey,
-    getSecret,
-    getSignatureVerificationKey,
-    getSigningKey,
-    getSymmetricKey,
-    getUnsealingKey,
-    sealWithSymmetricKey,
-    unsealWithSymmetricKey,
-    unsealWithUnsealingKey,
-   } as const;
-})();
-export type Command = keyof typeof Commands;
-export type NonMetaCommand = Exclude<Command,"getAuthToken">;
-export const isCommand = (str: string | undefined): str is Command =>
-  str != null && str in Commands;
 
 export const Inputs = {
   COMMON: {

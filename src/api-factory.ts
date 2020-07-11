@@ -30,14 +30,14 @@ export const generateRequestId = (): string => {
 export const addCommandNameToParameterObject = <METHOD extends ApiCalls.ApiCall>(
   command: ApiCalls.ApiCommand<METHOD>,
   parameters: ApiCalls.ApiCallParameters<METHOD>
-): ApiCalls.ApiCallObject<METHOD> => ({
+): ApiCalls.ApiRequestObject<METHOD> => ({
   ...parameters,
   command
-} as ApiCalls.ApiCallObject<METHOD>);
+} as ApiCalls.ApiRequestObject<METHOD>);
 
 export interface ApiClientImplementation{
   <METHOD extends ApiCalls.ApiCall>(
-    request: ApiCalls.ApiCallObject<METHOD>
+    request: ApiCalls.ApiRequestObject<METHOD>
   ): Promise<ApiCalls.ApiCallResult<METHOD>>
 }
 

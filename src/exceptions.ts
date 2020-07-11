@@ -2,6 +2,7 @@ export class ClientNotAuthorizedException extends Error {}
 
 export class UserDeclinedToAuthorizeOperation extends Error {}
 
+export class ClientMayRetrieveKeyNotSetInDerivationOptions extends ClientNotAuthorizedException {}
 
 export class InvalidDerivationOptionsTypeFieldException extends Error {
   static create(
@@ -13,7 +14,7 @@ export class InvalidDerivationOptionsTypeFieldException extends Error {
 }
 
 export class MissingParameter extends Error {
-  static create(missingParameterName: string) {
+static create(missingParameterName: string) {
     return new MissingParameter(`This operation requires the parameter '${missingParameterName}'.`);
   }
 }
@@ -53,6 +54,7 @@ export class InvalidCommand extends Error {
 
 const Exceptions = [
   ClientNotAuthorizedException,
+  ClientMayRetrieveKeyNotSetInDerivationOptions,
   InvalidDerivationOptionsTypeFieldException,
   UserCancelledLoadingDiceKey,
   UserDeclinedToAuthorizeOperation,

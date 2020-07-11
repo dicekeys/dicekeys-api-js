@@ -1,41 +1,21 @@
 import {
   generateRequestId,
 } from "./api-factory";
-import * as ApiMessages from "./api-calls";
-import {
-  Inputs,
-  Outputs
-} from "./api-strings";
+import * as ApiCalls from "./api-calls";
 import {
   restoreException
 } from "./exceptions";
 
 const apiUrl = "https://dicekeys.app";
 
-//export type ApiMessage = MessageEvent & {data: {[name: string]: string | number | Uint8Array}};
-type PostMessageRequestMessage<METHOD extends ApiMessages.ApiCall> = {
-  [Inputs.COMMON.requestId]: string,
-  [Inputs.COMMON.windowName]: string
-} & ApiMessages.ApiCallObject<METHOD>;
-
-interface MarshalledException {
-  [Outputs.COMMON.exception]: string;
-  [Outputs.COMMON.exceptionMessage]: string;
-}
-
-type PostMessageResponseMessage<METHOD extends ApiMessages.ApiCall> = {
-  [Outputs.COMMON.requestId]: string,
-} & ( ApiMessages.ApiCallResult<METHOD> | MarshalledException );
-
-
 /**
  * Typing for the transmit function, so that our unit testing framework
  * can substitute a custom transmitter to simulate postMessage reqeusts.
  */
-export interface TransmitRequestFunction {
-  <METHOD extends ApiMessages.ApiCall>(
-    request: PostMessageRequestMessage<METHOD>
-  ): Promise<ApiMessages.ApiCallResult<METHOD>>
+export interface PostMessageTransmitRequestFunction {
+  <METHOD extends ApiCalls.ApiCall>(
+    request: ApiCalls.RequestMessage<METHOD> & ApiCalls.PostMessageRequestMetadata 
+  ): Promise<ApiCalls.ApiCallResult<METHOD>>
 };
 
 
@@ -69,7 +49,7 @@ export const handlePossibleResultMessage = (result: MessageEvent) => {
     resolveDiceKeysAppWindowReadyPromise?.();
     return;
   }
-  const {requestId, ...response} = result.data as PostMessageResponseMessage<ApiMessages.ApiCall>;
+  const {requestId, ...response} = result.data as ApiCalls.Response;
     // FIXME -- validate origin is the Dicekeys app for good measure,
   // or treat the RequestId as an authentication key since it's strong enough?
   // Will do latter for now.
@@ -80,7 +60,7 @@ export const handlePossibleResultMessage = (result: MessageEvent) => {
       if ("exception" in response && typeof response.exception === "string") {
         throw restoreException(response.exception, response.exceptionMessage);
       } else {
-        resolveFn.resolve(response as ApiMessages.ApiCallResult<ApiMessages.ApiCall>);
+        resolveFn.resolve(response as ApiCalls.ApiCallResult<ApiCalls.ApiCall>);
       }
     } catch (e) {
       resolveFn.reject(e);
@@ -89,16 +69,23 @@ export const handlePossibleResultMessage = (result: MessageEvent) => {
 }
 var alreadyListeningForResultMessages: boolean = false;
 
+export const addPostMessageApiPromise = <T>(
+  requestId: string
+) =>
+  new Promise<T>(
+    (resolve, reject) =>
+      pendingCallResolveFunctions.set(requestId, {resolve, reject})
+  );
 
 /**
  * Transmit reqeusts to a window running the DiceKeys app, creating that
  * window if necessary.
  */
-const transmitRequest: TransmitRequestFunction = async <
-  METHOD extends ApiMessages.ApiCall
+const transmitRequest: PostMessageTransmitRequestFunction = async <
+  METHOD extends ApiCalls.ApiCall
 >(
-  request: PostMessageRequestMessage<METHOD>
-): Promise<ApiMessages.ApiCallResult<METHOD>> => {
+  request: ApiCalls.RequestMessage<METHOD> & ApiCalls.PostMessageRequestMetadata
+): Promise<ApiCalls.ApiCallResult<METHOD>> => {
   if (!alreadyListeningForResultMessages) {
     // Set up the listener for the response if one is not yet running
     window.addEventListener("message", (messageEvent) =>
@@ -115,11 +102,7 @@ const transmitRequest: TransmitRequestFunction = async <
   // We'll use a promise to wait for the response, storing a resolve and
   // reject function so that the [[handlePossibleResultMessage]] function can
   // find them by the requestId.
-  const responseMessagePromise =
-    new Promise<ApiMessages.ApiCallResult<METHOD>>(
-      (resolve, reject) =>
-        pendingCallResolveFunctions.set(request[Inputs.COMMON.requestId] as string, {resolve, reject})
-    );
+  const responseMessagePromise = addPostMessageApiPromise<ApiCalls.ApiCallResult<METHOD>>(request.requestId);
   diceKeysAppWindow!.postMessage(request, apiUrl);
   // We now await the response, which will arrive via a message event,
   // be processed by [[handlePossibleResultMessage]], which will
@@ -129,10 +112,10 @@ const transmitRequest: TransmitRequestFunction = async <
 
 
 export const postMessageApiCallFactory = (
-  transmitRequestFn: TransmitRequestFunction = transmitRequest,
-) => async <METHOD extends ApiMessages.ApiCall>(
-  request: ApiMessages.ApiCallObject<METHOD>,
-) : Promise<ApiMessages.ApiCallResult<METHOD>> => {
+  transmitRequestFn: PostMessageTransmitRequestFunction = transmitRequest,
+) => async <METHOD extends ApiCalls.ApiCall>(
+  request: ApiCalls.ApiRequestObject<METHOD>,
+) : Promise<ApiCalls.ApiCallResult<METHOD>> => {
   if (!window.name || window.name === "view") {
     // This window needs a name so that the window we're calling can
     // refer to it by name.
@@ -149,7 +132,7 @@ export const postMessageApiCallFactory = (
     requestId,
     windowName,
   }
-  const requestObject: PostMessageRequestMessage<METHOD> = {
+  const requestObject: ApiCalls.RequestMessage<METHOD> & ApiCalls.PostMessageRequestMetadata = {
     ...request,
     ...metaParameters,
   };
