@@ -58,7 +58,7 @@ export const handlePossibleResultMessage = (result: MessageEvent) => {
     pendingCallResolveFunctions.delete(requestId);
     try {
       if ("exception" in response && typeof response.exception === "string") {
-        throw restoreException(response.exception, response.exceptionMessage);
+        throw restoreException(response.exception, response.message, response.stack);
       } else {
         resolveFn.resolve(response as ApiCalls.ApiCallResult<ApiCalls.ApiCall>);
       }

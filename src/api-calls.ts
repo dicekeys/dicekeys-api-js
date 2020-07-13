@@ -151,7 +151,8 @@ ResponseMetadata & ApiCallResult<CALL>;
 
 export interface ExceptionResponse extends ResponseMetadata {
   [Outputs.COMMON.exception]: string;
-  [Outputs.COMMON.exceptionMessage]: string;
+  [Outputs.COMMON.message]: string;
+  [Outputs.COMMON.stack]: string;
 }
 
 export type Response = SuccessResult | ExceptionResponse;

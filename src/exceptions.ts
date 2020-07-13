@@ -69,17 +69,21 @@ const Exceptions = [
  * @param name The exception name
  * @param message The exception's message.
  */
-export const restoreException = (name: string, message?: string): Error => {
+export const restoreException = (name: string, message?: string, stack?: string): Error => {
   // Search known exceptions
   for (const exception of Exceptions) {
     if (exception.name === name) {
       // The exception's name matches a known exception.
       // Re-constitute it.
-      return new exception(message);
+      const e = new exception(message);
+      e.stack = stack;
+      return e;
     }
   }
   // The exception is not among the list of known exceptions, so
   // generate an UnknwonException.
-  return new UnknownException(name, message);
+  const e = new UnknownException(name, message);
+  e.stack = stack;
+  return e;
 }
 

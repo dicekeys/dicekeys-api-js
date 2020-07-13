@@ -9,7 +9,8 @@ const password = "password";
 const derivationOptionsJson = "derivationOptionsJson";
 const packagedSealedMessage = "packagedSealedMessage";
 const exception = "exception";
-const exceptionMessage = "exceptionMessage";
+const message = "message";
+const stack = "stack";
 const signature = "signature";
 const sealingKey = "sealingKey";
 const secret = "secret";
@@ -122,7 +123,8 @@ export const Outputs = {
   COMMON: {
     requestId,
     exception,
-    exceptionMessage,
+    message,
+    stack
   } as const,
 
   generateSignature: {
