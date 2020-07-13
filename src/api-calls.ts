@@ -53,21 +53,21 @@ export interface GenerateSignatureResponse {
   [Outputs.generateSignature.signature]: Uint8Array
   [Outputs.generateSignature.signatureVerificationKey]: SignatureVerificationKeyFields
 }
-export type GetSecretResponse = SecretFields;
-export type GetSignatureVerificationKeyResponse = SignatureVerificationKeyFields;
-export type GetSigningKeyResponse = SigningKeyFields;
-export type GetSealingKeyResponse = SealingKeyFields;
-export type GetUnsealingKeyResponse= UnsealingKeyFields;
-export type GetSymmetricKeyResponse = SymmetricKeyFields;
-export type UnsealWithSymmetricKeyResponse = Uint8Array;
-export type UnsealWithUnsealingKeyResponse = Uint8Array;
-export type SealWithSymmetricKeyResponse = PackagedSealedMessageFields;
+export interface GetSecretResponse extends SecretFields {}
+export interface GetSignatureVerificationKeyResponse extends SignatureVerificationKeyFields {}
+export interface GetSigningKeyResponse extends SigningKeyFields {}
+export interface GetSealingKeyResponse extends SealingKeyFields {}
+export interface GetUnsealingKeyResponse extends UnsealingKeyFields {}
+export interface GetSymmetricKeyResponse extends SymmetricKeyFields {}
+export interface UnsealWithSymmetricKeyResponse {plaintext: Uint8Array}
+export interface UnsealWithUnsealingKeyResponse {plaintext: Uint8Array}
+export interface SealWithSymmetricKeyResponse extends PackagedSealedMessageFields {}
 
 // export interface ApiFunction<REQUEST, RESULT> {
 //   (requestObject: REQUEST) : Promise<RESULT>
 // }
 
-export interface ApiFunction<REQUEST, RESULT> {
+export interface ApiFunction<REQUEST, RESULT extends {}> {
   parameters: Omit<REQUEST, "command">;
   request: REQUEST;
   result: RESULT;
