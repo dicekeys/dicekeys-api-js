@@ -22,9 +22,7 @@ interface ParametersWithDerivationOptions<COMMAND extends Command> extends ApiPa
   derivationOptionsJson: string
 }
 
-export interface GetPasswordRequest extends ParametersWithDerivationOptions<"getPassword"> {
-  [Inputs.getPassword.wordLimit]?: number
-}
+export interface GetPasswordRequest extends ParametersWithDerivationOptions<"getPassword"> {}
 export interface GetSecretRequest extends ParametersWithDerivationOptions<"getSecret"> {}
 export interface GetSignatureVerificationKeyRequest extends ParametersWithDerivationOptions<"getSignatureVerificationKey"> {}
 export interface GetSigningKeyRequest extends ParametersWithDerivationOptions<"getSigningKey"> {}
@@ -127,7 +125,7 @@ export type CommandsApiCall<COMMAND extends Command> =
     never;
 export type ResponseForCommand<COMMAND extends Command> = ApiCallResult<CommandsApiCall<COMMAND>>;
 export type RequestsApiCall<REQUEST extends ApiRequestObject> = CommandsApiCall<REQUEST["command"]>
-export type ResponseForRequest<REQUEST extends ApiRequestObject> = ApiCallResult<RequestsApiCall<REQUEST>>
+export type ResultForRequest<REQUEST extends ApiRequestObject> = ApiCallResult<RequestsApiCall<REQUEST>>
 
 
 
@@ -155,4 +153,5 @@ export interface ExceptionResponse extends ResponseMetadata {
   [Outputs.COMMON.stack]?: string | undefined;
 }
 
-export type Response = SuccessResult | ExceptionResponse;
+export type Response<CALL extends ApiCall = ApiCall> = SuccessResult<CALL> | ExceptionResponse;
+export type ResponseForRequest<REQUEST extends ApiRequestObject = ApiRequestObject> = Response<RequestsApiCall<REQUEST>>

@@ -256,6 +256,12 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
    */
   wordList?: WordListName;
 
+  /**
+   * When generating a [Secret] that will be converted to a password, this
+   * field specifies the maximum number of words to derive.
+   */
+  wordLimit?: number;
+
 }
 
 export type DerivationOptions = CryptoDerivationOptions & ApiDerivationOptions & {[key:string]: any};

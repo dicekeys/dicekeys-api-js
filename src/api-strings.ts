@@ -18,7 +18,6 @@ const signingKey = "signingKey";
 const symmetricKey = "symmetricKey";
 const unsealingKey = "unsealingKey";
 const signatureVerificationKey = "signatureVerificationKey";
-const wordLimit = "wordLimit";
 
 
 export const Commands = (() => {
@@ -69,11 +68,6 @@ const getObject = {
   ...withDerivationOptions
 } as const;
 
-const getPassword = {
-  ...getObject,
-  wordLimit,
-} as const;
-
 const unsealingInstructions = "unsealingInstructions";
 const unsealInput = {
   packagedSealedMessage
@@ -100,7 +94,7 @@ export const Inputs = {
     message: "message"
   } as const,
 
-  getPassword,
+  getPassword: getObject,
   getSealingKey: getObject,
   getSecret: getObject,
   getSignatureVerificationKey: getObject,
