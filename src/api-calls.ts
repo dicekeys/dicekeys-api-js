@@ -48,7 +48,7 @@ export interface GetPasswordResponse {
   [Outputs.getPassword.derivationOptionsJson]: string
 }
 export interface GenerateSignatureResponse {
-  [Outputs.generateSignature.signatureFields]: Uint8Array
+  [Outputs.generateSignature.signature]: Uint8Array
   [Outputs.generateSignature.signatureVerificationKeyFields]: SignatureVerificationKeyFields;
 }
 export interface GetSecretResponse {[Outputs.getSecret.secretFields]: SecretFields}

@@ -7,11 +7,11 @@ const authToken = "authToken";
 const password = "password";
 //const passwordWithDerivationOptionsJson = "passwordWithDerivationOptionsJson";
 const derivationOptionsJson = "derivationOptionsJson";
-const packagedSealedMessageFields = "packagedSealedMessage";
+const packagedSealedMessageFields = "packagedSealedMessageFields";
 const exception = "exception";
 const message = "message";
 const stack = "stack";
-const signatureFields = "signatureFields";
+const signature = "signature";
 const sealingKeyFields = "sealingKeyFields";
 const secretFields = "secretFields";
 const signingKeyFields = "signingKeyFields";
@@ -123,7 +123,7 @@ export const Outputs = {
   } as const,
 
   generateSignature: {
-    signatureFields,
+    signature,
     signatureVerificationKeyFields
   } as const,
 
