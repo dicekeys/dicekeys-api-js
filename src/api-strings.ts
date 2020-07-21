@@ -69,7 +69,7 @@ const getObject = {
 } as const;
 
 const unsealingInstructions = "unsealingInstructions";
-const unsealInput = {
+const unsealing = {
   packagedSealedMessage
 } as const;
 
@@ -87,6 +87,7 @@ export const Inputs = {
   } as const,
 
   withDerivationOptions,
+  unsealing,
 
   // For URL-based APIs, the command name and the https uri to respond to
   generateSignature: {
@@ -108,8 +109,8 @@ export const Inputs = {
     unsealingInstructions
   } as const,
 
-  unsealWithSymmetricKey: {...unsealInput} as const,
-  unsealWithUnsealingKey: {...unsealInput} as const,
+  unsealWithSymmetricKey: unsealing,
+  unsealWithUnsealingKey: unsealing,
 
 }
 
