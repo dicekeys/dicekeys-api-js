@@ -7,17 +7,17 @@ const authToken = "authToken";
 const password = "password";
 //const passwordWithDerivationOptionsJson = "passwordWithDerivationOptionsJson";
 const derivationOptionsJson = "derivationOptionsJson";
-const packagedSealedMessage = "packagedSealedMessage";
+const packagedSealedMessageFields = "packagedSealedMessage";
 const exception = "exception";
 const message = "message";
 const stack = "stack";
-const signature = "signature";
-const sealingKey = "sealingKey";
-const secret = "secret";
-const signingKey = "signingKey";
-const symmetricKey = "symmetricKey";
-const unsealingKey = "unsealingKey";
-const signatureVerificationKey = "signatureVerificationKey";
+const signatureFields = "signatureFields";
+const sealingKeyFields = "sealingKeyFields";
+const secretFields = "secretFields";
+const signingKeyFields = "signingKeyFields";
+const symmetricKeyFields = "symmetricKeyFields";
+const unsealingKeyFields = "unsealingKeyFields";
+const signatureVerificationKeyFields = "signatureVerificationKeyFields";
 
 
 export const Commands = (() => {
@@ -70,7 +70,7 @@ const getObject = {
 
 const unsealingInstructions = "unsealingInstructions";
 const unsealing = {
-  packagedSealedMessage
+  packagedSealedMessageFields: packagedSealedMessageFields
 } as const;
 
 
@@ -123,8 +123,8 @@ export const Outputs = {
   } as const,
 
   generateSignature: {
-    signature,
-    signatureVerificationKey
+    signatureFields,
+    signatureVerificationKeyFields
   } as const,
 
   getAuthToken: {
@@ -138,31 +138,31 @@ export const Outputs = {
   } as const,
 
   getSealingKey: {
-    sealingKey
+    sealingKeyFields
   } as const,
 
   getSecret: {
-    secret
+    secretFields
   } as const,
 
   getSignatureVerificationKey: {
-    signatureVerificationKey
+    signatureVerificationKeyFields
   } as const,
 
   getSigningKey: {
-    signingKey
+    signingKeyFields
   } as const,
 
   getSymmetricKey: {
-    symmetricKey
+    symmetricKeyFields
   } as const,
 
   getUnsealingKey: {
-    unsealingKey
+    unsealingKeyFields
   } as const,
 
   sealWithSymmetricKey: {
-    packagedSealedMessage
+    packagedSealedMessageFields
   } as const,
 
   unsealWithSymmetricKey: {

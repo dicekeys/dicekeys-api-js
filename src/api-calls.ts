@@ -30,10 +30,10 @@ export interface GetSealingKeyRequest extends ParametersWithDerivationOptions<"g
 export interface GetUnsealingKeyRequest extends ParametersWithDerivationOptions<"getUnsealingKey"> {}
 export interface GetSymmetricKeyRequest extends ParametersWithDerivationOptions<"getSymmetricKey"> {}
 export interface UnsealWithSymmetricKeyRequest extends ApiParametersBase<"unsealWithSymmetricKey"> {
-  [Inputs.unsealWithSymmetricKey.packagedSealedMessage]: PackagedSealedMessageFields;
+  [Inputs.unsealWithSymmetricKey.packagedSealedMessageFields]: PackagedSealedMessageFields;
 }
 export interface UnsealWithUnsealingKeyRequest extends ApiParametersBase<"unsealWithUnsealingKey"> {
-  [Inputs.unsealWithUnsealingKey.packagedSealedMessage]: PackagedSealedMessageFields;
+  [Inputs.unsealWithUnsealingKey.packagedSealedMessageFields]: PackagedSealedMessageFields;
 }
 export interface SealWithSymmetricKeyRequest extends ParametersWithDerivationOptions<"sealWithSymmetricKey"> {
   plaintext: Uint8Array;
@@ -48,18 +48,30 @@ export interface GetPasswordResponse {
   [Outputs.getPassword.derivationOptionsJson]: string
 }
 export interface GenerateSignatureResponse {
-  [Outputs.generateSignature.signature]: Uint8Array
-  [Outputs.generateSignature.signatureVerificationKey]: SignatureVerificationKeyFields
+  [Outputs.generateSignature.signatureFields]: Uint8Array
+  [Outputs.generateSignature.signatureVerificationKeyFields]: SignatureVerificationKeyFields;
 }
-export interface GetSecretResponse extends SecretFields {}
-export interface GetSignatureVerificationKeyResponse extends SignatureVerificationKeyFields {}
-export interface GetSigningKeyResponse extends SigningKeyFields {}
-export interface GetSealingKeyResponse extends SealingKeyFields {}
-export interface GetUnsealingKeyResponse extends UnsealingKeyFields {}
-export interface GetSymmetricKeyResponse extends SymmetricKeyFields {}
+export interface GetSecretResponse {[Outputs.getSecret.secretFields]: SecretFields}
+export interface GetSignatureVerificationKeyResponse {
+  [Outputs.getSignatureVerificationKey.signatureVerificationKeyFields]: SignatureVerificationKeyFields;
+}
+export interface GetSigningKeyResponse {
+  [Outputs.getSigningKey.signingKeyFields]: SigningKeyFields;
+}
+export interface GetSealingKeyResponse {
+  [Outputs.getSealingKey.sealingKeyFields]: SealingKeyFields;
+}
+export interface GetUnsealingKeyResponse {
+  [Outputs.getUnsealingKey.unsealingKeyFields]: UnsealingKeyFields;
+}
+export interface GetSymmetricKeyResponse {
+  [Outputs.getSymmetricKey.symmetricKeyFields]: SymmetricKeyFields;
+}
 export interface UnsealWithSymmetricKeyResponse {plaintext: Uint8Array}
 export interface UnsealWithUnsealingKeyResponse {plaintext: Uint8Array}
-export interface SealWithSymmetricKeyResponse extends PackagedSealedMessageFields {}
+export interface SealWithSymmetricKeyResponse {
+  [Outputs.sealWithSymmetricKey.packagedSealedMessageFields]: PackagedSealedMessageFields;
+}
 
 // export interface ApiFunction<REQUEST, RESULT> {
 //   (requestObject: REQUEST) : Promise<RESULT>
@@ -126,7 +138,6 @@ export type CommandsApiCall<COMMAND extends Command> =
 export type ResponseForCommand<COMMAND extends Command> = ApiCallResult<CommandsApiCall<COMMAND>>;
 export type RequestsApiCall<REQUEST extends ApiRequestObject> = CommandsApiCall<REQUEST["command"]>
 export type ResultForRequest<REQUEST extends ApiRequestObject> = ApiCallResult<RequestsApiCall<REQUEST>>
-
 
 
 export interface RequestMetadata {
