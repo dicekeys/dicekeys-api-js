@@ -73,7 +73,6 @@ export interface UnsealingKeyFields extends SealingKeyFields {
 
 export type SeededCryptoJsObject =
   PackagedSealedMessageFields |
-//  DerivedPasswordWithDerivationOptionsJson |
   SecretFields | 
   SymmetricKeyFields |
   SealingKeyFields |

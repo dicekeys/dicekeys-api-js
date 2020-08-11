@@ -1,4 +1,3 @@
-import {DerivationOptions as CryptoDerivationOptions} from "@dicekeys/seeded-crypto-js";
 import {
   InvalidDerivationOptionsTypeFieldException
 } from "./exceptions";
@@ -12,6 +11,137 @@ export const DerivableObjectNames = {
   "UnsealingKey": "UnsealingKey"
 } as const;
 export type DerivableObjectName = keyof typeof DerivableObjectNames;
+
+
+/**
+ * The subset of [[DerivationOptions]] specific to hash functions designed to be computionally expensive
+ * and consume memory in order to slow brute-force guessing attacks, including
+ * those attacks that might utilize speically-designed hardware.
+ *
+ * @category DerivationOptions
+ */
+export interface DerivationOptionsForExpensiveHashFunctions {
+  hashFunction: "Argon2id" | "Scrypt";
+  /**
+   * The  amount of memory that Argoin2id or Scrypt
+   * will be required to iterate (pass) through in order to compute the correct output.
+   *
+   * As the name implies, the hashFunctionMemoryLimitInBytes field is specified in bytes.
+   * It should be a multiple of 1,024, must be at least 8,192
+   * and no greater than 2^31 (2,147,483,648).
+   * The default is 67,108,864.
+   * This field maps to the memlimit parameter in libsodium.
+   */
+  hashFunctionMemoryLimitInBytes?: number;
+  /**
+   * The number of passes that Argoin2id or Scrypt will need to make through that
+   * memory to compute the hash.
+   *
+   * The hashFunctionMemoryPasses must be at least 1, no greater than 2^32-1 (4,294,967,295),
+   * and is set to 2 memory passes by default.
+   *
+   * Since this parameter determines the number of
+   * passes the hash function will make through the memory region specified by
+   * [[hashFunctionMemoryLimitInBytes]], and results in hashing an amount of memory equal
+   * to the product of these two parameters, the computational cost on the order of the
+   * product of [[hashFunctionMemoryPasses]] times [[hashFunctionMemoryLimitInBytes]].
+   *
+   * (The hashFunctionMemoryPasses field maps to the poorly-documented opslimit in libsodium.
+   * An examination of the libsodium source shows that opslimit is assigned to a parameter
+   * named t_cost, which in turn is assigned to instance.passes on line 56 of argon2.c.)
+   */
+  hashFunctionMemoryPasses?: number;
+}
+interface DerivationOptionsFor {
+  type?: "Secret" | "SigningKey" | "SymmetricKey" | "UnsealingKey";
+  /**
+   * The cryptographic hash function used to derive an object
+   * from a secret seed string.
+   */
+  hashFunction?: "Argon2id" | "Scrypt" | "BLAKE2b" | "SHA256";
+}
+/**
+* The subset of [[DerivationOptions]] specific to a [[Secret]].
+*
+* @category DerivationOptions
+*/
+export interface DerivationOptionsForSecret extends DerivationOptionsFor {
+  /**
+   * Setting this optional value ensures these options can only be used to
+   * derive a [[Secret]], and not any other type of derived object.
+   */
+  type?: "Secret";
+  /**
+   * The length of the secret to be derived, in bytes.  If not set,
+   * 32 bytes are derived.
+   */
+  lengthInBytes?: number;
+}
+/**
+* The subset of [[DerivationOptions]] specific to a [[SymmetricKey]].
+*
+* @category DerivationOptions
+*/
+export interface DerivationOptionsforSymmetricKey extends DerivationOptionsFor {
+  /**
+   * Setting this optional value ensures these options can only be used to
+   * derive a [[SymmetricKey]], and not any other type of derived object.
+   */
+  type?: "SymmetricKey";
+  /**
+   * The algorithm to use for the underlying key and cryptographic algorithms.
+   * (leave empty to use the default.)
+   */
+  algorithm?: "XSalsa20Poly1305";
+}
+/**
+* The subset of [[DerivationOptions]] specific to an [[UnsealingKey]].
+*
+* @category DerivationOptions
+*/
+export interface DerivationOptionsForUnsealingKey extends DerivationOptionsFor {
+  /**
+   * Setting this optional value ensures these options can only be used to
+   * derive a [[UnsealingKey]] and its corresponding [[SealingKey]],
+   * and not any other type of derived object.
+   */
+  type?: "UnsealingKey";
+  /**
+   * The algorithm to use for the underlying key and cryptographic algorithms.
+   * (leave empty to use the default.)
+   */
+  algorithm?: "X25519";
+}
+/**
+* The subset of [[DerivationOptions]] specific to a [[SigningKey]].
+*
+* @category DerivationOptions
+*/
+export interface DerivationOptionsForSigningKey extends DerivationOptionsFor {
+  /**
+   * Setting this optional value ensures these options can only be used to
+   * derive a [[SigningKey]] and its corresponding [[SignatureVerificationKey]],
+   * and not any other type of derived object.
+   */
+  type?: "SigningKey";
+  /**
+   * The algorithm to use for the underlying key and cryptographic algorithms.
+   * (leave empty to use the default.)
+   */
+  algorithm?: "Ed25519";
+}
+/**
+* The DerivationOptions used by the Seeded Crypto library
+* and which implement the portion of the
+* [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
+* that are interpreted by this library.
+*
+* (Other options may appear in layers above that library.)
+*
+* @category DerivationOptions
+*/
+
+
 
 /**
  * Related readings:
@@ -264,7 +394,10 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
 
 }
 
-export type DerivationOptions = CryptoDerivationOptions & ApiDerivationOptions & {[key:string]: any};
+export type DerivationOptions = 
+  (DerivationOptionsForSecret | DerivationOptionsforSymmetricKey | DerivationOptionsForUnsealingKey | DerivationOptionsForSigningKey) &
+  (DerivationOptionsForExpensiveHashFunctions | {}) &
+  ApiDerivationOptions & {[key:string]: any};
 
 export const DerivationOptions = (
   derivationOptionsAsObjectOrJson?: string | null | DerivationOptions,
