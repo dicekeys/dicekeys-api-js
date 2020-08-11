@@ -1,0 +1,25 @@
+{
+    "name": "DiceKeys PostMessage API",
+    "exclude": "**/tests/*",
+    "entryPoint": "post-message-api",
+    "disableSources": true,
+    "excludeNotExported": true,
+    "includeVersion": true,
+    "listInvalidSymbolLinks": true,
+    "categorizeByGroup": true,
+    "stripInternal": true,
+    "categoryOrder": [
+        "Module Access",
+        "Secret", 
+        "SymmetricKey", 
+        "UnsealingKey",
+        "SealingKey",
+        "SigningKey",
+        "SignatureVerificationKey",
+        "PackagedSealedMessage",
+        "DerivationOptions",
+        "JSON Serialization Format",
+        "Parameter Passing",
+        "*"
+    ]
+}

@@ -95,14 +95,14 @@ export interface DerivationOptionsforSymmetricKey extends DerivationOptionsFor {
   algorithm?: "XSalsa20Poly1305";
 }
 /**
-* The subset of [[DerivationOptions]] specific to an [[UnsealingKey]].
+* The subset of [[DerivationOptions]] specific to an UnsealingKey.
 *
 * @category DerivationOptions
 */
 export interface DerivationOptionsForUnsealingKey extends DerivationOptionsFor {
   /**
    * Setting this optional value ensures these options can only be used to
-   * derive a [[UnsealingKey]] and its corresponding [[SealingKey]],
+   * derive a UnsealingKey and its corresponding SealingKey,
    * and not any other type of derived object.
    */
   type?: "UnsealingKey";
@@ -113,14 +113,14 @@ export interface DerivationOptionsForUnsealingKey extends DerivationOptionsFor {
   algorithm?: "X25519";
 }
 /**
-* The subset of [[DerivationOptions]] specific to a [[SigningKey]].
+* The subset of [[DerivationOptions]] specific to a SigningKey.
 *
 * @category DerivationOptions
 */
 export interface DerivationOptionsForSigningKey extends DerivationOptionsFor {
   /**
    * Setting this optional value ensures these options can only be used to
-   * derive a [[SigningKey]] and its corresponding [[SignatureVerificationKey]],
+   * derive a SigningKey and its corresponding SignatureVerificationKey,
    * and not any other type of derived object.
    */
   type?: "SigningKey";
@@ -272,7 +272,7 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
    * derived key or secret.  It will need to store the modified JSON to ensure
    * the key or secret can be re-generated.
    * 
-   * For seal operations via a derived [[SymmetricKey]] or [[UnsealingKey]],
+   * For seal operations via a derived [[SymmetricKey]] or UnsealingKey,
    * the PackagedSealedMessage will contain the updated derivation options
    * in its derivationOptionsJson field.  For signing operations, the
    * signature verification key will contain the updated derivationOptionsJson.
@@ -331,10 +331,10 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
   /**
    * Unless this value is explicitly set to _true_, the DiceKeys may prevent
    * to obtain a raw derived [[SymmetricKey]],
-   * [[UnsealingKey]], or
-   * [[SigningKey]].
-   * Clients may retrieve a derived [[SealingKey]],
-   * or [[SignatureVerificationKey]] even if this value
+   * UnsealingKey, or
+   * SigningKey.
+   * Clients may retrieve a derived SealingKey,
+   * or SignatureVerificationKey even if this value
    * is not set or set to false.
    *
    * Even if this value is set to true, requests for keys are not permitted unless

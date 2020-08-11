@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;post-message-api&quot; | @dicekeys/dicekeys-api-js</title>
-	<meta name="description" content="Documentation for @dicekeys/dicekeys-api-js">
+	<title>&quot;post-message-api&quot; | DiceKeys PostMessage API - v0.0.68</title>
+	<meta name="description" content="Documentation for DiceKeys PostMessage API - v0.0.68">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">@dicekeys/dicekeys-api-js</a>
+					<a href="../index.html" class="title">DiceKeys PostMessage API - v0.0.68</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -40,8 +40,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -73,7 +71,6 @@
 						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_post_message_api_.html#callpostmessageapi" class="tsd-kind-icon">call<wbr>Post<wbr>Message<wbr>Api</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="_post_message_api_.html#generatesignature" class="tsd-kind-icon">generate<wbr>Signature</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="_post_message_api_.html#getpassword" class="tsd-kind-icon">get<wbr>Password</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="_post_message_api_.html#getsealingkey" class="tsd-kind-icon">get<wbr>Sealing<wbr>Key</a></li>
@@ -92,30 +89,17 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-					<a name="callpostmessageapi" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> call<wbr>Post<wbr>Message<wbr>Api</h3>
-					<div class="tsd-signature tsd-kind-icon">call<wbr>Post<wbr>Message<wbr>Api<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = postMessageApiCallFactory()</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L22">git/dicekeys-api-js/src/post-message-api.ts:22</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
 					<a name="generatesignature" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> generate<wbr>Signature</h3>
 					<div class="tsd-signature tsd-kind-icon">generate<wbr>Signature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;GenerateSignature&gt;(&quot;generateSignature&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L29">git/dicekeys-api-js/src/post-message-api.ts:29</a></li>
-						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Sign a <a href="_api_strings_.html#message">message</a> using a public/private signing key pair derived
+							<p>Sign a <a href="_api_strings_.html#inputs.generatesignature-1.__type-3.message">message</a> using a public/private signing key pair derived
 								from the user&#39;s DiceKey and the derivation options specified in
-							JSON format via <a href="_api_strings_.html#derivationoptionsjson">derivationOptionsJson</a>.</p>
+							JSON format via <a href="_api_strings_.html#inputs.withderivationoptions.__type-15.derivationoptionsjson">derivationOptionsJson</a>.</p>
 						</div>
 					</div>
 				</section>
@@ -124,9 +108,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Password</h3>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Password<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;GetPassword&gt;(&quot;getPassword&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L32">git/dicekeys-api-js/src/post-message-api.ts:32</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -134,9 +115,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Sealing<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Sealing<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;GetSealingKey&gt;(&quot;getSealingKey&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L30">git/dicekeys-api-js/src/post-message-api.ts:30</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -144,9 +122,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Secret</h3>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Secret<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;GetSecret&gt;(&quot;getSecret&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L31">git/dicekeys-api-js/src/post-message-api.ts:31</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -154,9 +129,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Signature<wbr>Verification<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Signature<wbr>Verification<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;GetSignatureVerificationKey&gt;(&quot;getSignatureVerificationKey&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L33">git/dicekeys-api-js/src/post-message-api.ts:33</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -164,9 +136,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Signing<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Signing<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;GetSigningKey&gt;(&quot;getSigningKey&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L34">git/dicekeys-api-js/src/post-message-api.ts:34</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -174,9 +143,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Symmetric<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Symmetric<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;GetSymmetricKey&gt;(&quot;getSymmetricKey&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L35">git/dicekeys-api-js/src/post-message-api.ts:35</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -184,9 +150,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> get<wbr>Unsealing<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Unsealing<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;GetUnsealingKey&gt;(&quot;getUnsealingKey&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L36">git/dicekeys-api-js/src/post-message-api.ts:36</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -194,9 +157,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> seal<wbr>With<wbr>Symmetric<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">seal<wbr>With<wbr>Symmetric<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;SealWithSymmetricKey&gt;(&quot;sealWithSymmetricKey&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L37">git/dicekeys-api-js/src/post-message-api.ts:37</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -204,9 +164,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> unseal<wbr>With<wbr>Symmetric<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">unseal<wbr>With<wbr>Symmetric<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;UnsealWithSymmetricKey&gt;(&quot;unsealWithSymmetricKey&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L38">git/dicekeys-api-js/src/post-message-api.ts:38</a></li>
-						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
@@ -214,9 +171,6 @@
 					<h3><span class="tsd-flag ts-flagConst">Const</span> unseal<wbr>With<wbr>Unsealing<wbr>Key</h3>
 					<div class="tsd-signature tsd-kind-icon">unseal<wbr>With<wbr>Unsealing<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span><span class="tsd-signature-symbol"> = apiCallFactory&lt;UnsealWithUnsealingKey&gt;(&quot;unsealWithUnsealingKey&quot;, callPostMessageApi)</span></div>
 					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/dicekeys/dicekeys-api-js/blob/3204360/src/post-message-api.ts#L39">git/dicekeys-api-js/src/post-message-api.ts:39</a></li>
-						</ul>
 					</aside>
 				</section>
 			</section>
@@ -270,9 +224,6 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_post_message_api_.html#callpostmessageapi" class="tsd-kind-icon">call<wbr>Post<wbr>Message<wbr>Api</a>
-					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module">
 						<a href="_post_message_api_.html#generatesignature" class="tsd-kind-icon">generate<wbr>Signature</a>
 					</li>
