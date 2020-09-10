@@ -14,9 +14,9 @@ export type DerivableObjectName = keyof typeof DerivableObjectNames;
 
 
 /**
- * The subset of [[DerivationOptions]] specific to hash functions designed to be computionally expensive
+ * The subset of [[DerivationOptions]] specific to hash functions designed to be computationally expensive
  * and consume memory in order to slow brute-force guessing attacks, including
- * those attacks that might utilize speically-designed hardware.
+ * those attacks that might utilize specially-designed hardware.
  *
  * @category DerivationOptions
  */
@@ -82,7 +82,7 @@ export interface DerivationOptionsForSecret extends DerivationOptionsFor {
 *
 * @category DerivationOptions
 */
-export interface DerivationOptionsforSymmetricKey extends DerivationOptionsFor {
+export interface DerivationOptionsForSymmetricKey extends DerivationOptionsFor {
   /**
    * Setting this optional value ensures these options can only be used to
    * derive a [[SymmetricKey]], and not any other type of derived object.
@@ -163,7 +163,7 @@ export interface DerivationOptionsForSigningKey extends DerivationOptionsFor {
  */
 
  /**
-  * A web-standards bsaed mechanism for identifying client code that is making
+  * A web-standards based mechanism for identifying client code that is making
   * a request of the DiceKeys app.
   *
   * Regardless of API, we identify web applications by their host (the part of the origin
@@ -188,7 +188,7 @@ export interface DerivationOptionsForSigningKey extends DerivationOptionsFor {
   * Restrict URL-based access to the API to a limited set of URL paths.
   *
   * If the specified path on the list ends in "/*", a path will validate it if it either shares
-  * the same prefix (including the "/" just beore the *) or if is exactly equal to prefix preceding the "/".
+  * the same prefix (including the "/" just before the *) or if is exactly equal to prefix preceding the "/".
   * In other words, the requirement "/here/*" is satisfied by "/here/and/there", "/here/", and "/here",
   * but not, "/hereandthere/", "/her", "/her/", or "/thereandhere".
   * 
@@ -197,7 +197,7 @@ export interface DerivationOptionsForSigningKey extends DerivationOptionsFor {
   * In other words, the requirement "/here*" is satisfied by "/here/and/there", "/here/", "/here", and "/hereandthere/",
   * but not "/her", "/her/", "/thereandhere", or "/thereandhere/".
   * 
-  * If the path does not end in "*", it must match exctly.
+  * If the path does not end in "*", it must match exactly.
   *
   * If paths is undefined, no path validation is ever performed.
   * 
@@ -232,7 +232,7 @@ export interface AuthenticationRequirements {
    * starts with one of the authorized prefixes.
    * 
    * The DiceKeys app will map the authorization token to that URL and,
-   * when reqeusts include that token, validate that the URL associated
+   * when requests include that token, validate that the URL associated
    * with the token has a valid prefix. The DiceKeys app will continue to
    * validate that responses are also sent to a valid prefix. 
    *
@@ -263,7 +263,7 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
   /**
    * Set this field to indicate that the user may modify the DerivationOptions
    * in the DiceKeys app.  For example, if this field is set, the user may
-   * choose to remove the orietnation of faces in their DiceKeys within the app,
+   * choose to remove the orientation of faces in their DiceKeys within the app,
    * and the app will add `"excludeOrientationOfFaces": true` to the
    * DerivationOptions before performing an operation.
    * 
@@ -303,7 +303,7 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
 
   /**
    * A specific seed hint consisting of the letters at the four corners of
-   * the DiceKey, in clockwise order from whereever the user initially
+   * the DiceKey, in clockwise order from wherever the user initially
    * scanned as the top-left corner.
    * 
    * The array must be a string consisting of four uppercase characters
@@ -314,7 +314,7 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
    * The DiceKeys app will want to get a user's consent before deriving a
    * secret on behalf of an app.
    * 
-   * When a user approves a set of DerivationOtpions, this field
+   * When a user approves a set of DerivationOptions, this field
    * allows us to record that the options were, at least at one time, approved
    * by the holder of this DiceKey.
    * 
@@ -346,7 +346,7 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
 
   /**
    * When using a DiceKey as a seed, the default seed string will be a 75-character
-   * string consisting of triples for each die in canonoical order:
+   * string consisting of triples for each die in canonical order:
    * 
    *   1 The uppercase letter on the die
    *   2 The digit on the die
@@ -377,12 +377,12 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
    * If the field is not set and the derivation options are mutable, the
    * DiceKeys app should allow the user to choose from a set of word lists
    * to match the user's preference of language and vocabulary size once
-   * more than one word list is avaialble.  The DiceKeys app will then
+   * more than one word list is available.  The DiceKeys app will then
    * return a derivationOptionsJson string with the wordList field set
    * to the user's chosen word list.
    * 
    * If the derivation options are not mutable and this field is not set, the
-   * DiceKeys app will default to the en_1024_words_5_chars_max_20200709 word list.
+   * DiceKeys app will default to the en_1024_words_6_chars_ed4_20200910 word list.
    */
   wordList?: WordListName;
 
@@ -395,7 +395,7 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
 }
 
 export type DerivationOptions = 
-  (DerivationOptionsForSecret | DerivationOptionsforSymmetricKey | DerivationOptionsForUnsealingKey | DerivationOptionsForSigningKey) &
+  (DerivationOptionsForSecret | DerivationOptionsForSymmetricKey | DerivationOptionsForUnsealingKey | DerivationOptionsForSigningKey) &
   (DerivationOptionsForExpensiveHashFunctions | {}) &
   ApiDerivationOptions & {[key:string]: any};
 

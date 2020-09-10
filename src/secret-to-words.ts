@@ -1,4 +1,4 @@
-import {en_1024_words_5_chars_max_20200709} from "./word-lists/en_1024_words_5_chars_max_20200709";
+import {en_1024_words_6_chars_ed4_20200910} from "./word-lists/en_1024_words_6_chars_ed4_20200910";
 import * as Exceptions from "./exceptions";
 import * as WordLists from "./word-lists";
 
@@ -99,7 +99,7 @@ const secretToWords = (
 export const secretTo10BitWords = (
   secret: Uint8Array,
   options: PasswordLengthOptions = {}
-) => secretToWords(en_1024_words_5_chars_max_20200709, secret, options);
+) => secretToWords(en_1024_words_6_chars_ed4_20200910, secret, options);
 
 export const secretToPasswordArray = (
   secret: Uint8Array,
