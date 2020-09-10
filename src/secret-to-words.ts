@@ -27,7 +27,7 @@ const secretToWords = (
   secret: Uint8Array,
   options: PasswordLengthOptions = {}
 ): string[] => {
-    const bitsPerWord = Math.round(Math.log2(wordListOfLengthPowerOf2.length));
+    const bitsPerWord = Math.floor(Math.log2(wordListOfLengthPowerOf2.length));
     var {wordsNeeded, bitsNeeded} = options;
     if (typeof wordsNeeded !== "number") {
       if (typeof bitsNeeded != "number") {
