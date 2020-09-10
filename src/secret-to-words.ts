@@ -54,7 +54,7 @@ const secretToWords = (
       }
       const numBitsToCopy = Math.min(bitsLeftInByte, bitsNeededForWordIndex);
       // If we're only copying part of the byte, copy high-order bits and
-      // shift the remaining bits to the right.  (Shift any bits that
+      // zero out the used bits
       const bitsToCopy = (byte >> (bitsLeftInByte - numBitsToCopy));
       bitsLeftInByte -= numBitsToCopy;
       byte = byte & (0xff >> (8-bitsLeftInByte));
