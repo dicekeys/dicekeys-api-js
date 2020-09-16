@@ -1,11 +1,4 @@
-/**
- * @deprecated
- * 
- * Word list deprecated on 2020-09-16.
- * 
- * Do not use unless you already have passwords generated from it.
- */
-export const en_1024_words_6_chars_ed4_20200910 = [
+export const EN_1024_6_chars_4_min_edit_distance_20200916 = [
 	"abacus",
 	"abide",
 	"abroad",
@@ -414,6 +407,7 @@ export const en_1024_words_6_chars_ed4_20200910 = [
 	"hankie",
 	"harbor",
 	"hardly",
+	"hassle",
 	"hatbox",
 	"hatred",
 	"hazard",
@@ -476,9 +470,7 @@ export const en_1024_words_6_chars_ed4_20200910 = [
 	"jumps",
 	"jurist",
 	"juror",
-	"kabob",
 	"karma",
-	"kebab",
 	"keenly",
 	"keep",
 	"kegs",
@@ -667,6 +659,7 @@ export const en_1024_words_6_chars_ed4_20200910 = [
 	"proofs",
 	"proton",
 	"proved",
+	"public",
 	"pucker",
 	"pueblo",
 	"pumice",
@@ -787,6 +780,7 @@ export const en_1024_words_6_chars_ed4_20200910 = [
 	"sheds",
 	"shelve",
 	"sherry",
+	"shifty",
 	"shimmy",
 	"shorty",
 	"shower",
@@ -807,7 +801,6 @@ export const en_1024_words_6_chars_ed4_20200910 = [
 	"skewed",
 	"skinny",
 	"skirt",
-	"skype",
 	"slang",
 	"slinky",
 	"slits",
