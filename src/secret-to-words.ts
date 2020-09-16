@@ -12,9 +12,9 @@ interface PasswordLengthOptions {
  * and the second (optional) parameter can shorten the list of words so
  * that it hits a threshold of `w` words `{wordsNeeded: <w>}` or at least
  * `l` bits `{bitsNeeded: `w`}`.  Note that bitsNeeded is a request for
- * a mininum number of bits, and more may be used if the requirement falls
+ * a minimum number of bits, and more may be used if the requirement falls
  * off of a word boundary and more bits are available to ensure that the
- * final word is chossen from the full set of possibilities.
+ * final word is chosen from the full set of possibilities.
  * 
  * If the secret isn't long enough to provide wordsNeeded words or bitsNeeded
  * bits, the longest set of words possible from the secret will be returned.
@@ -88,18 +88,18 @@ const secretToWords = (
  * that it hits a threshold of `w` words `{
  * wordsNeeded: <w>}` or at least
  * `l` bits `{bitsNeeded: `w`}`.  Note that bitsNeeded is a request for
- * a mininum number of bits, and more may be used if the requirement falls
+ * a minimum number of bits, and more may be used if the requirement falls
  * off of a word boundary and more bits are available to ensure that the
- * final word is chossen from the full set of possibilities.
+ * final word is chosen from the full set of possibilities.
  * 
  * If the secret isn't long enough to provide wordsNeeded words or bitsNeeded
  * bits, the longest set of words possible from the secret will be returned.
  * (It will not throw an error.)
  */
-export const secretTo10BitWords = (
-  secret: Uint8Array,
-  options: PasswordLengthOptions = {}
-) => secretToWords(en_1024_words_6_chars_ed4_20200910, secret, options);
+// export const secretTo10BitWords = (
+//   secret: Uint8Array,
+//   options: PasswordLengthOptions = {}
+// ) => secretToWords(en_1024_words_6_chars_ed4_20200910, secret, options);
 
 export const secretToPasswordArray = (
   secret: Uint8Array,
@@ -117,3 +117,18 @@ export const secretToPasswordWithSpacesBetweenWords: (
   wordListName: WordLists.WordListName,
   options?: PasswordLengthOptions
 ) => string = (...args) => secretToPasswordArray(...args).join(" ");
+
+export const secretToPasswordWithCapitalizedWords: (
+  secret: Uint8Array,
+  wordListName: WordLists.WordListName,
+  options?: PasswordLengthOptions
+) => string = (...args) => secretToPasswordArray(...args)
+  .map( word => word[0].toLocaleUpperCase() + word.substr(1))
+  .join("");
+
+export const secretToPasswordWithCapitalizedWordsDigitAndSymbol: (
+  secret: Uint8Array,
+  wordListName: WordLists.WordListName,
+  options?: PasswordLengthOptions
+) => string = (...args) => secretToPasswordWithCapitalizedWords(...args) + "4!"
+

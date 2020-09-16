@@ -1,6 +1,6 @@
 {
   "name": "@dicekeys/dicekeys-api-js",
-  "version": "0.0.69",
+  "version": "0.0.71",
   "description": "DiceKeys API for Javascript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
