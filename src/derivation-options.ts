@@ -1,10 +1,8 @@
 import {
   InvalidDerivationOptionsTypeFieldException
 } from "./exceptions";
-import {
-  WordListName
-} from "./word-lists";
 export const DerivableObjectNames = {
+  "Password": "Password",
   "Secret": "Secret",
   "SigningKey": "SigningKey",
   "SymmetricKey": "SymmetricKey",
@@ -12,6 +10,19 @@ export const DerivableObjectNames = {
 } as const;
 export type DerivableObjectName = keyof typeof DerivableObjectNames;
 
+export const WordListNames = [
+  "EN_512_words_5_chars_max_ed_4_20200917",
+  "EN_1024_words_6_chars_max_ed_4_20200917"
+] as const;
+export type WordListName = typeof WordListNames[number];
+export const WordListBitLengths: {[name in WordListName]: number} = {
+  "EN_512_words_5_chars_max_ed_4_20200917": 9,
+  "EN_1024_words_6_chars_max_ed_4_20200917": 10
+}
+
+export interface CheapHashFunctionOptions {
+  hashFunction?: "BLAKE2b" | "SHA256";
+}
 
 /**
  * The subset of [[DerivationOptions]] specific to hash functions designed to be computationally expensive
@@ -20,7 +31,7 @@ export type DerivableObjectName = keyof typeof DerivableObjectNames;
  *
  * @category DerivationOptions
  */
-export interface DerivationOptionsForExpensiveHashFunctions {
+export interface ExpensiveHashFunctionsOptions {
   hashFunction: "Argon2id" | "Scrypt";
   /**
    * The  amount of memory that Argoin2id or Scrypt
@@ -52,84 +63,131 @@ export interface DerivationOptionsForExpensiveHashFunctions {
    */
   hashFunctionMemoryPasses?: number;
 }
-interface DerivationOptionsFor {
-  type?: "Secret" | "SigningKey" | "SymmetricKey" | "UnsealingKey";
+
+type HashFunctionOptions = CheapHashFunctionOptions | ExpensiveHashFunctionsOptions;
+
+type DerivationOptionsFor<
+  TYPE extends DerivableObjectName,
+  OTHER_OPTIONS = {}
+> = {
+  type?: TYPE;
   /**
    * The cryptographic hash function used to derive an object
    * from a secret seed string.
    */
-  hashFunction?: "Argon2id" | "Scrypt" | "BLAKE2b" | "SHA256";
+} & 
+  HashFunctionOptions &
+  OTHER_OPTIONS;
+
+
+export interface PasswordLengthAsWordsNeeded {
+  /**
+   * Generate a password of this length, or the number of
+   * words available from a 256-bit secret, whichever is
+   * smaller.
+   */
+  lengthInWords: number
 }
+
+export interface PasswordLengthAsBitsNeeded {
+  /**
+   * Add words until either the secret has been exhausted
+   * or the bit strength has been reached or exceeded.
+   * 
+   * For example, if set to 50 and using a list of 512 words
+   * (9 bits/word), a 6 word (53 bit) password will be generated.
+   */  
+  lengthInBits: number
+}
+
+export interface PasswordWordList {
+  /**
+   * The name of the word list to use to convert a binary secret (a byte array)
+   * into a password.
+   * 
+   * If the field is not set and the derivation options are mutable, the
+   * DiceKeys app should allow the user to choose from a set of word lists
+   * to match the user's preference of language and vocabulary size once
+   * more than one word list is available.  The DiceKeys app will then
+   * return a derivationOptionsJson string with the wordList field set
+   * to the user's chosen word list.
+   * 
+   * If the derivation options are not mutable and this field is not set, the
+   * DiceKeys app will default to the EN_512_5_chars_4_min_edit_distance_20200916
+   * word list.
+   */
+  wordList?: WordListName;
+}
+
+export type PasswordOptions =
+  PasswordWordList &
+  (
+    PasswordLengthAsWordsNeeded |
+    PasswordLengthAsBitsNeeded |
+    {}
+  );
+
+/**
+* The subset of [[DerivationOptions]] specific to generating a password.
+*
+* @category DerivationOptions
+*/
+export type DerivationOptionsForPassword =
+  DerivationOptionsFor<"Password", PasswordOptions>;
+
+
 /**
 * The subset of [[DerivationOptions]] specific to a [[Secret]].
 *
 * @category DerivationOptions
 */
-export interface DerivationOptionsForSecret extends DerivationOptionsFor {
-  /**
-   * Setting this optional value ensures these options can only be used to
-   * derive a [[Secret]], and not any other type of derived object.
-   */
-  type?: "Secret";
+export type DerivationOptionsForSecret = DerivationOptionsFor<"Secret", {
   /**
    * The length of the secret to be derived, in bytes.  If not set,
    * 32 bytes are derived.
    */
   lengthInBytes?: number;
-}
+}>;
+
 /**
 * The subset of [[DerivationOptions]] specific to a [[SymmetricKey]].
 *
 * @category DerivationOptions
 */
-export interface DerivationOptionsForSymmetricKey extends DerivationOptionsFor {
-  /**
-   * Setting this optional value ensures these options can only be used to
-   * derive a [[SymmetricKey]], and not any other type of derived object.
-   */
-  type?: "SymmetricKey";
+export type DerivationOptionsForSymmetricKey = DerivationOptionsFor<"SymmetricKey",{
   /**
    * The algorithm to use for the underlying key and cryptographic algorithms.
    * (leave empty to use the default.)
    */
   algorithm?: "XSalsa20Poly1305";
-}
+}>;
+
 /**
 * The subset of [[DerivationOptions]] specific to an UnsealingKey.
 *
 * @category DerivationOptions
 */
-export interface DerivationOptionsForUnsealingKey extends DerivationOptionsFor {
-  /**
-   * Setting this optional value ensures these options can only be used to
-   * derive a UnsealingKey and its corresponding SealingKey,
-   * and not any other type of derived object.
-   */
-  type?: "UnsealingKey";
+export type DerivationOptionsForUnsealingKey = DerivationOptionsFor<"UnsealingKey",{
   /**
    * The algorithm to use for the underlying key and cryptographic algorithms.
    * (leave empty to use the default.)
    */
   algorithm?: "X25519";
-}
+}>;
+
 /**
 * The subset of [[DerivationOptions]] specific to a SigningKey.
 *
 * @category DerivationOptions
 */
-export interface DerivationOptionsForSigningKey extends DerivationOptionsFor {
-  /**
-   * Setting this optional value ensures these options can only be used to
-   * derive a SigningKey and its corresponding SignatureVerificationKey,
-   * and not any other type of derived object.
-   */
-  type?: "SigningKey";
+export type DerivationOptionsForSigningKey = DerivationOptionsFor<"SigningKey",{
   /**
    * The algorithm to use for the underlying key and cryptographic algorithms.
    * (leave empty to use the default.)
    */
   algorithm?: "Ed25519";
-}
+}>;
+
 /**
 * The DerivationOptions used by the Seeded Crypto library
 * and which implement the portion of the
@@ -258,7 +316,7 @@ export interface AuthenticationRequirements {
   allowAndroidPrefixes?: string[];
 }
 
-export interface ApiDerivationOptions extends AuthenticationRequirements {
+interface DerivationOptionsSpecificToDiceKeysApi extends AuthenticationRequirements {
 
   /**
    * Set this field to indicate that the user may modify the DerivationOptions
@@ -366,38 +424,24 @@ export interface ApiDerivationOptions extends AuthenticationRequirements {
 
     */
   excludeOrientationOfFaces?: boolean;
-
-  /**
-   * When generating a [Secret] that will be converted to a password, this
-   * field stores the name of the word list to use to convert it to a password.
-   * 
-   * If this field is set, the specified word list will be used to turn the
-   * secret into a password if getPassword is called.
-   * 
-   * If the field is not set and the derivation options are mutable, the
-   * DiceKeys app should allow the user to choose from a set of word lists
-   * to match the user's preference of language and vocabulary size once
-   * more than one word list is available.  The DiceKeys app will then
-   * return a derivationOptionsJson string with the wordList field set
-   * to the user's chosen word list.
-   * 
-   * If the derivation options are not mutable and this field is not set, the
-   * DiceKeys app will default to the en_1024_words_6_chars_ed4_20200910 word list.
-   */
-  wordList?: WordListName;
-
-  /**
-   * When generating a [Secret] that will be converted to a password, this
-   * field specifies the maximum number of words to derive.
-   */
-  wordLimit?: number;
-
 }
 
+export type DerivationOptionsDefinedInDicekeysApi =
+  ( DerivationOptionsForPassword |
+    DerivationOptionsForSecret |
+    DerivationOptionsForSymmetricKey |
+    DerivationOptionsForUnsealingKey |
+    DerivationOptionsForSigningKey
+  ) &
+  DerivationOptionsSpecificToDiceKeysApi;
+
 export type DerivationOptions = 
-  (DerivationOptionsForSecret | DerivationOptionsForSymmetricKey | DerivationOptionsForUnsealingKey | DerivationOptionsForSigningKey) &
-  (DerivationOptionsForExpensiveHashFunctions | {}) &
-  ApiDerivationOptions & {[key:string]: any};
+  DerivationOptionsDefinedInDicekeysApi &
+  {[key:string]: any};
+
+export const DerivationOptionsDefinedInDicekeysApi = (
+  value: DerivationOptionsDefinedInDicekeysApi
+) => value;
 
 export const DerivationOptions = (
   derivationOptionsAsObjectOrJson?: string | null | DerivationOptions,

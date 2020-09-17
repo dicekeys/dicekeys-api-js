@@ -10,7 +10,7 @@ const apiUrl = "https://dicekeys.app";
 
 /**
  * Typing for the transmit function, so that our unit testing framework
- * can substitute a custom transmitter to simulate postMessage reqeusts.
+ * can substitute a custom transmitter to simulate postMessage requests.
  */
 export interface PostMessageTransmitRequestFunction {
   <METHOD extends ApiCalls.ApiCall>(
@@ -42,7 +42,7 @@ const pendingCallResolveFunctions = new Map<string,
 }>();
 
 /*
- * Handles calls to window.onMessage to receive resposnes to requests.
+ * Handles calls to window.onMessage to receive responses to requests.
  */
 export const handlePossibleResultMessage = (result: MessageEvent) => {
   if (result.origin.startsWith(apiUrl) && result.data === "ready") {
@@ -78,7 +78,7 @@ export const addPostMessageApiPromise = <T>(
   );
 
 /**
- * Transmit reqeusts to a window running the DiceKeys app, creating that
+ * Transmit requests to a window running the DiceKeys app, creating that
  * window if necessary.
  */
 const transmitRequest: PostMessageTransmitRequestFunction = async <
