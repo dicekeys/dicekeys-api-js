@@ -1,13 +1,13 @@
 {
   "name": "@dicekeys/dicekeys-api-js",
-  "version": "0.0.72",
+  "version": "0.0.73",
   "description": "DiceKeys API for Javascript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scope": "@dicekeys/dicekeys-api-js",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/dicekeys",
-    "access": "restricted"
+    "access": "public"
   },
   "repository": "https://github.com/dicekeys/dicekeys-api-js.git",
   "author": "Stuart Schechter <stuart@dicekeys.com>",
