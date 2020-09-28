@@ -84,7 +84,7 @@ export interface UrlRequestMetadata {
   authToken?: string
 }
 
-  const UrlRequestMetadataParameterNames = toFieldNameMap<UrlRequestMetadata>(
+export const UrlRequestMetadataParameterNames = toFieldNameMap<UrlRequestMetadata>(
   "respondTo",
   "authToken"
 );
@@ -93,10 +93,10 @@ export interface GetAuthTokenRequest {
   command: "getAuthToken"
 }
 
-export type MetaRequests = GetAuthTokenRequest;
-export type MetaCommand = MetaRequests["command"];
+export type UrlApiMetaRequests = GetAuthTokenRequest;
+export type UrlApiMetaCommand = UrlApiMetaRequests["command"];
 
-  const MetaCommand = toNameMap<MetaCommand>([
+export const UrlApiMetaCommand = toNameMap<UrlApiMetaCommand>([
   "getAuthToken"
 ]);
 
@@ -127,7 +127,7 @@ export class UrlApi {
       const requestId = generateRequestId();
       requestUrl.searchParams.set(RequestMetadataParameterNames.requestId, requestId);
       requestUrl.searchParams.set(UrlRequestMetadataParameterNames.respondTo, this.respondToUrl);
-      requestUrl.searchParams.set(RequestCommandParameterNames.command, MetaCommand.getAuthToken);
+      requestUrl.searchParams.set(RequestCommandParameterNames.command, UrlApiMetaCommand.getAuthToken);
       return new Promise<string>( (resolve, reject) => {
         this.pendingPromisesForRequestResponseUrls.set(requestId, url => {
           const newAuthToken = url.searchParams.get(GetAuthTokenResponseParameterNames.authToken);
