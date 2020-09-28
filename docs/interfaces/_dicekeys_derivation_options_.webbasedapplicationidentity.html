@@ -1,0 +1,290 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>WebBasedApplicationIdentity | DiceKeys API - v0.0.82</title>
+	<meta name="description" content="Documentation for DiceKeys API - v0.0.82">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">DiceKeys API - v0.0.82</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_dicekeys_derivation_options_.html">&quot;dicekeys-derivation-options&quot;</a>
+				</li>
+				<li>
+					<a href="_dicekeys_derivation_options_.webbasedapplicationidentity.html">WebBasedApplicationIdentity</a>
+				</li>
+			</ul>
+			<h1>Interface WebBasedApplicationIdentity</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A web-standards based mechanism for identifying client code that is making
+						a request of the DiceKeys app.</p>
+					</div>
+					<p>Regardless of API, we identify web applications by their host (the part of the origin
+						after the mandatory &quot;https://&quot; prefix). The host alone is is sufficient when using
+						intra-browser communication via postMessage APIs, as it is the only identifier we
+					have available.</p>
+					<p>When passing messages via URL, as occurs for interapp/intra-device communication within
+					iOS and Android, we can also restrict to a subset of valid paths and/or path prefixes.</p>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">WebBasedApplicationIdentity</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_dicekeys_derivation_options_.webbasedapplicationidentity.html#host" class="tsd-kind-icon">host</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_dicekeys_derivation_options_.webbasedapplicationidentity.html#paths" class="tsd-kind-icon">paths</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="host" class="tsd-anchor"></a>
+					<h3>host</h3>
+					<div class="tsd-signature tsd-kind-icon">host<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The host, which is the same as a hostname unless a non-standard https port is used (not recommended).
+							Start it with a &quot;*.&quot; to match a domain and any of its subdomains.</p>
+						</div>
+						<blockquote>
+							<p>origin = <scheme> &quot;://&quot; <hostname> [ &quot;:&quot; <port> ] = <scheme> &quot;://&quot; <host> = &quot;https://&quot; <host>
+							So, <code>host = origin.substr(8)</code></p>
+						</blockquote>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="paths" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> paths</h3>
+					<div class="tsd-signature tsd-kind-icon">paths<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Restrict URL-based access to the API to a limited set of URL paths.</p>
+						</div>
+						<p>If the specified path on the list ends in &quot;/*&quot;, a path will validate it if it either shares
+							the same prefix (including the &quot;/&quot; just before the <em>) or if is exactly equal to prefix preceding the &quot;/&quot;.
+							In other words, the requirement &quot;/here/</em>&quot; is satisfied by &quot;/here/and/there&quot;, &quot;/here/&quot;, and &quot;/here&quot;,
+						but not, &quot;/hereandthere/&quot;, &quot;/her&quot;, &quot;/her/&quot;, or &quot;/thereandhere&quot;.</p>
+						<p>If the path does not end in &quot;/*&quot; but does end in &quot;*&quot;, any path that starts with the string preceding the &quot;*&quot;
+							will be validated.
+							In other words, the requirement &quot;/here*&quot; is satisfied by &quot;/here/and/there&quot;, &quot;/here/&quot;, &quot;/here&quot;, and &quot;/hereandthere/&quot;,
+						but not &quot;/her&quot;, &quot;/her/&quot;, &quot;/thereandhere&quot;, or &quot;/thereandhere/&quot;.</p>
+						<p>If the path does not end in &quot;*&quot;, it must match exactly.</p>
+						<p>If paths is undefined, no path validation is ever performed.</p>
+						<p>If paths is et to an empty list is  empty, no path will match and the URL interface operations are disallowed.</p>
+						<p>Paths are not evaluated for the postMessage-based API as all authentication is done by
+						origin and postMessage not subject to cross-site request forgery.</p>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_api_calls_.html">&quot;api-<wbr>calls&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_api_strings_.html">&quot;api-<wbr>strings&quot;</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html">&quot;dicekeys-<wbr>derivation-<wbr>options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_encodings_.html">&quot;encodings&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_exceptions_.html">&quot;exceptions&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_post_message_api_.html">&quot;post-<wbr>message-<wbr>api&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_seeded_crypto_derivation_options_.html">&quot;seeded-<wbr>crypto-<wbr>derivation-<wbr>options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_seeded_crypto_json_fields_.html">&quot;seeded-<wbr>crypto-<wbr>json-<wbr>fields&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_seeded_crypto_object_fields_.html">&quot;seeded-<wbr>crypto-<wbr>object-<wbr>fields&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_to_name_map_.html">&quot;to-<wbr>name-<wbr>map&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_unsealing_instructions_.html">&quot;unsealing-<wbr>instructions&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_url_api_.html">&quot;url-<wbr>api&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_dicekeys_derivation_options_.authenticationrequirements.html" class="tsd-kind-icon">Authentication<wbr>Requirements</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="_dicekeys_derivation_options_.webbasedapplicationidentity.html" class="tsd-kind-icon">Web<wbr>Based<wbr>Application<wbr>Identity</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_dicekeys_derivation_options_.webbasedapplicationidentity.html#host" class="tsd-kind-icon">host</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_dicekeys_derivation_options_.webbasedapplicationidentity.html#paths" class="tsd-kind-icon">paths</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../modules/_dicekeys_derivation_options_.html#derivationoptions" class="tsd-kind-icon">Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#passwordderivationoptions" class="tsd-kind-icon">Password<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#secretderivationoptions" class="tsd-kind-icon">Secret<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#signingkeyderivationoptions" class="tsd-kind-icon">Signing<wbr>Key<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#symmetrickeyderivationoptions" class="tsd-kind-icon">Symmetric<wbr>Key<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#unsealingkeyderivationoptions" class="tsd-kind-icon">Unsealing<wbr>Key<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#derivationoptions-1" class="tsd-kind-icon">Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#passwordderivationoptions-1" class="tsd-kind-icon">Password<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#secretderivationoptions-1" class="tsd-kind-icon">Secret<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#signingkeyderivationoptions-1" class="tsd-kind-icon">Signing<wbr>Key<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#symmetrickeyderivationoptions-1" class="tsd-kind-icon">Symmetric<wbr>Key<wbr>Derivation<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/_dicekeys_derivation_options_.html#unsealingkeyderivationoptions-1" class="tsd-kind-icon">Unsealing<wbr>Key<wbr>Derivation<wbr>Options</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

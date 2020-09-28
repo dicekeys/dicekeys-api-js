@@ -1,3 +1,8 @@
+// import {
+//   toNameMap
+// } from "./to-name-map";
+import * as ApiCalls from "./api-calls";
+
 const windowName = "windowName";
 const requestId = "requestId";
 const plaintext = "plaintext";
@@ -20,32 +25,7 @@ const unsealingKeyFields = "unsealingKeyFields";
 const signatureVerificationKeyFields = "signatureVerificationKeyFields";
 
 
-export const Commands = (() => {
-  const generateSignature = "generateSignature";
-  const getPassword = "getPassword";
-  const getSealingKey = "getSealingKey";
-  const getSecret = "getSecret";
-  const getSignatureVerificationKey = "getSignatureVerificationKey";
-  const getSigningKey = "getSigningKey";
-  const getSymmetricKey = "getSymmetricKey";
-  const getUnsealingKey = "getUnsealingKey";
-  const sealWithSymmetricKey = "sealWithSymmetricKey";
-  const unsealWithSymmetricKey = "unsealWithSymmetricKey";
-  const unsealWithUnsealingKey = "unsealWithUnsealingKey";
-  return {
-    generateSignature,
-    getPassword,
-    getSealingKey,
-    getSecret,
-    getSignatureVerificationKey,
-    getSigningKey,
-    getSymmetricKey,
-    getUnsealingKey,
-    sealWithSymmetricKey,
-    unsealWithSymmetricKey,
-    unsealWithUnsealingKey,
-   } as const;
-})();
+export const Commands = ApiCalls.Command;
 export const MetaCommands = (() => {
   const getAuthToken = "getAuthToken";
   return {

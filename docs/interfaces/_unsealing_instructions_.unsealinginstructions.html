@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>UnsealingInstructions | DiceKeys PostMessage API - v0.0.68</title>
-	<meta name="description" content="Documentation for DiceKeys PostMessage API - v0.0.68">
+	<title>UnsealingInstructions | DiceKeys API - v0.0.82</title>
+	<meta name="description" content="Documentation for DiceKeys API - v0.0.82">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">DiceKeys PostMessage API - v0.0.68</a>
+					<a href="../index.html" class="title">DiceKeys API - v0.0.82</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -67,11 +67,25 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>You can instruct the DiceKeys app to display a consent question to the user
+							before unsealing the message and returning it to the client app.
+							You specify the <code>question</code>, the text for the button that will <code>allow</code> the data
+							to be unsealed, and the text for the button that will <code>deny</code> the client access
+							to the unsealed data.
+							The language of the warning is chosen by the sealer of the message, which should use
+						it&#39;s best knowledge about the language of the user at the time of sealing.</p>
+					</div>
+					<p>requireUsersConsent?: RequestForUsersConsent,</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_derivation_options_.authenticationrequirements.html" class="tsd-signature-type">AuthenticationRequirements</a>
+						<a href="_dicekeys_derivation_options_.authenticationrequirements.html" class="tsd-signature-type">AuthenticationRequirements</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">UnsealingInstructions</span>
@@ -84,26 +98,25 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_unsealing_instructions_.unsealinginstructions.html#allow" class="tsd-kind-icon">allow</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_unsealing_instructions_.unsealinginstructions.html#allowandroidprefixes" class="tsd-kind-icon">allow<wbr>Android<wbr>Prefixes</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_unsealing_instructions_.unsealinginstructions.html#requireauthenticationhandshake" class="tsd-kind-icon">require<wbr>Authentication<wbr>Handshake</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_unsealing_instructions_.unsealinginstructions.html#requireusersconsent" class="tsd-kind-icon">require<wbr>Users<wbr>Consent</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="allow" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> allow</h3>
-					<div class="tsd-signature tsd-kind-icon">allow<span class="tsd-signature-symbol">:</span> <a href="_derivation_options_.webbasedapplicationidentity.html" class="tsd-signature-type">WebBasedApplicationIdentity</a><span class="tsd-signature-symbol">[]</span></div>
+					<div class="tsd-signature tsd-kind-icon">allow<span class="tsd-signature-symbol">:</span> <a href="_dicekeys_derivation_options_.webbasedapplicationidentity.html" class="tsd-signature-type">WebBasedApplicationIdentity</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_derivation_options_.authenticationrequirements.html">AuthenticationRequirements</a>.<a href="_derivation_options_.authenticationrequirements.html#allow">allow</a></p>
+						<p>Inherited from <a href="_dicekeys_derivation_options_.authenticationrequirements.html">AuthenticationRequirements</a>.<a href="_dicekeys_derivation_options_.authenticationrequirements.html#allow">allow</a></p>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
@@ -123,7 +136,7 @@
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> allow<wbr>Android<wbr>Prefixes</h3>
 					<div class="tsd-signature tsd-kind-icon">allow<wbr>Android<wbr>Prefixes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_derivation_options_.authenticationrequirements.html">AuthenticationRequirements</a>.<a href="_derivation_options_.authenticationrequirements.html#allowandroidprefixes">allowAndroidPrefixes</a></p>
+						<p>Inherited from <a href="_dicekeys_derivation_options_.authenticationrequirements.html">AuthenticationRequirements</a>.<a href="_dicekeys_derivation_options_.authenticationrequirements.html#allowandroidprefixes">allowAndroidPrefixes</a></p>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
@@ -146,7 +159,7 @@
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> require<wbr>Authentication<wbr>Handshake</h3>
 					<div class="tsd-signature tsd-kind-icon">require<wbr>Authentication<wbr>Handshake<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="_derivation_options_.authenticationrequirements.html">AuthenticationRequirements</a>.<a href="_derivation_options_.authenticationrequirements.html#requireauthenticationhandshake">requireAuthenticationHandshake</a></p>
+						<p>Inherited from <a href="_dicekeys_derivation_options_.authenticationrequirements.html">AuthenticationRequirements</a>.<a href="_dicekeys_derivation_options_.authenticationrequirements.html#requireauthenticationhandshake">requireAuthenticationHandshake</a></p>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
@@ -156,27 +169,9 @@
 							starts with one of the authorized prefixes.</p>
 						</div>
 						<p>The DiceKeys app will map the authorization token to that URL and,
-							when reqeusts include that token, validate that the URL associated
+							when requests include that token, validate that the URL associated
 							with the token has a valid prefix. The DiceKeys app will continue to
 						validate that responses are also sent to a valid prefix.</p>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="requireusersconsent" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> require<wbr>Users<wbr>Consent</h3>
-					<div class="tsd-signature tsd-kind-icon">require<wbr>Users<wbr>Consent<span class="tsd-signature-symbol">:</span> <a href="_unsealing_instructions_.requestforusersconsent.html" class="tsd-signature-type">RequestForUsersConsent</a></div>
-					<aside class="tsd-sources">
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>You can instruct the DiceKeys app to display a consent question to the user
-								before unsealing the message and returning it to the client app.
-								You specify the <code>question</code>, the text for the button that will <code>allow</code> the data
-								to be unsealed, and the text for the button that will <code>deny</code> the client access
-								to the unsealed data.
-								The language of the warning is chosen by the sealer of the message, which should use
-							it&#39;s best knowledge about the language of the user at the time of sealing.</p>
-						</div>
 					</div>
 				</section>
 			</section>
@@ -191,13 +186,13 @@
 						<a href="../modules/_api_calls_.html">&quot;api-<wbr>calls&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/_api_factory_.html">&quot;api-<wbr>factory&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
 						<a href="../modules/_api_strings_.html">&quot;api-<wbr>strings&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/_derivation_options_.html">&quot;derivation-<wbr>options&quot;</a>
+						<a href="../modules/_dicekeys_derivation_options_.html">&quot;dicekeys-<wbr>derivation-<wbr>options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_encodings_.html">&quot;encodings&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/_exceptions_.html">&quot;exceptions&quot;</a>
@@ -209,33 +204,27 @@
 						<a href="../modules/_post_message_api_.html">&quot;post-<wbr>message-<wbr>api&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/_post_message_api_factory_.html">&quot;post-<wbr>message-<wbr>api-<wbr>factory&quot;</a>
+						<a href="../modules/_seeded_crypto_derivation_options_.html">&quot;seeded-<wbr>crypto-<wbr>derivation-<wbr>options&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/_secret_to_words_.html">&quot;secret-<wbr>to-<wbr>words&quot;</a>
+						<a href="../modules/_seeded_crypto_json_fields_.html">&quot;seeded-<wbr>crypto-<wbr>json-<wbr>fields&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/_seeded_crypto_object_fields_.html">&quot;seeded-<wbr>crypto-<wbr>object-<wbr>fields&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_to_name_map_.html">&quot;to-<wbr>name-<wbr>map&quot;</a>
 					</li>
 					<li class="current tsd-kind-module">
 						<a href="../modules/_unsealing_instructions_.html">&quot;unsealing-<wbr>instructions&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/_word_lists_en_1024_words_5_chars_max_20200709_.html">&quot;word-<wbr>lists/en_<wbr>1024_<wbr>words_<wbr>5_chars_<wbr>max_<wbr>20200709&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/_word_lists_index_.html">&quot;word-<wbr>lists/index&quot;</a>
+						<a href="../modules/_url_api_.html">&quot;url-<wbr>api&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/_unsealing_instructions_.usersconsentresponse.html" class="tsd-kind-icon">Users<wbr>Consent<wbr>Response</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_unsealing_instructions_.requestforusersconsent.html" class="tsd-kind-icon">Request<wbr>For<wbr>Users<wbr>Consent</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
@@ -249,9 +238,6 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="_unsealing_instructions_.unsealinginstructions.html#requireauthenticationhandshake" class="tsd-kind-icon">require<wbr>Authentication<wbr>Handshake</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_unsealing_instructions_.unsealinginstructions.html#requireusersconsent" class="tsd-kind-icon">require<wbr>Users<wbr>Consent</a>
 							</li>
 						</ul>
 					</li>
@@ -280,10 +266,6 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>

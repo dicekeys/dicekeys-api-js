@@ -71,7 +71,7 @@ export interface UnsealingKeyFields extends SealingKeyFields {
 }
 
 
-export type SeededCryptoJsObject =
+export type SeededCryptoObjectFields =
   PackagedSealedMessageFields |
   SecretFields | 
   SymmetricKeyFields |
