@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DiceKeys PostMessage API - v0.0.68</title>
-	<meta name="description" content="Documentation for DiceKeys PostMessage API - v0.0.68">
+	<title>DiceKeys API - v0.0.82</title>
+	<meta name="description" content="Documentation for DiceKeys API - v0.0.82">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">DiceKeys PostMessage API - v0.0.68</a>
+					<a href="index.html" class="title">DiceKeys API - v0.0.82</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -54,7 +54,7 @@
 					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1>DiceKeys PostMessage API - v0.0.68</h1>
+			<h1>DiceKeys API - v0.0.82</h1>
 		</div>
 	</div>
 </header>
@@ -62,8 +62,8 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#dicekeys-postmessage-api" id="dicekeys-postmessage-api" style="color: inherit; text-decoration: none;">
-					<h1><a href="https://dicekeys.com/">DiceKeys</a> PostMessage Api</h1>
+				<a href="#dicekeys-api" id="dicekeys-api" style="color: inherit; text-decoration: none;">
+					<h1>DiceKeys API</h1>
 				</a>
 				<p>This package contains the <a href="https://dicekeys.app/">DiceKeys app</a>&#39;s Application Programming Interface (API),
 				for use by websites and browser-based via the browser&#39;s PostMessage interface.</p>
@@ -76,31 +76,6 @@
 					<li>Sign messages with a signing key derived from the user&#39;s
 					Dicekey</li>
 				</ul>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {
-  DerivationOptions,
-  getPassword
-} <span class="hljs-keyword">from</span> <span class="hljs-string">"@dicekeys/dicekeys-api-js"</span>
-
-<span class="hljs-comment">// See https://dicekeys.github.io/seeded-crypto/derivation_options_format.html</span>
-<span class="hljs-keyword">const</span> derivationOptionsJson = <span class="hljs-built_in">JSON</span>.stringify(DerivationOptions({
-  <span class="hljs-keyword">type</span>: <span class="hljs-string">"Secret"</span>,
-  mutable: <span class="hljs-literal">true</span>,
-  wordLimit: <span class="hljs-number">13</span>,
-  allow: [{<span class="hljs-string">"host"</span>: <span class="hljs-built_in">document</span>.location.host}]
-}));
-
-<span class="hljs-comment">// Call the API to request a password specific to this host</span>
-<span class="hljs-comment">// derived from the user's DiceKey</span>
-<span class="hljs-keyword">const</span> {password} = <span class="hljs-keyword">await</span> getPassword({derivationOptionsJson});</code></pre>
-				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
-					<h2>Installation</h2>
-				</a>
-				<p>In your <code>.npmrc</code> file</p>
-				<pre><code><span class="hljs-variable">@dicekeys:</span>registry=<span class="hljs-attribute">https</span>:<span class="hljs-comment">//npm.pkg.github.com</span></code></pre><pre><code class="language-bash">&gt; npm install @dicekeys/dicekeys-api-js</code></pre>
-				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
-					<h2>Documentation</h2>
-				</a>
-				<p><a href="https://dicekeys.github.io/dicekeys-api-js/">Generated via TypeDoc</a></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -113,13 +88,13 @@
 						<a href="modules/_api_calls_.html">&quot;api-<wbr>calls&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_api_factory_.html">&quot;api-<wbr>factory&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
 						<a href="modules/_api_strings_.html">&quot;api-<wbr>strings&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_derivation_options_.html">&quot;derivation-<wbr>options&quot;</a>
+						<a href="modules/_dicekeys_derivation_options_.html">&quot;dicekeys-<wbr>derivation-<wbr>options&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_encodings_.html">&quot;encodings&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_exceptions_.html">&quot;exceptions&quot;</a>
@@ -131,22 +106,22 @@
 						<a href="modules/_post_message_api_.html">&quot;post-<wbr>message-<wbr>api&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_post_message_api_factory_.html">&quot;post-<wbr>message-<wbr>api-<wbr>factory&quot;</a>
+						<a href="modules/_seeded_crypto_derivation_options_.html">&quot;seeded-<wbr>crypto-<wbr>derivation-<wbr>options&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_secret_to_words_.html">&quot;secret-<wbr>to-<wbr>words&quot;</a>
+						<a href="modules/_seeded_crypto_json_fields_.html">&quot;seeded-<wbr>crypto-<wbr>json-<wbr>fields&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_seeded_crypto_object_fields_.html">&quot;seeded-<wbr>crypto-<wbr>object-<wbr>fields&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/_to_name_map_.html">&quot;to-<wbr>name-<wbr>map&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/_unsealing_instructions_.html">&quot;unsealing-<wbr>instructions&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_word_lists_en_1024_words_5_chars_max_20200709_.html">&quot;word-<wbr>lists/en_<wbr>1024_<wbr>words_<wbr>5_chars_<wbr>max_<wbr>20200709&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_word_lists_index_.html">&quot;word-<wbr>lists/index&quot;</a>
+						<a href="modules/_url_api_.html">&quot;url-<wbr>api&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -172,9 +147,6 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
