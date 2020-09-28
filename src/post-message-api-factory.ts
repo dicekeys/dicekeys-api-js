@@ -1,4 +1,7 @@
 import {
+  toFieldNameMap
+} from "./to-name-map";
+import {
   generateRequestId,
 } from "./api-factory";
 import * as ApiCalls from "./api-calls";
@@ -8,13 +11,22 @@ import {
 
 const apiUrl = "https://dicekeys.app";
 
+
+export interface PostMessageRequestMetadata extends ApiCalls.RequestMetadata {
+  windowName: string
+}
+  
+export const PostMessageRequestMetadataParameterNames = toFieldNameMap<PostMessageRequestMetadata>(
+  "windowName"
+);
+
 /**
  * Typing for the transmit function, so that our unit testing framework
  * can substitute a custom transmitter to simulate postMessage requests.
  */
 export interface PostMessageTransmitRequestFunction {
   <METHOD extends ApiCalls.ApiCall>(
-    request: ApiCalls.RequestMessage<METHOD> & ApiCalls.PostMessageRequestMetadata 
+    request: ApiCalls.RequestMessage<METHOD> & PostMessageRequestMetadata 
   ): Promise<ApiCalls.ApiCallResult<METHOD>>
 };
 
@@ -84,7 +96,7 @@ export const addPostMessageApiPromise = <T>(
 const transmitRequest: PostMessageTransmitRequestFunction = async <
   METHOD extends ApiCalls.ApiCall
 >(
-  request: ApiCalls.RequestMessage<METHOD> & ApiCalls.PostMessageRequestMetadata
+  request: ApiCalls.RequestMessage<METHOD> & PostMessageRequestMetadata
 ): Promise<ApiCalls.ApiCallResult<METHOD>> => {
   if (!alreadyListeningForResultMessages) {
     // Set up the listener for the response if one is not yet running
@@ -132,7 +144,7 @@ export const postMessageApiCallFactory = (
     requestId,
     windowName,
   }
-  const requestObject: ApiCalls.RequestMessage<METHOD> & ApiCalls.PostMessageRequestMetadata = {
+  const requestObject: ApiCalls.RequestMessage<METHOD> & PostMessageRequestMetadata = {
     ...request,
     ...metaParameters,
   };

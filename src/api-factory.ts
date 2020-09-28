@@ -20,7 +20,7 @@ export const generateRequestId = (): string => {
 }
 
 /**
- * An API requst object is just a set of parameters with the function (command)
+ * An API request object is just a set of parameters with the function (command)
  * name attached.  This function adds the commands to the parameters to create
  * a request that can be sent over the wire.
  * 
@@ -28,8 +28,8 @@ export const generateRequestId = (): string => {
  * @param parameters The parameters to that API call.
  */
 export const addCommandNameToParameterObject = <METHOD extends ApiCalls.ApiCall>(
-  command: ApiCalls.ApiCommand<METHOD>,
-  parameters: ApiCalls.ApiCallParameters<METHOD>
+  command: METHOD["request"]["command"],
+  parameters: METHOD["parameters"]
 ): ApiCalls.ApiRequestObject<METHOD> => ({
   ...parameters,
   command
@@ -51,9 +51,9 @@ export interface ApiClientImplementation{
  * of the request object and response object and sends the call
  */
 export const apiCallFactory = <METHOD extends ApiCalls.ApiCall>(
-  command: ApiCalls.ApiCommand<METHOD>,
+  command: METHOD["request"]["command"],
   client: ApiClientImplementation
 ) => (
-    parameters: ApiCalls.ApiCallParameters<METHOD>
-  ) =>
+    parameters: METHOD["parameters"]
+  ): Promise<METHOD["result"]> =>
     client<METHOD>(addCommandNameToParameterObject(command, parameters));

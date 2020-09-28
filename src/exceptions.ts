@@ -81,7 +81,7 @@ export const restoreException = (name: string, message?: string, stack?: string)
     }
   }
   // The exception is not among the list of known exceptions, so
-  // generate an UnknwonException.
+  // generate an UnknownException.
   const e = new UnknownException(name, message);
   e.stack = stack;
   return e;

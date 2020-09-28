@@ -1,10 +1,10 @@
-import * as ApiFactory from "./api-factory";
-import * as ApiStrings from "./api-strings";
 import * as Exceptions from "./exceptions";
-import * as PostMessageApiFactory from "./post-message-api-factory";
 import * as ApiCalls from "./api-calls";
-export {ApiFactory, ApiStrings, Exceptions, PostMessageApiFactory, ApiCalls};
-export * from "./derivation-options";
+export {Exceptions, ApiCalls};
+export * from "./dicekeys-derivation-options";
+export * from "./seeded-crypto-derivation-options";
 export * from "./post-message-api";
 export * from "./unsealing-instructions";
 export * from "./seeded-crypto-object-fields";
+export * from "./to-name-map";
+export * from "./url-api";
