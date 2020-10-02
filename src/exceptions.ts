@@ -1,10 +1,17 @@
-export class ClientNotAuthorizedException extends Error {}
+export class NamedException extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
 
-export class UserDeclinedToAuthorizeOperation extends Error {}
+export class ClientNotAuthorizedException extends NamedException {}
+
+export class UserDeclinedToAuthorizeOperation extends NamedException {}
 
 export class ClientMayRetrieveKeyNotSetInDerivationOptions extends ClientNotAuthorizedException {}
 
-export class InvalidDerivationOptionsTypeFieldException extends Error {
+export class InvalidDerivationOptionsTypeFieldException extends NamedException {
   static create(
     typeRequiredByOperation: string,
     typeSpecifiedInDerivationOptions: string
@@ -13,42 +20,43 @@ export class InvalidDerivationOptionsTypeFieldException extends Error {
   }
 }
 
-export class MissingParameter extends Error {
+export class MissingParameter extends NamedException {
 static create(missingParameterName: string) {
     return new MissingParameter(`This operation requires the parameter '${missingParameterName}'.`);
   }
 }
 
-export class MissingResponseParameter extends Error {
+export class MissingResponseParameter extends NamedException {
   static create(missingParameterName: string) {
     return new MissingParameter(`Expected but did not receive response parameter '${missingParameterName}'.`);
   }
 }
 
-export class WordListNotFound extends Error {
+export class WordListNotFound extends NamedException {
   static create(wordListName: string) {
     return new WordListNotFound(`Could not generate password using the following word list as it could not be found '${wordListName}'.`);
   }
 }
 
-export class UnknownException extends Error {
-  constructor(
-    public readonly exceptionName: string,
-    public readonly marshalledMessage?: string
-  ) {
-    super(`Unknown exception of type ${exceptionName} and message "${marshalledMessage}"`);
-  }
-}
-
-export class UserCancelledLoadingDiceKey extends Error {
+export class UserCancelledLoadingDiceKey extends NamedException {
   static create(message: string = `This operation requires a DiceKey and the user declined or cancelled the scanning operation.`) {
     new UserCancelledLoadingDiceKey(message)
   }
 }
 
-export class InvalidCommand extends Error {
+export class InvalidCommand extends NamedException {
   static create(message: string = `Invalid API Command`) {
     new InvalidCommand(message)
+  }
+}
+
+export class UnknownException extends Error {
+  constructor(
+    exceptionName: string,
+    message?: string
+  ) {
+    super(message);
+    this.name = exceptionName;
   }
 }
 
