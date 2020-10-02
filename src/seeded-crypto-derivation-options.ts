@@ -22,9 +22,9 @@ export const WordListBitLengths: {[name in WordListName]: number} = {
   "EN_1024_words_6_chars_max_ed_4_20200917": 10
 }
 
-export const CheapHashFunction = toNameMap(["BLAKE2b", "SHA256" ]);
+export const CheapHashFunction = toNameMap(["BLAKE2b" ]);
 export type CheapHashFunction = keyof typeof CheapHashFunction;
-export const ExpensiveHashFunction = toNameMap(["Argon2id", "Scrypt"]);
+export const ExpensiveHashFunction = toNameMap(["Argon2id"]);
 export type ExpensiveHashFunction = keyof typeof CheapHashFunction;
 export const HashFunction = {...CheapHashFunction, ...ExpensiveHashFunction};
 export type HashFunction = keyof typeof HashFunction;
@@ -248,12 +248,6 @@ export type SeededCryptoDerivationOptions<
   never
   );
 
-// export type SeededCryptoPasswordDerivationOptions<HASH_FUNCTION extends HashFunction = HashFunction> = SeededCryptoDerivationOptions<"Password", HASH_FUNCTION>;
-// export type SeededCryptoSecretDerivationOptions<HASH_FUNCTION extends HashFunction = HashFunction> = SeededCryptoDerivationOptions<"Secret", HASH_FUNCTION>;
-// export type SeededCryptoSymmetricKeyDerivationOptions<HASH_FUNCTION extends HashFunction = HashFunction> = SeededCryptoDerivationOptions<"SymmetricKey", HASH_FUNCTION>;
-// export type SeededCryptoUnsealingKeyDerivationOptions<HASH_FUNCTION extends HashFunction = HashFunction> = SeededCryptoDerivationOptions<"UnsealingKey", HASH_FUNCTION>;
-// export type SeededCryptoSigningKeyDerivationOptions<HASH_FUNCTION extends HashFunction = HashFunction> = SeededCryptoDerivationOptions<"SigningKey", HASH_FUNCTION>;
-
 const SeededCryptoDerivationOptionsFor = <
   TYPE extends DerivableObjectName
 >(  typeRequiredByOperation?: TYPE
@@ -281,7 +275,7 @@ export const SeededCryptoUnsealingKeyDerivationOptions = SeededCryptoDerivationO
 export const SeededCryptoSigningKeyDerivationOptions = SeededCryptoDerivationOptionsFor("SigningKey")
 
 // const test = SeededCryptoPasswordDerivationOptions({
-//   hashFunction: "SHA256",
+//   hashFunction: "BLAKE2b",
 //   lengthInBits: 3,
 //   lengthInWords: 3,
 //   hashFunctionMemoryPasses: undefined,
