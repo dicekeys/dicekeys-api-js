@@ -2,16 +2,6 @@ import {
   toNameMap,
   toFieldNameMap
 } from "./to-name-map";
-import {
-  PackagedSealedMessageFields,
-  SecretFields,
-  SignatureVerificationKeyFields,
-  SigningKeyFields,
-  SealingKeyFields,
-  UnsealingKeyFields,
-  SymmetricKeyFields
-} from "./seeded-crypto-object-fields";
-
 
 
 interface ParametersWithDerivationOptions {
@@ -81,25 +71,22 @@ export interface GetSymmetricKeyParameters extends ParametersWithDerivationOptio
 }
 export const GetSymmetricKeyParameterNames = DerivationFunctionParameterNames;
 
-export interface UnsealWithSymmetricKeyParameters {
+
+export interface UnsealParameters {
   /**
    * The encrypted (sealed) message to be unsealed packaged with its derivation options and optional unsealing instructions.
    */
-  packagedSealedMessageFields: PackagedSealedMessageFields;
+  packagedSealedMessageJson: string;
 }
-export const UnsealWithSymmetricKeyParameterNames = toFieldNameMap<UnsealWithSymmetricKeyParameters>(
-  "packagedSealedMessageFields"
+export const UnsealParameterNames = toFieldNameMap<UnsealWithSymmetricKeyParameters>(
+  "packagedSealedMessageJson"
 );
 
-export interface UnsealWithUnsealingKeyParameters {
-  /**
-   * The sealed (encrypted and authenticated) message to be unsealed packaged with its derivation options and optional unsealing instructions.
-   */
-  packagedSealedMessageFields: PackagedSealedMessageFields;
-}
-export const UnsealWithUnsealingKeyParameterNames = toFieldNameMap<UnsealWithUnsealingKeyParameters>(
-  "packagedSealedMessageFields"
-);
+export type  UnsealWithSymmetricKeyParameters = UnsealParameters;
+export const UnsealWithSymmetricKeyParameterNames = UnsealParameterNames;
+export type  UnsealWithUnsealingKeyParameters = UnsealParameters;
+export const UnsealWithUnsealingKeyParameterNames = UnsealParameterNames;
+
 
 export interface SealWithSymmetricKeyParameters extends ParametersWithDerivationOptions {
   /**
@@ -161,130 +148,57 @@ export const Command = toNameMap([
 ])
 export type Command = keyof typeof Command;
 
-export interface GetPasswordSuccessResponse {
-  /**
-   * The generated password.
-   */
-  password: string,
-  /**
-   * The JSON-encoded [[PasswordDerivationOptions]] used to derive the password,
-   * which may have been modified during the request if it was passed with the
-   * `mutable` option set to true.
-   */
-  derivationOptionsJson: string
+export interface GetSeededCryptoObjectSuccessResponse {
+  seededCryptoObjectAsJson: string
 }
-export const GetPasswordSuccessResponseParameterNames = toFieldNameMap<GetPasswordSuccessResponse>(
-  "derivationOptionsJson", "password"
+export const GetSeededCryptoObjectResponseParameterNames = toFieldNameMap<GetPasswordSuccessResponse>(
+  "seededCryptoObjectAsJson"
 );
+export type  GetPasswordSuccessResponse = GetSeededCryptoObjectSuccessResponse;
+export const GetPasswordSuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
 
-export interface GenerateSignatureSuccessResponse {
+
+export interface GenerateSignatureSuccessResponse extends GetSeededCryptoObjectSuccessResponse {
   /**
    * The signature of the message
    */
   signature: Uint8Array
-  /**
-   * The fields of the SignatureVerificationKey matching the derived SigningKey,
-   * in case the party receiving the signature needs to be reminded of the verification key.
-   */
-  signatureVerificationKeyFields: SignatureVerificationKeyFields;
 }
 export const GenerateSignatureSuccessResponseParameterNames = toFieldNameMap<GenerateSignatureSuccessResponse>(
-  "signature", "signatureVerificationKeyFields"
+  "signature", "seededCryptoObjectAsJson"
 );
 
-export interface GetSecretSuccessResponse {
-  /**
-   * The fields of the derived Secret.
-   */
-  secretFields: SecretFields
-}
-export const GetSecretSuccessResponseParameterNames = toFieldNameMap<GetSecretSuccessResponse>(
-  "secretFields"
-);
+export type  GetSecretSuccessResponse = GetSeededCryptoObjectSuccessResponse;
+export const GetSecretSuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
+export type  GetSignatureVerificationKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
+export const GetSignatureVerificationKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
+export type  GetSigningKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
+export const GetSigningKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
+export type  GetSealingKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
+export const GetSealingKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
+export type  GetSymmetricKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
+export const GetSymmetricKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
+export type  GetUnsealingKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
+export const GetUnsealingKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
+export type  SealWithSymmetricKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
+export const SealWithSymmetricKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
 
-export interface GetSignatureVerificationKeySuccessResponse {
-  /**
-   * The fields of the derived SignatureVerificationKey.
-   */
-  signatureVerificationKeyFields: SignatureVerificationKeyFields;
-}
-export const GetSignatureVerificationKeySuccessResponseParameterNames = toFieldNameMap<GetSignatureVerificationKeySuccessResponse>(
-  "signatureVerificationKeyFields"
-);
-
-export interface GetSigningKeySuccessResponse {
-  /**
-   * The fields of the derived SigningKey.
-   */
-  signingKeyFields: SigningKeyFields;
-}
-export const GetSigningKeySuccessResponseParameterNames = toFieldNameMap<GetSigningKeySuccessResponse>(
-  "signingKeyFields"
-);
-
-export interface GetSealingKeySuccessResponse {
-  /**
-   * The fields of the derived SealingKey.
-   */
-  sealingKeyFields: SealingKeyFields;
-}
-export const GetSealingKeySuccessResponseParameterNames = toFieldNameMap<GetSealingKeySuccessResponse>(
-  "sealingKeyFields"
-);
-
-export interface GetUnsealingKeySuccessResponse {
-  /**
-   * The fields of the derived UnsealingKey.
-   */
-  unsealingKeyFields: UnsealingKeyFields;
-}
-export const GetUnsealingKeySuccessResponseParameterNames = toFieldNameMap<GetUnsealingKeySuccessResponse>(
-  "unsealingKeyFields"
-);
-
-export interface GetSymmetricKeySuccessResponse {
-  /**
-   * The fields of the derived SymmetricKey.
-   */
-  symmetricKeyFields: SymmetricKeyFields;
-}
-export const GetSymmetricKeySuccessResponseParameterNames = toFieldNameMap<GetSymmetricKeySuccessResponse>(
-  "symmetricKeyFields"
-);
-
-export interface UnsealWithSymmetricKeySuccessResponse {
+export interface UnsealSuccessResponse {
   /**
    * The unsealed plaintext decrypted and authenticated using
    * the derived SymmetricKey.
    */
   plaintext: Uint8Array;
 }
-export const UnsealWithSymmetricKeySuccessResponseParameterNames = toFieldNameMap<UnsealWithSymmetricKeySuccessResponse>(
+export const UnsealSuccessResponseParameterNames = toFieldNameMap<UnsealSuccessResponse>(
   "plaintext"
 );
 
-export interface UnsealWithUnsealingKeySuccessResponse {
-  /**
-   * The unsealed plaintext decrypted and authenticated using
-   * the derived UnsealingKey.
-   */
-  plaintext: Uint8Array;
-}
-export const UnsealWithUnsealingKeySuccessResponseParameterNames = toFieldNameMap<UnsealWithUnsealingKeySuccessResponse>(
-  "plaintext"
-);
+export type  UnsealWithSymmetricKeySuccessResponse = UnsealSuccessResponse;
+export const UnsealWithSymmetricKeySuccessResponseParameterNames = UnsealSuccessResponseParameterNames;
+export type  UnsealWithUnsealingKeySuccessResponse = UnsealSuccessResponse;
+export const UnsealWithUnsealingKeySuccessResponseParameterNames = UnsealSuccessResponseParameterNames;
 
-/**
- * The fields of the PackagedSealedMessage which encode everything
- * the DiceKey holder will need to re-derive the SymmetricKey and
- * the sealed message. 
- */
-export interface SealWithSymmetricKeySuccessResponse {
-  packagedSealedMessageFields: PackagedSealedMessageFields;
-}
-export const SealWithSymmetricKeySuccessResponseParameterNames = toFieldNameMap<SealWithSymmetricKeySuccessResponse>(
-  "packagedSealedMessageFields"
-);
 
 export type SuccessResponse = 
   GetPasswordSuccessResponse |

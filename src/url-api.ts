@@ -1,7 +1,7 @@
 import {
   apiCallFactory, generateRequestId
 } from "./api-factory"
-import { ClientNotAuthorizedException, MissingResponseParameter, restoreException } from "./exceptions";
+import * as Exceptions from "./exceptions";
 import {
   DerivationOptions
 } from "./dicekeys-derivation-options";
@@ -12,15 +12,15 @@ import {
   urlSafeBase64Decode,
   urlSafeBase64Encode
 } from "./encodings";
-import {
-  SignatureVerificationKeyJson,
-  SealingKeyJson,
-  SecretJson,
-  SigningKeyJson,
-  SymmetricKeyJson,
-  UnsealingKeyJson,
-  PackagedSealedMessageJson,
-} from "./seeded-crypto-json-fields";
+// import {
+//   SignatureVerificationKeyJson,
+//   SealingKeyJson,
+//   SecretJson,
+//   SigningKeyJson,
+//   SymmetricKeyJson,
+//   UnsealingKeyJson,
+//   PackagedSealedMessageJson,
+// } from "./seeded-crypto-json-fields";
 import {
   Command,
   GenerateSignature,
@@ -46,15 +46,15 @@ import {
   ApiCallResult,
   GenerateSignatureSuccessResponseParameterNames,
   GetPasswordSuccessResponseParameterNames,
-  GetSealingKeySuccessResponseParameterNames,
-  GetSecretSuccessResponseParameterNames,
-  GetSignatureVerificationKeySuccessResponseParameterNames,
-  GetSigningKeySuccessResponseParameterNames,
-  GetSymmetricKeySuccessResponseParameterNames,
-  GetUnsealingKeySuccessResponseParameterNames,
-  SealWithSymmetricKeySuccessResponseParameterNames,
-  UnsealWithSymmetricKeySuccessResponseParameterNames,
-  UnsealWithUnsealingKeySuccessResponseParameterNames,
+  // GetSealingKeySuccessResponseParameterNames,
+  // GetSecretSuccessResponseParameterNames,
+  // GetSignatureVerificationKeySuccessResponseParameterNames,
+  // GetSigningKeySuccessResponseParameterNames,
+  // GetSymmetricKeySuccessResponseParameterNames,
+  // GetUnsealingKeySuccessResponseParameterNames,
+  // SealWithSymmetricKeySuccessResponseParameterNames,
+  // UnsealWithSymmetricKeySuccessResponseParameterNames,
+  // UnsealWithUnsealingKeySuccessResponseParameterNames,
   GenerateSignatureParameters,
   GenerateSignatureSuccessResponse,
   GetPasswordSuccessResponse,
@@ -76,8 +76,9 @@ import {
   UnsealWithSymmetricKeySuccessResponse,
   UnsealWithUnsealingKeyParameters,
   UnsealWithUnsealingKeySuccessResponse,
-  GetPasswordParameters
+  GetPasswordParameters, GetSeededCryptoObjectSuccessResponse, UnsealSuccessResponseParameterNames
 } from "./api-calls";
+import { PackagedSealedMessageJson } from "./seeded-crypto-json-fields";
 
 export interface UrlRequestMetadata {
   respondTo: string;
@@ -135,7 +136,7 @@ export class UrlApi {
             this.authToken = newAuthToken;
             resolve(newAuthToken);        
           } else {
-            reject(new ClientNotAuthorizedException());
+            reject(new Exceptions.ClientNotAuthorizedException());
           }
         });
         this.transmitRequest(requestUrl);
@@ -157,7 +158,10 @@ export class UrlApi {
     marshallString(RequestCommandParameterNames.command, request.command)
     const derivationOptionsJson = ("derivationOptionsJson" in request) ?
       request.derivationOptionsJson :
-      request.packagedSealedMessageFields.derivationOptionsJson;
+      (JSON.parse(request.packagedSealedMessageJson) as PackagedSealedMessageJson).derivationOptionsJson;
+    if (typeof derivationOptionsJson !== "string") {
+      throw new Exceptions.MissingParameter(`Missing parameter derivationOptionsJson`);
+    }
     if ("derivationOptionsJson" in request) {
       marshallString(DerivationFunctionParameterNames.derivationOptionsJson, request.derivationOptionsJson)
     }
@@ -186,11 +190,7 @@ export class UrlApi {
         break;
       case Command.unsealWithSymmetricKey:
       case Command.unsealWithUnsealingKey:
-        const {ciphertext, derivationOptionsJson, unsealingInstructions} = request.packagedSealedMessageFields;
-        marshallString(UnsealWithUnsealingKeyParameterNames.packagedSealedMessageFields, JSON.stringify({
-          ciphertext: urlSafeBase64Encode(ciphertext),
-          derivationOptionsJson, unsealingInstructions
-        }));
+        marshallString(UnsealWithUnsealingKeyParameterNames.packagedSealedMessageJson, request.packagedSealedMessageJson);
     }
     const urlPromise = new Promise<URL>( (resolve, _reject) => this.pendingPromisesForRequestResponseUrls.set(requestId, resolve));
     this.transmitRequest(requestUrl);
@@ -199,102 +199,35 @@ export class UrlApi {
     if (typeof exception === "string") {
       const message = url.searchParams.get(ExceptionResponseParameterNames.message!) ?? undefined;
       const stack = url.searchParams.get(ExceptionResponseParameterNames.stack!) ?? undefined;
-      throw restoreException(exception, message, stack);
+      throw Exceptions.restoreException(exception, message, stack);
     }
 
-    const fromJson = <T, U>(json: string, f: (t: T) => U) => f(JSON.parse(json) as T);
+//    const fromJson = <T, U>(json: string, f: (t: T) => U) => f(JSON.parse(json) as T);
     const required = (parameterName: string): string => url.searchParams.get(parameterName) ??
-      ( () => { throw new MissingResponseParameter(parameterName) ; })()
+      ( () => { throw new Exceptions.MissingResponseParameter(parameterName) ; })()
 
 
     switch(request.command) {
       case Command.generateSignature:
-        return fromJson<SignatureVerificationKeyJson, ApiCallResult<GenerateSignature>>(
-          required(GenerateSignatureSuccessResponseParameterNames.signatureVerificationKeyFields), 
-          ({signatureVerificationKeyBytes, derivationOptionsJson}) => ({
-            [GenerateSignatureSuccessResponseParameterNames.signatureVerificationKeyFields]: {
-              derivationOptionsJson,
-              signatureVerificationKeyBytes: urlSafeBase64Decode(signatureVerificationKeyBytes)
-            },
-            [GenerateSignatureSuccessResponseParameterNames.signature]: urlSafeBase64Decode(required(GenerateSignatureSuccessResponseParameterNames.signature))            
-          } )
-        ) as ApiCallResult<GenerateSignature>
-      case Command.getPassword:
         return {
-          password: required(GetPasswordSuccessResponseParameterNames.password),
-          derivationOptionsJson: required(GetPasswordSuccessResponseParameterNames.derivationOptionsJson)
-        } as ApiCallResult<GetPassword>
+            [GenerateSignatureSuccessResponseParameterNames.seededCryptoObjectAsJson]: required(GenerateSignatureSuccessResponseParameterNames.seededCryptoObjectAsJson),
+            [GenerateSignatureSuccessResponseParameterNames.signature]: urlSafeBase64Decode(required(GenerateSignatureSuccessResponseParameterNames.signature))            
+        } as GenerateSignatureSuccessResponse;
+      case Command.getPassword:
       case Command.getSealingKey:
-        return fromJson<SealingKeyJson, ApiCallResult<GetSealingKey>>( required(GetSealingKeySuccessResponseParameterNames.sealingKeyFields),
-          ({sealingKeyBytes, derivationOptionsJson}) => ({
-            [GetSealingKeySuccessResponseParameterNames.sealingKeyFields]: {
-              sealingKeyBytes: urlSafeBase64Decode(sealingKeyBytes),
-              derivationOptionsJson
-            }
-          })) as ApiCallResult<GetSealingKey>;
       case Command.getSecret:
-        return fromJson<SecretJson, ApiCallResult<GetSecret>>( required(GetSecretSuccessResponseParameterNames.secretFields),
-          ({secretBytes, derivationOptionsJson}) => ({
-            [GetSecretSuccessResponseParameterNames.secretFields]: {
-              secretBytes: urlSafeBase64Decode(secretBytes),
-              derivationOptionsJson
-            }
-          })) as ApiCallResult<GetSecret>;
-      case Command.getSignatureVerificationKey:
-        return fromJson<SignatureVerificationKeyJson, ApiCallResult<GetSignatureVerificationKey>>(
-          required(GetSignatureVerificationKeySuccessResponseParameterNames.signatureVerificationKeyFields),
-          ({signatureVerificationKeyBytes, derivationOptionsJson}) => ({
-            [GetSignatureVerificationKeySuccessResponseParameterNames.signatureVerificationKeyFields]: {
-              signatureVerificationKeyBytes: urlSafeBase64Decode(signatureVerificationKeyBytes),
-              derivationOptionsJson
-            }
-          })) as ApiCallResult<GetSignatureVerificationKey>;
       case Command.getSigningKey:
-        return fromJson<SigningKeyJson, ApiCallResult<GetSigningKey>>(
-          required(GetSigningKeySuccessResponseParameterNames.signingKeyFields),
-          ({signingKeyBytes, signatureVerificationKeyBytes, derivationOptionsJson}) => ({
-            [GetSigningKeySuccessResponseParameterNames.signingKeyFields]: {
-              derivationOptionsJson,
-              signingKeyBytes: urlSafeBase64Decode(signingKeyBytes),
-              signatureVerificationKeyBytes: signatureVerificationKeyBytes == null ?
-                new Uint8Array() :
-                urlSafeBase64Decode(signatureVerificationKeyBytes)
-            }
-          })) as ApiCallResult<GetSigningKey>;
       case Command.getSymmetricKey:
-        return fromJson<SymmetricKeyJson, ApiCallResult<GetSymmetricKey>>(
-          required(GetSymmetricKeySuccessResponseParameterNames.symmetricKeyFields),
-          ({keyBytes, derivationOptionsJson}) => ({
-            [GetSymmetricKeySuccessResponseParameterNames.symmetricKeyFields]: {
-              keyBytes: urlSafeBase64Decode(keyBytes),
-              derivationOptionsJson
-            }
-          })) as ApiCallResult<GetSymmetricKey>;
       case Command.getUnsealingKey:
-        return fromJson<UnsealingKeyJson, ApiCallResult<GetUnsealingKey>>(
-          required(GetUnsealingKeySuccessResponseParameterNames.unsealingKeyFields),
-          ({unsealingKeyBytes, sealingKeyBytes, derivationOptionsJson}) => ({
-            [GetUnsealingKeySuccessResponseParameterNames.unsealingKeyFields]: {
-              unsealingKeyBytes: urlSafeBase64Decode(unsealingKeyBytes),
-              sealingKeyBytes: urlSafeBase64Decode(sealingKeyBytes),
-              derivationOptionsJson
-            }
-          })) as ApiCallResult<GetUnsealingKey>;
-        break;
+      case Command.getSignatureVerificationKey:
       case Command.sealWithSymmetricKey:
-        return fromJson<PackagedSealedMessageJson, ApiCallResult<SealWithSymmetricKey>>(
-          required(SealWithSymmetricKeySuccessResponseParameterNames.packagedSealedMessageFields),
-          ({ciphertext, unsealingInstructions, derivationOptionsJson}) => ({
-            [SealWithSymmetricKeySuccessResponseParameterNames.packagedSealedMessageFields]: {
-              ciphertext: urlSafeBase64Decode(ciphertext),
-              unsealingInstructions,
-              derivationOptionsJson
-            }
-          })) as ApiCallResult<SealWithSymmetricKey>;
+        return {
+          seededCryptoObjectAsJson: required(GetPasswordSuccessResponseParameterNames.seededCryptoObjectAsJson),
+        } as GetSeededCryptoObjectSuccessResponse
+        break;
       case Command.unsealWithSymmetricKey:
-        return {plaintext: urlSafeBase64Decode(required(UnsealWithSymmetricKeySuccessResponseParameterNames.plaintext))} as ApiCallResult<UnsealWithSymmetricKey>;
-      case Command.unsealWithUnsealingKey:
-        return {plaintext: urlSafeBase64Decode(required(UnsealWithUnsealingKeySuccessResponseParameterNames.plaintext))} as ApiCallResult<UnsealWithUnsealingKey>;
+        case Command.unsealWithUnsealingKey:
+          return {plaintext: urlSafeBase64Decode(required(UnsealSuccessResponseParameterNames.plaintext))} as ApiCallResult<UnsealWithSymmetricKey>;
       default:
         throw new Error();
       }
@@ -306,77 +239,77 @@ export class UrlApi {
  * 
 */
   readonly generateSignature: (params: GenerateSignatureParameters) => Promise<GenerateSignatureSuccessResponse> =
-    apiCallFactory<GenerateSignature>("generateSignature", this.call);
+    apiCallFactory<GenerateSignature>(Command.generateSignature, this.call);
 
 /**
 * Derive a password from the user's DiceKey and the JSON encoded
 * [[PasswordDerivationOptions]].
 */
   readonly getPassword: (params: GetPasswordParameters) => Promise<GetPasswordSuccessResponse> =
-    apiCallFactory<GetPassword>("getPassword", this.call);
+    apiCallFactory<GetPassword>(Command.getPassword, this.call);
 
 /**
 * Derive a SealingKey from the user's DiceKey and the JSON encoded
 * [[UnsealingKeyDerivationOptions]].
 */
   readonly getSealingKey: (params: GetSealingKeyParameters) => Promise<GetSealingKeySuccessResponse> =
-    apiCallFactory<GetSealingKey>("getSealingKey", this.call);
+    apiCallFactory<GetSealingKey>(Command.getSealingKey, this.call);
 
 /**
 * Derive a binary Secret from the user's DiceKey and the JSON encoded
 * [[SecretDerivationOptions]].
 */
   readonly getSecret: (params: GetSecretParameters) => Promise<GetSecretSuccessResponse> =
-    apiCallFactory<GetSecret>("getSecret", this.call);
+    apiCallFactory<GetSecret>(Command.getSecret, this.call);
 
 /**
 * Derive a SignatureVerificationKey from the user's DiceKey and the JSON encoded
 * [[SigningKeyDerivationOptions]].
 */
   readonly getSignatureVerificationKey: (params: GetSignatureVerificationKeyParameters) => Promise<GetSignatureVerificationKeySuccessResponse> =
-    apiCallFactory<GetSignatureVerificationKey>("getSignatureVerificationKey", this.call);
+    apiCallFactory<GetSignatureVerificationKey>(Command.getSignatureVerificationKey, this.call);
 
 /**
 * Derive a SigningKey from the user's DiceKey and the JSON encoded
 * [[SigningKeyDerivationOptions]].
 */
   readonly getSigningKey: (params: GetSigningKeyParameters) => Promise<GetSigningKeySuccessResponse> =
-    apiCallFactory<GetSigningKey>("getSigningKey", this.call);
+    apiCallFactory<GetSigningKey>(Command.getSigningKey, this.call);
 
 /**
 * Derive a SymmetricKey from the user's DiceKey and the JSON encoded
 * [[SymmetricKeyDerivationOptions]].
 */
   readonly getSymmetricKey: (params: GetSymmetricKeyParameters) => Promise<GetSymmetricKeySuccessResponse> =
-    apiCallFactory<GetSymmetricKey>("getSymmetricKey", this.call);
+    apiCallFactory<GetSymmetricKey>(Command.getSymmetricKey, this.call);
 
 /**
 * Derive an UnsealingKey from the user's DiceKey and the JSON encoded
 * [[UnsealingKeyDerivationOptions]].
 */
   readonly getUnsealingKey: (params: GetUnsealingKeyParameters) => Promise<GetUnsealingKeySuccessResponse> =
-    apiCallFactory<GetUnsealingKey>("getUnsealingKey", this.call);
+    apiCallFactory<GetUnsealingKey>(Command.getUnsealingKey, this.call);
 
 /**
 * Seal a message with a SymmetricKey derived from from the user's DiceKey and the JSON encoded
 * [[SymmetricKeyDerivationOptions]].
 */
   readonly sealWithSymmetricKey: (params: SealWithSymmetricKeyParameters) => Promise<SealWithSymmetricKeySuccessResponse> =
-    apiCallFactory<SealWithSymmetricKey>("sealWithSymmetricKey", this.call);
+    apiCallFactory<SealWithSymmetricKey>(Command.sealWithSymmetricKey, this.call);
 
 /**
 * Unseal a message sealed with a SymmetricKey derived from from the user's DiceKey and the JSON encoded
 * [[SymmetricKeyDerivationOptions]].
 */
   readonly unsealWithSymmetricKey: (params: UnsealWithSymmetricKeyParameters) => Promise<UnsealWithSymmetricKeySuccessResponse> =
-    apiCallFactory<UnsealWithSymmetricKey>("unsealWithSymmetricKey", this.call);
+    apiCallFactory<UnsealWithSymmetricKey>(Command.unsealWithSymmetricKey, this.call);
 
 /**
 * Unseal a message sealed with an UnsealingKey derived from from the user's DiceKey and the JSON encoded
 * [[UnsealingKeyDerivationOptions]].
 */
   readonly unsealWithUnsealingKey: (params: UnsealWithUnsealingKeyParameters) => Promise<UnsealWithUnsealingKeySuccessResponse> =
-    apiCallFactory<UnsealWithUnsealingKey>("unsealWithUnsealingKey", this.call);
+    apiCallFactory<UnsealWithUnsealingKey>(Command.unsealWithUnsealingKey, this.call);
 
 
   /**

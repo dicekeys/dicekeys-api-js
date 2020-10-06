@@ -11,7 +11,7 @@ export * from "./dicekeys-derivation-options";
 export * from "./seeded-crypto-derivation-options";
 export * from "./post-message-api";
 export * from "./unsealing-instructions";
-export * from "./seeded-crypto-object-fields";
+// export * from "./seeded-crypto-object-fields";
 export * from "./to-name-map";
 export * from "./url-api";
 export * from "./encodings";
