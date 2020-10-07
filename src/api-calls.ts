@@ -53,7 +53,7 @@ export interface GetSealingKeyParameters extends ParametersWithDerivationOptions
    */
   derivationOptionsJson: string;
 }
-export const GetSealingParameterNames = DerivationFunctionParameterNames;
+export const GetSealingKeyParameterNames = DerivationFunctionParameterNames;
 
 export interface GetUnsealingKeyParameters extends  ParametersWithDerivationOptions {
   /**
@@ -147,6 +147,22 @@ export const Command = toNameMap([
   "generateSignature",  
 ])
 export type Command = keyof typeof Command;
+
+
+export const ParameterNames = {
+  [Command.generateSignature]: GenerateSignatureParameterNames,
+  [Command.getPassword]: GetPasswordParameterNames,
+  [Command.getSecret]: GetSecretParameterNames,
+  [Command.getSignatureVerificationKey]: GetSignatureVerificationKeyParameterNames,
+  [Command.getSigningKey]: GetSigningKeyParameterNames,
+  [Command.getSymmetricKey]: GetSymmetricKeyParameterNames,
+  [Command.getSealingKey]: GetSealingKeyParameterNames,
+  [Command.getUnsealingKey]: GetUnsealingKeyParameterNames,
+  [Command.unsealWithSymmetricKey]: UnsealWithSymmetricKeyParameterNames,
+  [Command.unsealWithUnsealingKey]: UnsealWithUnsealingKeyParameterNames,
+  [Command.sealWithSymmetricKey]: SealWithSymmetricKeyParameterNames,
+} as const;
+
 
 export interface GetSeededCryptoObjectSuccessResponse {
   seededCryptoObjectAsJson: string
