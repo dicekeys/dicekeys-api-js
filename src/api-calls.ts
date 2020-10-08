@@ -164,6 +164,26 @@ export const ParameterNames = {
 } as const;
 
 
+
+const ListOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey = [
+  Command.getSigningKey,
+  Command.getUnsealingKey,
+  Command.getSymmetricKey
+] as const;
+export type CommandsThatRequireDerivationOptionOfClientMayRetrieveKey = typeof ListOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey[number];
+
+
+export const SetOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey = new Set(ListOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey);
+export const commandRequiresDerivationOptionOfClientMayRetrieveKey = (
+  command: Command
+): command is CommandsThatRequireDerivationOptionOfClientMayRetrieveKey =>
+  SetOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey.has(command as CommandsThatRequireDerivationOptionOfClientMayRetrieveKey);
+export const requestRequiresDerivationOptionOfClientMayRetrieveKey = (
+  request: ApiRequestObject
+): request is CommandsApiCall<CommandsThatRequireDerivationOptionOfClientMayRetrieveKey>["request"] =>
+  commandRequiresDerivationOptionOfClientMayRetrieveKey(request.command);
+  
+
 export interface GetSeededCryptoObjectSuccessResponse {
   seededCryptoObjectAsJson: string
 }
