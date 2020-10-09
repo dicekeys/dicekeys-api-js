@@ -1,4 +1,4 @@
-export const toNameMap = <TYPE extends string>(names: TYPE[]) => names.reduce( (result, key) => {
+export const toNameMap = <TYPE extends string>(names: readonly TYPE[]) => names.reduce( (result, key) => {
   return Object.assign(result, {[key]: key} as Partial<{[key in TYPE]: key}>);
 },
 {} as Partial<{[key in TYPE]: key}>

@@ -134,7 +134,7 @@ export type Parameters =
   SealWithSymmetricKeyParameters |
   GenerateSignatureParameters;
 
-export const Command = toNameMap([
+export const Commands = [
   "getPassword",
   "getSecret",
   "getSignatureVerificationKey",
@@ -146,7 +146,8 @@ export const Command = toNameMap([
   "unsealWithUnsealingKey",
   "sealWithSymmetricKey",
   "generateSignature",  
-])
+] as const;
+export const Command = toNameMap(Commands)
 export type Command = keyof typeof Command;
 
 
