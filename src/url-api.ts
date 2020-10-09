@@ -177,7 +177,7 @@ export class UrlApi {
       case Command.sealWithSymmetricKey:
         marshallString(SealWithSymmetricKeyParameterNames.plaintext, urlSafeBase64Encode(request.plaintext));
         if (request.unsealingInstructions != null) {
-          marshallString(SealWithSymmetricKeyParameterNames.unsealingInstructions!, request.unsealingInstructions);
+          marshallString(SealWithSymmetricKeyParameterNames.unsealingInstructions, request.unsealingInstructions);
         }
         break;
       case Command.unsealWithSymmetricKey:

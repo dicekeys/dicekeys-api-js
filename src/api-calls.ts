@@ -102,6 +102,7 @@ export interface SealWithSymmetricKeyParameters extends ParametersWithDerivation
    */
   unsealingInstructions?: string
 }
+
 export const SealWithSymmetricKeyParameterNames = toFieldNameMap<SealWithSymmetricKeyParameters>(
   "derivationOptionsJson", "plaintext", "unsealingInstructions"
 );
