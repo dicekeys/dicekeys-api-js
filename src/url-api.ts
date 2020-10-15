@@ -37,16 +37,6 @@ import {
   ExceptionResponseParameterNames,
   ApiCallResult,
   GenerateSignatureSuccessResponseParameterNames,
-  GetPasswordSuccessResponseParameterNames,
-  // GetSealingKeySuccessResponseParameterNames,
-  // GetSecretSuccessResponseParameterNames,
-  // GetSignatureVerificationKeySuccessResponseParameterNames,
-  // GetSigningKeySuccessResponseParameterNames,
-  // GetSymmetricKeySuccessResponseParameterNames,
-  // GetUnsealingKeySuccessResponseParameterNames,
-  // SealWithSymmetricKeySuccessResponseParameterNames,
-  // UnsealWithSymmetricKeySuccessResponseParameterNames,
-  // UnsealWithUnsealingKeySuccessResponseParameterNames,
   GenerateSignatureParameters,
   GenerateSignatureSuccessResponse,
   GetPasswordSuccessResponse,
@@ -68,7 +58,10 @@ import {
   UnsealWithSymmetricKeySuccessResponse,
   UnsealWithUnsealingKeyParameters,
   UnsealWithUnsealingKeySuccessResponse,
-  GetPasswordParameters, GetSeededCryptoObjectSuccessResponse, UnsealSuccessResponseParameterNames
+  GetPasswordParameters,
+  GetSeededCryptoObjectSuccessResponse,
+  UnsealSuccessResponseParameterNames,
+  SeededCryptoObjectResponseParameterNames
 } from "./api-calls";
 import { PackagedSealedMessageJson } from "./seeded-crypto-json-fields";
 
@@ -202,7 +195,7 @@ export class UrlApi {
     switch(request.command) {
       case Command.generateSignature:
         return {
-            [GenerateSignatureSuccessResponseParameterNames.seededCryptoObjectAsJson]: required(GenerateSignatureSuccessResponseParameterNames.seededCryptoObjectAsJson),
+            [GenerateSignatureSuccessResponseParameterNames.signatureVerificationKeyJson]: required(GenerateSignatureSuccessResponseParameterNames.signatureVerificationKeyJson),
             [GenerateSignatureSuccessResponseParameterNames.signature]: urlSafeBase64Decode(required(GenerateSignatureSuccessResponseParameterNames.signature))            
         } as GenerateSignatureSuccessResponse;
       case Command.getPassword:
@@ -214,8 +207,8 @@ export class UrlApi {
       case Command.getSignatureVerificationKey:
       case Command.sealWithSymmetricKey:
         return {
-          seededCryptoObjectAsJson: required(GetPasswordSuccessResponseParameterNames.seededCryptoObjectAsJson),
-        } as GetSeededCryptoObjectSuccessResponse
+          [SeededCryptoObjectResponseParameterNames[request.command]]: required(SeededCryptoObjectResponseParameterNames[request.command]),
+        } as GetSeededCryptoObjectSuccessResponse<typeof request.command>
         break;
       case Command.unsealWithSymmetricKey:
         case Command.unsealWithUnsealingKey:

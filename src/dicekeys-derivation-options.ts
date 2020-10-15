@@ -250,10 +250,13 @@ const DerivationOptionsForDiceKeysApiFor = <
   derivationOptionsAsObjectOrJson?: string | null | (DerivationOptions<TYPE>),
   optionsNotSpecifiedWithinThisStandard?: object
 ): DerivationOptions<TYPE> => {
-  const derivationOptions = 
-    (typeof derivationOptionsAsObjectOrJson === "object" && derivationOptionsAsObjectOrJson != null) ?
-      derivationOptionsAsObjectOrJson :
-      JSON.parse(derivationOptionsAsObjectOrJson ?? "{}") as DerivationOptions<TYPE>;
+  const derivationOptions: DerivationOptions<TYPE> = 
+    (derivationOptionsAsObjectOrJson == null || derivationOptionsAsObjectOrJson === "") ?
+      {} as DerivationOptions<TYPE> :
+    (typeof derivationOptionsAsObjectOrJson === "string") ?
+      (JSON.parse(derivationOptionsAsObjectOrJson) as DerivationOptions<TYPE>) :
+    derivationOptionsAsObjectOrJson;
+
   if (typeRequiredByOperation && derivationOptions.type && derivationOptions.type !== typeRequiredByOperation) {
     throw InvalidDerivationOptionsTypeFieldException.create(typeRequiredByOperation, derivationOptions.type);
   }

@@ -4,6 +4,7 @@ import {
 } from "./to-name-map";
 
 
+
 interface ParametersWithDerivationOptions {
   /**
    * JSON-encoded DerivationOptions (plus arbitrary additional fields)
@@ -184,42 +185,75 @@ export const requestRequiresDerivationOptionOfClientMayRetrieveKey = (
   request: ApiRequestObject
 ): request is CommandsApiCall<CommandsThatRequireDerivationOptionOfClientMayRetrieveKey>["request"] =>
   commandRequiresDerivationOptionOfClientMayRetrieveKey(request.command);
-  
 
-export interface GetSeededCryptoObjectSuccessResponse {
-  seededCryptoObjectAsJson: string
+export type CommandWithJsonResponse =
+  typeof Command.generateSignature |
+  typeof Command.getPassword |
+  typeof Command.getSealingKey |
+  typeof Command.getSecret |
+  typeof Command.getSigningKey |
+  typeof Command.getSignatureVerificationKey |
+  typeof Command.getSymmetricKey |
+  typeof Command.getUnsealingKey |
+  typeof Command.sealWithSymmetricKey;
+export const commandHasJsonResponse = (command: Command): command is CommandWithJsonResponse =>
+  command != Command.unsealWithSymmetricKey && command != Command.unsealWithUnsealingKey;
+
+export const SeededCryptoObjectResponseParameterNames = {
+  [Command.generateSignature]: "signatureVerificationKeyJson",
+  [Command.getPassword]: "passwordJson",
+  [Command.getSealingKey]: "sealingKeyJson",
+  [Command.getSecret]: "secretJson",
+  [Command.getSigningKey]: "signingKeyJson",
+  [Command.getSignatureVerificationKey]: "signatureVerificationKeyJson",
+  [Command.getSymmetricKey]: "symmetricKeyJson",
+  [Command.getUnsealingKey]: "unsealingKeyJson",
+  [Command.sealWithSymmetricKey]: "packagedSealedMessageJson"
+} as const;
+export type SeededCryptoObjectResponseParameterNames = typeof SeededCryptoObjectResponseParameterNames;
+export type SeededCryptoObjectResponseParameterName<COMMAND extends CommandWithJsonResponse> = SeededCryptoObjectResponseParameterNames[COMMAND];
+
+
+export type GetSeededCryptoObjectSuccessResponse<COMMAND extends CommandWithJsonResponse> = {
+  [key in SeededCryptoObjectResponseParameterName<COMMAND>]: string
 }
-export const GetSeededCryptoObjectResponseParameterNames = toFieldNameMap<GetPasswordSuccessResponse>(
-  "seededCryptoObjectAsJson"
-);
-export type  GetPasswordSuccessResponse = GetSeededCryptoObjectSuccessResponse;
-export const GetPasswordSuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
+export const GetSeededCryptoObjectResponseParameterNames = <COMMAND extends CommandWithJsonResponse>(
+  command: COMMAND
+) => ({
+  [SeededCryptoObjectResponseParameterNames[command]]: SeededCryptoObjectResponseParameterNames[command]
+} as {[key in SeededCryptoObjectResponseParameterName<COMMAND>]: SeededCryptoObjectResponseParameterName<COMMAND>});
+
+// toFieldNameMap<GetSeededCryptoObjectSuccessResponse<COMMAND>>(
+//   SeededCryptoObjectResponseParameterNames[command]
+// );
+export type  GetPasswordSuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.getPassword>;
+export const GetPasswordSuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.getPassword);
 
 
-export interface GenerateSignatureSuccessResponse extends GetSeededCryptoObjectSuccessResponse {
+export type GenerateSignatureSuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.generateSignature> & {
   /**
    * The signature of the message
    */
   signature: Uint8Array
 }
 export const GenerateSignatureSuccessResponseParameterNames = toFieldNameMap<GenerateSignatureSuccessResponse>(
-  "signature", "seededCryptoObjectAsJson"
+  "signature", "signatureVerificationKeyJson"
 );
 
-export type  GetSecretSuccessResponse = GetSeededCryptoObjectSuccessResponse;
-export const GetSecretSuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
-export type  GetSignatureVerificationKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
-export const GetSignatureVerificationKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
-export type  GetSigningKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
-export const GetSigningKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
-export type  GetSealingKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
-export const GetSealingKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
-export type  GetSymmetricKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
-export const GetSymmetricKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
-export type  GetUnsealingKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
-export const GetUnsealingKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
-export type  SealWithSymmetricKeySuccessResponse = GetSeededCryptoObjectSuccessResponse;
-export const SealWithSymmetricKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames;
+export type  GetSecretSuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.getSecret>;
+export const GetSecretSuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.getSecret);
+export type  GetSignatureVerificationKeySuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.getSignatureVerificationKey>;
+export const GetSignatureVerificationKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.getSignatureVerificationKey);
+export type  GetSigningKeySuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.getSigningKey>;
+export const GetSigningKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.getSigningKey);
+export type  GetSealingKeySuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.getSealingKey>;
+export const GetSealingKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.getSealingKey);
+export type  GetSymmetricKeySuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.getSymmetricKey>;
+export const GetSymmetricKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.getSymmetricKey);
+export type  GetUnsealingKeySuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.getUnsealingKey>;
+export const GetUnsealingKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.getUnsealingKey);
+export type  SealWithSymmetricKeySuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.sealWithSymmetricKey>;
+export const SealWithSymmetricKeySuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.sealWithSymmetricKey);
 
 export interface UnsealSuccessResponse {
   /**
@@ -262,6 +296,21 @@ export const RequestCommandParameterNames = toFieldNameMap<RequestCommand<any>>(
   "command"
 );
 
+export type RequestWithDerivationOptionsJsonParameter = 
+  GetPasswordRequest |
+  GetSecretRequest |
+  GetSignatureVerificationKeyRequest |
+  GetSigningKeyRequest |
+  GetSealingKeyRequest |
+  GetUnsealingKeyRequest |
+  GetSymmetricKeyRequest |
+  SealWithSymmetricKeyRequest |
+  GenerateSignatureRequest;
+
+export type RequestWithPackagedSealedMessageParameter = 
+  UnsealWithSymmetricKeyRequest |
+  UnsealWithUnsealingKeyRequest;
+
 export type Request = 
   GetPasswordRequest |
   GetSecretRequest |
@@ -274,6 +323,13 @@ export type Request =
   UnsealWithUnsealingKeyRequest |
   SealWithSymmetricKeyRequest |
   GenerateSignatureRequest;
+
+export const requestHasPackagedSealedMessageParameter = (request: Request): request is RequestWithPackagedSealedMessageParameter =>
+  request.command === Command.unsealWithSymmetricKey || request.command === Command.unsealWithUnsealingKey;
+
+export const requestHasDerivationOptionsParameter = (request: Request): request is RequestWithDerivationOptionsJsonParameter =>
+  !requestHasPackagedSealedMessageParameter(request);
+
 export type GetPasswordRequest = GetPasswordParameters & RequestCommand<typeof Command.getPassword>;
 export type GetSecretRequest = GetSecretParameters & RequestCommand<typeof Command.getSecret>;
 export type GetSignatureVerificationKeyRequest = GetSignatureVerificationKeyParameters & RequestCommand<typeof Command.getSignatureVerificationKey>;
@@ -307,7 +363,7 @@ export interface UnsealWithUnsealingKey extends ApiFunction<UnsealWithUnsealingK
 export interface SealWithSymmetricKey extends ApiFunction<SealWithSymmetricKeyParameters, typeof Command.sealWithSymmetricKey, SealWithSymmetricKeySuccessResponse> {}
 export interface GenerateSignature extends ApiFunction<GenerateSignatureParameters, typeof Command.generateSignature, GenerateSignatureSuccessResponse> {}
 
-export type ApiCall =
+export type ApiCallsThatTakeDerivationOptionJsonParameter = 
   GetPassword |
   GetSecret |
   GetSignatureVerificationKey |
@@ -315,10 +371,17 @@ export type ApiCall =
   GetSealingKey |
   GetUnsealingKey |
   GetSymmetricKey |
-  UnsealWithSymmetricKey |
-  UnsealWithUnsealingKey |
   SealWithSymmetricKey |
   GenerateSignature;
+
+export type ApiCallsWithNoDerivationOptionJsonParameter =  
+    UnsealWithSymmetricKey |
+    UnsealWithUnsealingKey;
+
+
+export type ApiCall =
+  ApiCallsThatTakeDerivationOptionJsonParameter |
+  ApiCallsWithNoDerivationOptionJsonParameter;
 
 // export type ApiRequestObject<METHOD extends ApiCall = ApiCall> = METHOD extends (p: infer PARAMETERS) => any ? PARAMETERS : never;
 export type ApiRequestObject<METHOD extends ApiCall = ApiCall> = METHOD["request"];
