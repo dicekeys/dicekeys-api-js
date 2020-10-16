@@ -236,9 +236,6 @@ export const GetSeededCryptoObjectResponseParameterNames = <COMMAND extends Comm
   [SeededCryptoObjectResponseParameterNames[command]]: SeededCryptoObjectResponseParameterNames[command]
 } as {[key in SeededCryptoObjectResponseParameterName<COMMAND>]: SeededCryptoObjectResponseParameterName<COMMAND>});
 
-// toFieldNameMap<GetSeededCryptoObjectSuccessResponse<COMMAND>>(
-//   SeededCryptoObjectResponseParameterNames[command]
-// );
 export type  GetPasswordSuccessResponse = GetSeededCryptoObjectSuccessResponse<typeof Command.getPassword>;
 export const GetPasswordSuccessResponseParameterNames = GetSeededCryptoObjectResponseParameterNames(Command.getPassword);
 
