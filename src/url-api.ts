@@ -137,18 +137,23 @@ export class UrlApi {
   ): Promise<ResultForRequest<REQUEST>> => {
     const requestUrl = new URL(this.requestUrlString);
     const marshallString = (field: string, value: string) => requestUrl.searchParams.set(field, value);
+    const marshallBoolean = (field: string, value: boolean) => requestUrl.searchParams.set(field, value ? "true": "false");
     const requestId = generateRequestId();
     marshallString(RequestMetadataParameterNames.requestId, requestId);
     marshallString(UrlRequestMetadataParameterNames.respondTo, this.respondToUrl);
     marshallString(RequestCommandParameterNames.command, request.command)
-    const derivationOptionsJson = ("derivationOptionsJson" in request) ?
-      request.derivationOptionsJson :
-      (JSON.parse(request.packagedSealedMessageJson) as PackagedSealedMessageJson).derivationOptionsJson;
+    const derivationOptionsJson =
+      "packagedSealedMessageJson" in request ?
+        (JSON.parse(request.packagedSealedMessageJson) as PackagedSealedMessageJson).derivationOptionsJson ?? "" :
+        request.derivationOptionsJson ?? "";
     if (typeof derivationOptionsJson !== "string") {
       throw new Exceptions.MissingParameter(`Missing parameter derivationOptionsJson`);
     }
-    if ("derivationOptionsJson" in request) {
+    if ("derivationOptionsJson" in request && request.derivationOptionsJson != null) {
       marshallString(DerivationFunctionParameterNames.derivationOptionsJson, request.derivationOptionsJson)
+    }
+    if ("derivationOptionsJsonMayBeModified" in request && request.derivationOptionsJsonMayBeModified != null) {
+      marshallBoolean(DerivationFunctionParameterNames.derivationOptionsJsonMayBeModified, request.derivationOptionsJsonMayBeModified)
     }
     const {requireAuthenticationHandshake} = DerivationOptions(derivationOptionsJson);
     if (requireAuthenticationHandshake) {

@@ -4,23 +4,36 @@ import {
 } from "./to-name-map";
 
 
-
 interface ParametersWithDerivationOptions {
   /**
    * JSON-encoded DerivationOptions (plus arbitrary additional fields)
    */
-  derivationOptionsJson: string;
+  derivationOptionsJson?: string;
+
+  /**
+   * Determines whether the DiceKeys app may allow the user to make adjustments to the
+   * derivation options (desirable when creating a new secret/key/password), or if the options should be treated
+   * as immutable (as would be desired when replicating a previously-generated key).
+   * 
+   * Defaults to true for "getSealingKey" and "sealWithSymmetricKey" (as no data has been sealed yet),
+   * and false otherwise (such as when generating a password or secret, as we don't know if it's the first time,
+   * or when generating other secrets).
+   */
+  derivationOptionsJsonMayBeModified?: boolean;
 }
 export const DerivationFunctionParameterNames = toFieldNameMap<ParametersWithDerivationOptions>(
-  "derivationOptionsJson"
+  "derivationOptionsJson",
+  "derivationOptionsJsonMayBeModified",
 )
 
+export const getDefaultValueOfDerivationOptionsJsonMayBeModified = (command: Command): boolean =>
+  command === "getSealingKey" || command == "sealWithSymmetricKey";
 
 export interface GetPasswordParameters extends ParametersWithDerivationOptions {
   /**
    * JSON-encoded [[PasswordDerivationOptions]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  derivationOptionsJson?: string;
 }
 export const GetPasswordParameterNames = DerivationFunctionParameterNames;
 
@@ -28,7 +41,7 @@ export interface GetSecretParameters extends ParametersWithDerivationOptions {
   /**
    * JSON-encoded [[SecretDerivationOptions]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  derivationOptionsJson?: string;
 }
 export const GetSecretParameterNames = DerivationFunctionParameterNames;
 
@@ -36,7 +49,7 @@ export interface GetSignatureVerificationKeyParameters extends ParametersWithDer
   /**
    * JSON-encoded [[SigningKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  derivationOptionsJson?: string;
 }
 export const GetSignatureVerificationKeyParameterNames = DerivationFunctionParameterNames;
 
@@ -52,7 +65,7 @@ export interface GetSealingKeyParameters extends ParametersWithDerivationOptions
   /**
    * JSON-encoded [[UnsealingKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  derivationOptionsJson?: string;
 }
 export const GetSealingKeyParameterNames = DerivationFunctionParameterNames;
 
@@ -93,7 +106,7 @@ export interface SealWithSymmetricKeyParameters extends ParametersWithDerivation
   /**
    * JSON-encoded [[UnsealingKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  derivationOptionsJson?: string;
   /**
    * The plaintext message to seal (encrypt and authenticate)
    */

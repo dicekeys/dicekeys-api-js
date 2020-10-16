@@ -138,15 +138,15 @@ export interface PasswordWordList {
    * The name of the word list to use to convert a binary secret (a byte array)
    * into a password.
    * 
-   * If the field is not set and the derivation options are mutable, the
+   * If the field is not set, the
    * DiceKeys app should allow the user to choose from a set of word lists
    * to match the user's preference of language and vocabulary size once
    * more than one word list is available.  The DiceKeys app will then
    * return a derivationOptionsJson string with the wordList field set
    * to the user's chosen word list.
    * 
-   * If the derivation options are not mutable and this field is not set, the
-   * DiceKeys app will default to the EN_512_5_chars_4_min_edit_distance_20200916
+   * If the derivation options are not set, the DiceKeys app will default
+   * to the EN_512_5_chars_4_min_edit_distance_20200916
    * word list.
    */
   wordList?: WordListName;
