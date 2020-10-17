@@ -56,10 +56,9 @@ export interface PackagedSealedMessageJson {
 
 export interface PasswordJson extends DerivedSecretJson {
     /**
-     * The array of bytes that constitutes the derived secret,
-     * encoded to URL-safe Base64 per [RFC 4648 Section 5](https://tools.ietf.org/html/rfc4648#section-5).
+     * The string containing the derived password.
      */
-    secretBytes: ByteArrayAsUrlSafeBase64String;
+    password: string;
 }
 
 
