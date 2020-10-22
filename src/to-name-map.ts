@@ -14,4 +14,4 @@ export const toFieldNameMap = <
       return Object.assign(result, {[key]: key} as Partial<{[key in (KeysIncludingOptionalKeys<OBJECT_TYPE>)]: key}>);
     },
     {} as Partial<{[key in (keyof OBJECT_TYPE)]: key}>
-  ) as {[key in (keyof OBJECT_TYPE)]: key};
+  ) as {readonly [key in (keyof OBJECT_TYPE)]: key};

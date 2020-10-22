@@ -21,6 +21,7 @@
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
+    "cross-compile": "ts-node cross-compiling/generate.ts",
     "build-docs": "typedoc && copyfiles --flat _config.yml docs/"
   },
   "dependencies": {

@@ -118,7 +118,7 @@ export interface SealWithSymmetricKeyParameters extends ParametersWithDerivation
 }
 
 export const SealWithSymmetricKeyParameterNames = toFieldNameMap<SealWithSymmetricKeyParameters>(
-  "derivationOptionsJson", "plaintext", "unsealingInstructions"
+  "derivationOptionsJson", "plaintext", "unsealingInstructions", "derivationOptionsJsonMayBeModified"
 );
 
 export interface GenerateSignatureParameters extends ParametersWithDerivationOptions{
@@ -149,17 +149,17 @@ export type Parameters =
   GenerateSignatureParameters;
 
 export const Commands = [
+  "generateSignature",  
   "getPassword",
-  "getSecret",
-  "getSignatureVerificationKey",
-  "getSigningKey",
   "getSealingKey",
-  "getUnsealingKey",
+  "getSecret",
+  "getSigningKey",
+  "getSignatureVerificationKey",
   "getSymmetricKey",
+  "getUnsealingKey",
+  "sealWithSymmetricKey",
   "unsealWithSymmetricKey",
   "unsealWithUnsealingKey",
-  "sealWithSymmetricKey",
-  "generateSignature",  
 ] as const;
 export const Command = toNameMap(Commands)
 export type Command = keyof typeof Command;
@@ -211,6 +211,20 @@ export type CommandWithJsonResponse =
   typeof Command.sealWithSymmetricKey;
 export const commandHasJsonResponse = (command: Command): command is CommandWithJsonResponse =>
   command != Command.unsealWithSymmetricKey && command != Command.unsealWithUnsealingKey;
+
+export const SuccessResponseParameterNames = {
+  [Command.generateSignature]: toFieldNameMap<GenerateSignatureSuccessResponse>("signatureVerificationKeyJson", "signature"), // as (keyof GenerateSignatureSuccessResponse)[],
+  [Command.getPassword]: toFieldNameMap<GetPasswordSuccessResponse>("passwordJson"),
+  [Command.getSecret]: toFieldNameMap<GetSecretSuccessResponse>("secretJson"),
+  [Command.getSignatureVerificationKey]: toFieldNameMap<GetSignatureVerificationKeySuccessResponse>("signatureVerificationKeyJson"),
+  [Command.getSigningKey]: toFieldNameMap<GetSigningKeySuccessResponse>("signingKeyJson"),
+  [Command.getSymmetricKey]: toFieldNameMap<GetSymmetricKeySuccessResponse>("symmetricKeyJson"),
+  [Command.getSealingKey]: toFieldNameMap<GetSealingKeySuccessResponse>("sealingKeyJson"),
+  [Command.getUnsealingKey]: toFieldNameMap<GetUnsealingKeySuccessResponse>("unsealingKeyJson"),
+  [Command.unsealWithSymmetricKey]: toFieldNameMap<UnsealWithSymmetricKeySuccessResponse>("plaintext"),
+  [Command.unsealWithUnsealingKey]: toFieldNameMap<UnsealWithUnsealingKeySuccessResponse>("plaintext"),
+  [Command.sealWithSymmetricKey]: toFieldNameMap<SealWithSymmetricKeySuccessResponse>("packagedSealedMessageJson"),
+} as const;
 
 export const SeededCryptoObjectResponseParameterNames = {
   [Command.generateSignature]: "signatureVerificationKeyJson",
@@ -295,6 +309,45 @@ export type SuccessResponse =
   SealWithSymmetricKeySuccessResponse |
   GenerateSignatureSuccessResponse;
 
+  type SuccessResponseParameterNameTypes<COMMAND extends Command> =
+  COMMAND extends "generateSignature" ?
+  (keyof typeof GenerateSignatureSuccessResponseParameterNames) :
+  COMMAND extends ("unsealWithSymmetricKey" | "unsealWithUnsealingKey") ?
+  (keyof typeof UnsealSuccessResponseParameterNames) :
+  SeededCryptoObjectResponseParameterNames[COMMAND & CommandWithJsonResponse]
+
+export const SuccessResponseParameters = Commands.reduce( 
+  <COMMAND extends Command>(
+      result: {[command in COMMAND]: SuccessResponseParameterNameTypes<command>[]},
+      command: COMMAND
+    ) => {
+      result[command] = [
+        ...( command in SeededCryptoObjectResponseParameterNames ?
+          [SeededCryptoObjectResponseParameterNames[command as keyof SeededCryptoObjectResponseParameterNames]] :
+          []
+        ),
+        ...( command === "generateSignature" ?
+          Object.keys(GenerateSignatureSuccessResponseParameterNames) : []
+        ),
+        ...( (command === "unsealWithSymmetricKey" || command === "unsealWithUnsealingKey") ?
+          Object.keys(UnsealSuccessResponseParameterNames) : []
+        ),
+      ] as SuccessResponseParameterNameTypes<typeof command>[];
+      return result;
+  }, {} as {
+    [command in Command]: SuccessResponseParameterNameTypes<command>[]
+  });
+export type SuccessResponseParameterName = typeof SuccessResponseParameters[Command][number];
+export type SuccessResponseParameterNameToType<P extends SuccessResponseParameterName> =
+    P extends ("signature" | "plaintext") ? Uint8Array :
+    string;
+export type SuccessResponseParameterNameToTypeName<P extends SuccessResponseParameterName> =
+    P extends ("signature" | "plaintext") ? "Uint8Array" :
+    "string";
+export const SuccessResponseParameterNameToTypeName = <SUCCESS_RESPONSE_NAME extends SuccessResponseParameterName>(
+  pName: SUCCESS_RESPONSE_NAME
+) => (pName === "signature" || pName === "plaintext") ?
+      "Uint8Array" : "string";
 
 export interface RequestCommand<COMMAND extends string> {
   /**
@@ -334,6 +387,25 @@ export type Request =
   SealWithSymmetricKeyRequest |
   GenerateSignatureRequest;
 
+type KeysIncludingOptionalKeys<T> = T extends any ? keyof T : never;
+type RequestParameterName = KeysIncludingOptionalKeys<Request>;
+export type RequestParameterNameToType<P extends RequestParameterName> =
+    P extends ("message" | "plaintext") ? Uint8Array :
+    P extends "derivationOptionsMayBeModified" ? boolean :
+    string;
+export type RequestParameterNameToTypeName<P extends RequestParameterName> =
+    P extends ("message" | "plaintext") ? "Uint8Array" :
+    P extends "derivationOptionsMayBeModified" ? "boolean" :
+    "string";
+export const requestParameterNameToTypeName = <REQUEST_NAME extends RequestParameterName>(
+  requestName: REQUEST_NAME
+) => (
+    (requestName === "message" || requestName === "plaintext") ?
+      "Uint8Array" :
+    (requestName === "derivationOptionsJsonMayBeModified") ? "boolean" :
+    "string"
+  ) as RequestParameterNameToTypeName<REQUEST_NAME>;
+  
 export const requestHasPackagedSealedMessageParameter = (request: Request): request is RequestWithPackagedSealedMessageParameter =>
   request.command === Command.unsealWithSymmetricKey || request.command === Command.unsealWithUnsealingKey;
 
@@ -393,6 +465,10 @@ export type ApiCall =
   ApiCallsThatTakeDerivationOptionJsonParameter |
   ApiCallsWithNoDerivationOptionJsonParameter;
 
+
+
+
+
 // export type ApiRequestObject<METHOD extends ApiCall = ApiCall> = METHOD extends (p: infer PARAMETERS) => any ? PARAMETERS : never;
 export type ApiRequestObject<METHOD extends ApiCall = ApiCall> = METHOD["request"];
 //type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
@@ -421,11 +497,11 @@ export type RequestsApiCall<REQUEST extends Request> = CommandsApiCall<REQUEST["
 export type ResultForRequest<REQUEST extends Request> = ApiCallResult<RequestsApiCall<REQUEST>>
 
 
-export interface RequestMetadata {
+export interface RequestMetadata extends RequestCommand<any> {
   requestId: string,
 }
 export const RequestMetadataParameterNames = toFieldNameMap<RequestMetadata>(
-  "requestId"
+  "requestId", "command"
 );
 
 export type RequestMessage<CALL extends ApiCall = ApiCall> = ApiRequestObject<CALL> & RequestMetadata
@@ -441,7 +517,18 @@ export const ResponseMetadataParameterNames = toFieldNameMap<ResponseMetadata>(
 export type SuccessResult<CALL extends ApiCall = ApiCall> =
 ResponseMetadata & ApiCallResult<CALL>;
 
-export interface ExceptionResponse extends ResponseMetadata {
+export interface ExceptionParameters {
+  exception: string;
+  message?: string | undefined;
+  stack?: string | undefined;
+}
+export const ExceptionParameterNames = toFieldNameMap<ExceptionParameters>(
+  "exception",
+  "message",
+  "stack"
+);
+
+export interface ExceptionResponse extends ExceptionParameters, ResponseMetadata {
   exception: string;
   message?: string | undefined;
   stack?: string | undefined;
