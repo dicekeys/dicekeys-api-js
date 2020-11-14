@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import {generateKotlinApi} from "./generate-kotlin"
+import { generateSwiftApi } from "./generate-swift";
 for (const dirName of [
   "./cross-compiling-out",
 ]) {
@@ -9,3 +10,4 @@ for (const dirName of [
 }
 
 generateKotlinApi();
+generateSwiftApi();
