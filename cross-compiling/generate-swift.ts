@@ -31,7 +31,7 @@ enum Request {${ "\n" +
   })
 }
 
-enum MetaInputs {
+enum MetaInputs: String, Codable {
 ${"\t"  +
     Object.keys(Api.RequestMetadataParameterNames).sort().map(
       parameterName => `case ${parameterName}`
@@ -39,7 +39,7 @@ ${"\t"  +
   }
 }
 
-enum UrlMetaInputs {
+enum UrlMetaInputs: String, Codable {
 ${"\t"  +
     Object.keys(UrlRequestMetadataParameterNames).sort().map(
       parameterName => `case ${parameterName}`
@@ -57,7 +57,7 @@ enum SuccessResponse {${ "\n" +
   })
 }
 
-enum MetaOutputs {
+enum MetaOutputs: String, Codable {
 ${"\t"  +
     Object.keys(Api.ResponseMetadataParameterNames).sort().map(
       parameterName => `case ${parameterName}`
@@ -65,7 +65,7 @@ ${"\t"  +
   }
 }
 
-enum ExceptionMetaOutputs {
+enum ExceptionMetaOutputs: String, Codable {
 ${"\t"  +
     Object.keys(Api.ExceptionParameterNames).sort().map(
       parameterName => `case ${parameterName}`
