@@ -4,91 +4,91 @@ import {
 } from "./to-name-map";
 
 
-interface ParametersWithDerivationOptions {
+interface ParametersWithRecipe {
   /**
-   * JSON-encoded DerivationOptions (plus arbitrary additional fields)
+   * JSON-encoded Recipe (plus arbitrary additional fields)
    */
-  derivationOptionsJson?: string;
+  recipe?: string;
 
   /**
    * Determines whether the DiceKeys app may allow the user to make adjustments to the
-   * derivation options (desirable when creating a new secret/key/password), or if the options should be treated
+   * recipe (desirable when creating a new secret/key/password), or if the options should be treated
    * as immutable (as would be desired when replicating a previously-generated key).
    * 
    * Defaults to true for "getSealingKey" and "sealWithSymmetricKey" (as no data has been sealed yet),
    * and false otherwise (such as when generating a password or secret, as we don't know if it's the first time,
    * or when generating other secrets).
    */
-  derivationOptionsJsonMayBeModified?: boolean;
+  recipeMayBeModified?: boolean;
 }
-export const DerivationFunctionParameterNames = toFieldNameMap<ParametersWithDerivationOptions>(
-  "derivationOptionsJson",
-  "derivationOptionsJsonMayBeModified",
+export const RecipeFunctionParameterNames = toFieldNameMap<ParametersWithRecipe>(
+  "recipe",
+  "recipeMayBeModified",
 )
 
-export const getDefaultValueOfDerivationOptionsJsonMayBeModified = (command: Command): boolean =>
+export const getDefaultValueOfRecipeMayBeModified = (command: Command): boolean =>
   command === "getSealingKey" || command == "sealWithSymmetricKey";
 
-export interface GetPasswordParameters extends ParametersWithDerivationOptions {
+export interface GetPasswordParameters extends ParametersWithRecipe {
   /**
-   * JSON-encoded [[PasswordDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[PasswordRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson?: string;
+  recipe?: string;
 }
-export const GetPasswordParameterNames = DerivationFunctionParameterNames;
+export const GetPasswordParameterNames = RecipeFunctionParameterNames;
 
-export interface GetSecretParameters extends ParametersWithDerivationOptions {
+export interface GetSecretParameters extends ParametersWithRecipe {
   /**
-   * JSON-encoded [[SecretDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[SecretRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson?: string;
+  recipe?: string;
 }
-export const GetSecretParameterNames = DerivationFunctionParameterNames;
+export const GetSecretParameterNames = RecipeFunctionParameterNames;
 
-export interface GetSignatureVerificationKeyParameters extends ParametersWithDerivationOptions {
+export interface GetSignatureVerificationKeyParameters extends ParametersWithRecipe {
   /**
-   * JSON-encoded [[SigningKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[SigningKeyRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson?: string;
+  recipe?: string;
 }
-export const GetSignatureVerificationKeyParameterNames = DerivationFunctionParameterNames;
+export const GetSignatureVerificationKeyParameterNames = RecipeFunctionParameterNames;
 
-export interface GetSigningKeyParameters extends ParametersWithDerivationOptions{
+export interface GetSigningKeyParameters extends ParametersWithRecipe{
   /**
-   * JSON-encoded [[SigningKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[SigningKeyRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  recipe: string;
 }
-export const GetSigningKeyParameterNames = DerivationFunctionParameterNames;
+export const GetSigningKeyParameterNames = RecipeFunctionParameterNames;
 
-export interface GetSealingKeyParameters extends ParametersWithDerivationOptions {
+export interface GetSealingKeyParameters extends ParametersWithRecipe {
   /**
-   * JSON-encoded [[UnsealingKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[UnsealingKeyRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson?: string;
+  recipe?: string;
 }
-export const GetSealingKeyParameterNames = DerivationFunctionParameterNames;
+export const GetSealingKeyParameterNames = RecipeFunctionParameterNames;
 
-export interface GetUnsealingKeyParameters extends  ParametersWithDerivationOptions {
+export interface GetUnsealingKeyParameters extends  ParametersWithRecipe {
   /**
-   * JSON-encoded [[UnsealingKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[UnsealingKeyRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  recipe: string;
 }
-export const GetUnsealingKeyParameterNames = DerivationFunctionParameterNames;
+export const GetUnsealingKeyParameterNames = RecipeFunctionParameterNames;
 
-export interface GetSymmetricKeyParameters extends ParametersWithDerivationOptions {
+export interface GetSymmetricKeyParameters extends ParametersWithRecipe {
   /**
-   * JSON-encoded [[SymmetricKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[SymmetricKeyRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  recipe: string;
 }
-export const GetSymmetricKeyParameterNames = DerivationFunctionParameterNames;
+export const GetSymmetricKeyParameterNames = RecipeFunctionParameterNames;
 
 
 export interface UnsealParameters {
   /**
-   * The encrypted (sealed) message to be unsealed packaged with its derivation options and optional unsealing instructions.
+   * The encrypted (sealed) message to be unsealed packaged with its recipe and optional unsealing instructions.
    */
   packagedSealedMessageJson: string;
 }
@@ -102,11 +102,11 @@ export type  UnsealWithUnsealingKeyParameters = UnsealParameters;
 export const UnsealWithUnsealingKeyParameterNames = UnsealParameterNames;
 
 
-export interface SealWithSymmetricKeyParameters extends ParametersWithDerivationOptions {
+export interface SealWithSymmetricKeyParameters extends ParametersWithRecipe {
   /**
-   * JSON-encoded [[UnsealingKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[UnsealingKeyRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson?: string;
+  recipe?: string;
   /**
    * The plaintext message to seal (encrypt and authenticate)
    */
@@ -118,21 +118,21 @@ export interface SealWithSymmetricKeyParameters extends ParametersWithDerivation
 }
 
 export const SealWithSymmetricKeyParameterNames = toFieldNameMap<SealWithSymmetricKeyParameters>(
-  "derivationOptionsJson", "plaintext", "unsealingInstructions", "derivationOptionsJsonMayBeModified"
+  "recipe", "plaintext", "unsealingInstructions", "recipeMayBeModified"
 );
 
-export interface GenerateSignatureParameters extends ParametersWithDerivationOptions{
+export interface GenerateSignatureParameters extends ParametersWithRecipe{
   /**
-   * JSON-encoded [[SigningKeyDerivationOptions]] (with arbitrary additional JSON fields allowed)
+   * JSON-encoded [[SigningKeyRecipe]] (with arbitrary additional JSON fields allowed)
    */
-  derivationOptionsJson: string;
+  recipe: string;
   /**
    * The plaintext message to generate a signature for.
    */
   message: Uint8Array;
 }
 export const GenerateSignatureParameterNames = toFieldNameMap<GenerateSignatureParameters>(
-  "derivationOptionsJson", "message"
+  "recipe", "message"
 );
 
 export type Parameters = 
@@ -181,23 +181,23 @@ export const ParameterNames = {
 
 
 
-const ListOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey = [
+const ListOfCommandsThatRequireRecipeToSetClientMayRetrieveKey = [
   Command.getSigningKey,
   Command.getUnsealingKey,
   Command.getSymmetricKey
 ] as const;
-export type CommandsThatRequireDerivationOptionOfClientMayRetrieveKey = typeof ListOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey[number];
+export type CommandsThatRequireRecipeToSetClientMayRetrieveKey = typeof ListOfCommandsThatRequireRecipeToSetClientMayRetrieveKey[number];
 
 
-export const SetOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey = new Set(ListOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey);
-export const commandRequiresDerivationOptionOfClientMayRetrieveKey = (
+export const SetOfCommandsThatRequireRecipeToSetClientMayRetrieveKey = new Set(ListOfCommandsThatRequireRecipeToSetClientMayRetrieveKey);
+export const commandRequiresRecipeToSetClientMayRetrieveKey = (
   command: Command
-): command is CommandsThatRequireDerivationOptionOfClientMayRetrieveKey =>
-  SetOfCommandsThatRequireDerivationOptionOfClientMayRetrieveKey.has(command as CommandsThatRequireDerivationOptionOfClientMayRetrieveKey);
-export const requestRequiresDerivationOptionOfClientMayRetrieveKey = (
+): command is CommandsThatRequireRecipeToSetClientMayRetrieveKey =>
+  SetOfCommandsThatRequireRecipeToSetClientMayRetrieveKey.has(command as CommandsThatRequireRecipeToSetClientMayRetrieveKey);
+export const requestRequiresRecipeToSetClientMayRetrieveKey = (
   request: ApiRequestObject
-): request is CommandsApiCall<CommandsThatRequireDerivationOptionOfClientMayRetrieveKey>["request"] =>
-  commandRequiresDerivationOptionOfClientMayRetrieveKey(request.command);
+): request is CommandsApiCall<CommandsThatRequireRecipeToSetClientMayRetrieveKey>["request"] =>
+  commandRequiresRecipeToSetClientMayRetrieveKey(request.command);
 
 export type CommandWithJsonResponse =
   typeof Command.generateSignature |
@@ -359,7 +359,7 @@ export const RequestCommandParameterNames = toFieldNameMap<RequestCommand<any>>(
   "command"
 );
 
-export type RequestWithDerivationOptionsJsonParameter = 
+export type RequestWithRecipeParameter = 
   GetPasswordRequest |
   GetSecretRequest |
   GetSignatureVerificationKeyRequest |
@@ -391,25 +391,25 @@ type KeysIncludingOptionalKeys<T> = T extends any ? keyof T : never;
 type RequestParameterName = KeysIncludingOptionalKeys<Request>;
 export type RequestParameterNameToType<P extends RequestParameterName> =
     P extends ("message" | "plaintext") ? Uint8Array :
-    P extends "derivationOptionsMayBeModified" ? boolean :
+    P extends "recipeMayBeModified" ? boolean :
     string;
 export type RequestParameterNameToTypeName<P extends RequestParameterName> =
     P extends ("message" | "plaintext") ? "Uint8Array" :
-    P extends "derivationOptionsMayBeModified" ? "boolean" :
+    P extends "recipeMayBeModified" ? "boolean" :
     "string";
 export const requestParameterNameToTypeName = <REQUEST_NAME extends RequestParameterName>(
   requestName: REQUEST_NAME
 ) => (
     (requestName === "message" || requestName === "plaintext") ?
       "Uint8Array" :
-    (requestName === "derivationOptionsJsonMayBeModified") ? "boolean" :
+    (requestName === "recipeMayBeModified") ? "boolean" :
     "string"
   ) as RequestParameterNameToTypeName<REQUEST_NAME>;
   
 export const requestHasPackagedSealedMessageParameter = (request: Request): request is RequestWithPackagedSealedMessageParameter =>
   request.command === Command.unsealWithSymmetricKey || request.command === Command.unsealWithUnsealingKey;
 
-export const requestHasDerivationOptionsParameter = (request: Request): request is RequestWithDerivationOptionsJsonParameter =>
+export const requestHasRecipeParameter = (request: Request): request is RequestWithRecipeParameter =>
   !requestHasPackagedSealedMessageParameter(request);
 
 export type GetPasswordRequest = GetPasswordParameters & RequestCommand<typeof Command.getPassword>;
@@ -445,7 +445,7 @@ export interface UnsealWithUnsealingKey extends ApiFunction<UnsealWithUnsealingK
 export interface SealWithSymmetricKey extends ApiFunction<SealWithSymmetricKeyParameters, typeof Command.sealWithSymmetricKey, SealWithSymmetricKeySuccessResponse> {}
 export interface GenerateSignature extends ApiFunction<GenerateSignatureParameters, typeof Command.generateSignature, GenerateSignatureSuccessResponse> {}
 
-export type ApiCallsThatTakeDerivationOptionJsonParameter = 
+export type ApiCallsThatTakeRecipeParameter = 
   GetPassword |
   GetSecret |
   GetSignatureVerificationKey |
@@ -456,14 +456,14 @@ export type ApiCallsThatTakeDerivationOptionJsonParameter =
   SealWithSymmetricKey |
   GenerateSignature;
 
-export type ApiCallsWithNoDerivationOptionJsonParameter =  
+export type ApiCallsWithNoRecipeParameter =  
     UnsealWithSymmetricKey |
     UnsealWithUnsealingKey;
 
 
 export type ApiCall =
-  ApiCallsThatTakeDerivationOptionJsonParameter |
-  ApiCallsWithNoDerivationOptionJsonParameter;
+  ApiCallsThatTakeRecipeParameter |
+  ApiCallsWithNoRecipeParameter;
 
 
 

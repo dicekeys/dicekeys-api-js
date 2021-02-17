@@ -3,8 +3,8 @@ import {
 } from "./api-factory"
 import * as Exceptions from "./exceptions";
 import {
-  DerivationOptions
-} from "./dicekeys-derivation-options";
+  Recipe
+} from "./dicekeys-recipe";
 import {
   toFieldNameMap, toNameMap
 } from "./to-name-map"
@@ -30,7 +30,7 @@ import {
   RequestCommandParameterNames,
   Request,
   ResultForRequest,
-  DerivationFunctionParameterNames,
+  RecipeFunctionParameterNames,
   GenerateSignatureParameterNames,
   SealWithSymmetricKeyParameterNames,
   UnsealWithUnsealingKeyParameterNames,
@@ -142,20 +142,20 @@ export class UrlApi {
     marshallString(RequestMetadataParameterNames.requestId, requestId);
     marshallString(UrlRequestMetadataParameterNames.respondTo, this.respondToUrl);
     marshallString(RequestCommandParameterNames.command, request.command)
-    const derivationOptionsJson =
+    const recipe =
       "packagedSealedMessageJson" in request ?
-        (JSON.parse(request.packagedSealedMessageJson) as PackagedSealedMessageJson).derivationOptionsJson ?? "" :
-        request.derivationOptionsJson ?? "";
-    if (typeof derivationOptionsJson !== "string") {
-      throw new Exceptions.MissingParameter(`Missing parameter derivationOptionsJson`);
+        (JSON.parse(request.packagedSealedMessageJson) as PackagedSealedMessageJson).recipe ?? "" :
+        request.recipe ?? "";
+    if (typeof recipe !== "string") {
+      throw new Exceptions.MissingParameter(`Missing parameter recipe`);
     }
-    if ("derivationOptionsJson" in request && request.derivationOptionsJson != null) {
-      marshallString(DerivationFunctionParameterNames.derivationOptionsJson, request.derivationOptionsJson)
+    if ("recipe" in request && request.recipe != null) {
+      marshallString(RecipeFunctionParameterNames.recipe, request.recipe)
     }
-    if ("derivationOptionsJsonMayBeModified" in request && request.derivationOptionsJsonMayBeModified != null) {
-      marshallBoolean(DerivationFunctionParameterNames.derivationOptionsJsonMayBeModified, request.derivationOptionsJsonMayBeModified)
+    if ("recipeMayBeModified" in request && request.recipeMayBeModified != null) {
+      marshallBoolean(RecipeFunctionParameterNames.recipeMayBeModified, request.recipeMayBeModified)
     }
-    const {requireAuthenticationHandshake} = DerivationOptions(derivationOptionsJson);
+    const {requireAuthenticationHandshake} = Recipe(recipe);
     if (requireAuthenticationHandshake) {
       const authToken = await this.getAuthToken();
       requestUrl.searchParams.set(UrlRequestMetadataParameterNames.authToken!, authToken);
@@ -225,7 +225,7 @@ export class UrlApi {
   
   /**
   * Sign a message using a public/private signing key pair derived
-  * the user's DiceKey using the JSON-encoded [[SigningKeyDerivationOptions]].
+  * the user's DiceKey using the JSON-encoded [[SigningKeyRecipe]].
  * 
 */
   readonly generateSignature: (params: GenerateSignatureParameters) => Promise<GenerateSignatureSuccessResponse> =
@@ -233,70 +233,70 @@ export class UrlApi {
 
 /**
 * Derive a password from the user's DiceKey and the JSON encoded
-* [[PasswordDerivationOptions]].
+* [[PasswordRecipe]].
 */
   readonly getPassword: (params: GetPasswordParameters) => Promise<GetPasswordSuccessResponse> =
     apiCallFactory<GetPassword>(Command.getPassword, this.call);
 
 /**
 * Derive a SealingKey from the user's DiceKey and the JSON encoded
-* [[UnsealingKeyDerivationOptions]].
+* [[UnsealingKeyRecipe]].
 */
   readonly getSealingKey: (params: GetSealingKeyParameters) => Promise<GetSealingKeySuccessResponse> =
     apiCallFactory<GetSealingKey>(Command.getSealingKey, this.call);
 
 /**
 * Derive a binary Secret from the user's DiceKey and the JSON encoded
-* [[SecretDerivationOptions]].
+* [[SecretRecipe]].
 */
   readonly getSecret: (params: GetSecretParameters) => Promise<GetSecretSuccessResponse> =
     apiCallFactory<GetSecret>(Command.getSecret, this.call);
 
 /**
 * Derive a SignatureVerificationKey from the user's DiceKey and the JSON encoded
-* [[SigningKeyDerivationOptions]].
+* [[SigningKeyRecipe]].
 */
   readonly getSignatureVerificationKey: (params: GetSignatureVerificationKeyParameters) => Promise<GetSignatureVerificationKeySuccessResponse> =
     apiCallFactory<GetSignatureVerificationKey>(Command.getSignatureVerificationKey, this.call);
 
 /**
 * Derive a SigningKey from the user's DiceKey and the JSON encoded
-* [[SigningKeyDerivationOptions]].
+* [[SigningKeyRecipe]].
 */
   readonly getSigningKey: (params: GetSigningKeyParameters) => Promise<GetSigningKeySuccessResponse> =
     apiCallFactory<GetSigningKey>(Command.getSigningKey, this.call);
 
 /**
 * Derive a SymmetricKey from the user's DiceKey and the JSON encoded
-* [[SymmetricKeyDerivationOptions]].
+* [[SymmetricKeyRecipe]].
 */
   readonly getSymmetricKey: (params: GetSymmetricKeyParameters) => Promise<GetSymmetricKeySuccessResponse> =
     apiCallFactory<GetSymmetricKey>(Command.getSymmetricKey, this.call);
 
 /**
 * Derive an UnsealingKey from the user's DiceKey and the JSON encoded
-* [[UnsealingKeyDerivationOptions]].
+* [[UnsealingKeyRecipe]].
 */
   readonly getUnsealingKey: (params: GetUnsealingKeyParameters) => Promise<GetUnsealingKeySuccessResponse> =
     apiCallFactory<GetUnsealingKey>(Command.getUnsealingKey, this.call);
 
 /**
 * Seal a message with a SymmetricKey derived from from the user's DiceKey and the JSON encoded
-* [[SymmetricKeyDerivationOptions]].
+* [[SymmetricKeyRecipe]].
 */
   readonly sealWithSymmetricKey: (params: SealWithSymmetricKeyParameters) => Promise<SealWithSymmetricKeySuccessResponse> =
     apiCallFactory<SealWithSymmetricKey>(Command.sealWithSymmetricKey, this.call);
 
 /**
 * Unseal a message sealed with a SymmetricKey derived from from the user's DiceKey and the JSON encoded
-* [[SymmetricKeyDerivationOptions]].
+* [[SymmetricKeyRecipe]].
 */
   readonly unsealWithSymmetricKey: (params: UnsealWithSymmetricKeyParameters) => Promise<UnsealWithSymmetricKeySuccessResponse> =
     apiCallFactory<UnsealWithSymmetricKey>(Command.unsealWithSymmetricKey, this.call);
 
 /**
 * Unseal a message sealed with an UnsealingKey derived from from the user's DiceKey and the JSON encoded
-* [[UnsealingKeyDerivationOptions]].
+* [[UnsealingKeyRecipe]].
 */
   readonly unsealWithUnsealingKey: (params: UnsealWithUnsealingKeyParameters) => Promise<UnsealWithUnsealingKeySuccessResponse> =
     apiCallFactory<UnsealWithUnsealingKey>(Command.unsealWithUnsealingKey, this.call);

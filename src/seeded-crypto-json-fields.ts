@@ -23,9 +23,9 @@ export declare type ByteArrayAsUrlSafeBase64String = string;
 interface DerivedSecretJson {
     /**
      * The options used to derive a secret or key, specified using the
-     * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
+     * [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/recipe_format.html).
      */
-    derivationOptionsJson: string;
+    recipe: string;
 }
 
 /**
@@ -43,7 +43,7 @@ export interface PackagedSealedMessageJson {
      * The derivation options used to derive the key used to seal the message, and
      * which can be used to re-derive the key needed to unseal it.
      */
-    derivationOptionsJson: string;
+    recipe: string;
     /**
      * Any unsealing instructions that parties able to unseal the message should be
      * aware of.  These are stored in plaintext and are meant to be readable by

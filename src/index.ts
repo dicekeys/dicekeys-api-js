@@ -7,8 +7,8 @@ export {
   PostMessageApiFactory,
   Exceptions,
   ApiCalls};
-export * from "./dicekeys-derivation-options";
-export * from "./seeded-crypto-derivation-options";
+export * from "./dicekeys-recipe";
+export * from "./seeded-crypto-recipe";
 export * from "./post-message-api";
 export * from "./unsealing-instructions";
 // export * from "./seeded-crypto-object-fields";

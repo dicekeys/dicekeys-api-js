@@ -1,6 +1,6 @@
 import { toNameMap } from "./to-name-map";
 import {
-  InvalidDerivationOptionsTypeFieldException
+  InvalidRecipeTypeFieldException
 } from "./exceptions";
 
 export const DerivableObjectNames = {
@@ -35,11 +35,11 @@ export interface CheapHashFunctionOptions {
 }
 
 /**
- * The subset of [[DerivationOptions]] specific to hash functions designed to be computationally expensive
+ * The subset of [[Recipe]] specific to hash functions designed to be computationally expensive
  * and consume memory in order to slow brute-force guessing attacks, including
  * those attacks that might utilize specially-designed hardware.
  *
- * @category DerivationOptions
+ * @category Recipe
  */
 export interface ExpensiveHashFunctionsOptions {
   hashFunction: ExpensiveHashFunction;
@@ -142,7 +142,7 @@ export interface PasswordWordList {
    * DiceKeys app should allow the user to choose from a set of word lists
    * to match the user's preference of language and vocabulary size once
    * more than one word list is available.  The DiceKeys app will then
-   * return a derivationOptionsJson string with the wordList field set
+   * return a recipe string with the wordList field set
    * to the user's chosen word list.
    * 
    * If the derivation options are not set, the DiceKeys app will default
@@ -162,19 +162,19 @@ export type PasswordOptions =
   );
 
 /**
-* The subset of [[DerivationOptions]] specific to generating a password.
+* The subset of [[Recipe]] specific to generating a password.
 *
-* @category DerivationOptions
+* @category Recipe
 */
-export type DerivationOptionsSpecificToPassword = PasswordOptions;
+export type RecipeSpecificToPassword = PasswordOptions;
 
 
 /**
-* The subset of [[DerivationOptions]] specific to a [[Secret]].
+* The subset of [[Recipe]] specific to a [[Secret]].
 *
-* @category DerivationOptions
+* @category Recipe
 */
-export interface DerivationOptionsSpecificToSecret {
+export interface RecipeSpecificToSecret {
   /**
    * The length of the secret to be derived, in bytes.  If not set,
    * 32 bytes are derived.
@@ -184,11 +184,11 @@ export interface DerivationOptionsSpecificToSecret {
 };
 
 /**
-* The subset of [[DerivationOptions]] specific to a [[SymmetricKey]].
+* The subset of [[Recipe]] specific to a [[SymmetricKey]].
 *
-* @category DerivationOptions
+* @category Recipe
 */
-export interface DerivationOptionsSpecificToSymmetricKey {
+export interface RecipeSpecificToSymmetricKey {
   type?: "SymmetricKey";
   /**
    * The algorithm to use for the underlying key and cryptographic algorithms.
@@ -198,11 +198,11 @@ export interface DerivationOptionsSpecificToSymmetricKey {
 };
 
 /**
-* The subset of [[DerivationOptions]] specific to an UnsealingKey.
+* The subset of [[Recipe]] specific to an UnsealingKey.
 *
-* @category DerivationOptions
+* @category Recipe
 */
-export type DerivationOptionsSpecificToUnsealingKey = {
+export type RecipeSpecificToUnsealingKey = {
   type?: "UnsealingKey";
   /**
    * The algorithm to use for the underlying key and cryptographic algorithms.
@@ -212,11 +212,11 @@ export type DerivationOptionsSpecificToUnsealingKey = {
 };
 
 /**
-* The subset of [[DerivationOptions]] specific to a SigningKey.
+* The subset of [[Recipe]] specific to a SigningKey.
 *
-* @category DerivationOptions
+* @category Recipe
 */
-export type DerivationOptionsSpecificToSigningKey = {
+export type RecipeSpecificToSigningKey = {
   type?: "SigningKey";
   /**
    * The algorithm to use for the underlying key and cryptographic algorithms.
@@ -227,54 +227,54 @@ export type DerivationOptionsSpecificToSigningKey = {
 
 
 /**
-* The DerivationOptions used by the Seeded Crypto library
+* The Recipe used by the Seeded Crypto library
 * and which implement the portion of the
-* [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/derivation_options_format.html).
+* [JSON Derivation Options format](https://dicekeys.github.io/seeded-crypto/recipe_format.html).
 * that are interpreted by this library.
 *
 * (Other options may appear in layers above that library.)
 *
-* @category DerivationOptions
+* @category Recipe
 */
-export type SeededCryptoDerivationOptions<
+export type SeededCryptoRecipe<
   TYPE extends DerivableObjectName = DerivableObjectName,
   HASH_FUNCTION extends HashFunction = HashFunction
 > = HashFunctionOptions<HASH_FUNCTION> & (
-  TYPE extends "Password" ? DerivationOptionsSpecificToPassword :
-  TYPE extends "Secret" ? DerivationOptionsSpecificToSecret :
-  TYPE extends "SymmetricKey" ? DerivationOptionsSpecificToSymmetricKey :
-  TYPE extends "UnsealingKey" ? DerivationOptionsSpecificToUnsealingKey :
-  TYPE extends "SigningKey" ? DerivationOptionsSpecificToSigningKey :
+  TYPE extends "Password" ? RecipeSpecificToPassword :
+  TYPE extends "Secret" ? RecipeSpecificToSecret :
+  TYPE extends "SymmetricKey" ? RecipeSpecificToSymmetricKey :
+  TYPE extends "UnsealingKey" ? RecipeSpecificToUnsealingKey :
+  TYPE extends "SigningKey" ? RecipeSpecificToSigningKey :
   never
   );
 
-const SeededCryptoDerivationOptionsFor = <
+const SeededCryptoRecipeFor = <
   TYPE extends DerivableObjectName
 >(  typeRequiredByOperation?: TYPE
 ) => <HASH_FUNCTION extends HashFunction = HashFunction> (
-  derivationOptionsAsObjectOrJson?: string | null | (SeededCryptoDerivationOptions<TYPE, HASH_FUNCTION>),
+  recipeAsObjectOrJson?: string | null | (SeededCryptoRecipe<TYPE, HASH_FUNCTION>),
   optionsNotSpecifiedWithinThisStandard?: object
-): SeededCryptoDerivationOptions<TYPE, HASH_FUNCTION> => {
-  const derivationOptions = 
-    (typeof derivationOptionsAsObjectOrJson === "object" && derivationOptionsAsObjectOrJson != null) ?
-      derivationOptionsAsObjectOrJson :
-      JSON.parse(derivationOptionsAsObjectOrJson ?? "{}") as SeededCryptoDerivationOptions<TYPE, HASH_FUNCTION>;
-  if (typeRequiredByOperation && derivationOptions.type && derivationOptions.type !== typeRequiredByOperation) {
-    throw InvalidDerivationOptionsTypeFieldException.create(typeRequiredByOperation, derivationOptions.type);
+): SeededCryptoRecipe<TYPE, HASH_FUNCTION> => {
+  const recipe = 
+    (typeof recipeAsObjectOrJson === "object" && recipeAsObjectOrJson != null) ?
+      recipeAsObjectOrJson :
+      JSON.parse(recipeAsObjectOrJson ?? "{}") as SeededCryptoRecipe<TYPE, HASH_FUNCTION>;
+  if (typeRequiredByOperation && recipe.type && recipe.type !== typeRequiredByOperation) {
+    throw InvalidRecipeTypeFieldException.create(typeRequiredByOperation, recipe.type);
   }
   return optionsNotSpecifiedWithinThisStandard ?
-    Object.assign({...optionsNotSpecifiedWithinThisStandard, derivationOptions}) as SeededCryptoDerivationOptions<TYPE, HASH_FUNCTION> :
-    derivationOptions
+    Object.assign({...optionsNotSpecifiedWithinThisStandard, recipe}) as SeededCryptoRecipe<TYPE, HASH_FUNCTION> :
+    recipe
 }
 
-export const SeededCryptoDerivationOptions = SeededCryptoDerivationOptionsFor<DerivableObjectName>();
-export const SeededCryptoPasswordDerivationOptions = SeededCryptoDerivationOptionsFor("Password")
-export const SeededCryptoSecretDerivationOptions = SeededCryptoDerivationOptionsFor("Secret")
-export const SeededCryptoSymmetricKeyDerivationOptions = SeededCryptoDerivationOptionsFor("SymmetricKey")
-export const SeededCryptoUnsealingKeyDerivationOptions = SeededCryptoDerivationOptionsFor("UnsealingKey")
-export const SeededCryptoSigningKeyDerivationOptions = SeededCryptoDerivationOptionsFor("SigningKey")
+export const SeededCryptoRecipe = SeededCryptoRecipeFor<DerivableObjectName>();
+export const SeededCryptoPasswordRecipe = SeededCryptoRecipeFor("Password")
+export const SeededCryptoSecretRecipe = SeededCryptoRecipeFor("Secret")
+export const SeededCryptoSymmetricKeyRecipe = SeededCryptoRecipeFor("SymmetricKey")
+export const SeededCryptoUnsealingKeyRecipe = SeededCryptoRecipeFor("UnsealingKey")
+export const SeededCryptoSigningKeyRecipe = SeededCryptoRecipeFor("SigningKey")
 
-// const test = SeededCryptoPasswordDerivationOptions({
+// const test = SeededCryptoPasswordRecipe({
 //   hashFunction: "BLAKE2b",
 //   lengthInBits: 3,
 //   lengthInWords: 3,

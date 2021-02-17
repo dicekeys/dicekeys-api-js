@@ -9,14 +9,14 @@ export class ClientNotAuthorizedException extends NamedException {}
 
 export class UserDeclinedToAuthorizeOperation extends NamedException {}
 
-export class ClientMayRetrieveKeyNotSetInDerivationOptions extends ClientNotAuthorizedException {}
+export class ClientMayRetrieveKeyNotSetInRecipe extends ClientNotAuthorizedException {}
 
-export class InvalidDerivationOptionsTypeFieldException extends NamedException {
+export class InvalidRecipeTypeFieldException extends NamedException {
   static create(
     typeRequiredByOperation: string,
-    typeSpecifiedInDerivationOptions: string
+    typeSpecifiedInRecipe: string
   ) {
-    return new InvalidDerivationOptionsTypeFieldException(`Operation for type ${typeRequiredByOperation} cannot use derivation options with type ${typeSpecifiedInDerivationOptions}.`);
+    return new InvalidRecipeTypeFieldException(`Operation for type ${typeRequiredByOperation} cannot use derivation options with type ${typeSpecifiedInRecipe}.`);
   }
 }
 
@@ -62,8 +62,8 @@ export class UnknownException extends Error {
 
 const Exceptions = [
   ClientNotAuthorizedException,
-  ClientMayRetrieveKeyNotSetInDerivationOptions,
-  InvalidDerivationOptionsTypeFieldException,
+  ClientMayRetrieveKeyNotSetInRecipe,
+  InvalidRecipeTypeFieldException,
   UserCancelledLoadingDiceKey,
   UserDeclinedToAuthorizeOperation,
   MissingParameter,

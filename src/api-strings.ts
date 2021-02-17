@@ -10,8 +10,8 @@
 // const respondTo = "respondTo";
 // const authToken = "authToken";
 // const password = "password";
-// //const passwordWithDerivationOptionsJson = "passwordWithDerivationOptionsJson";
-// const derivationOptionsJson = "derivationOptionsJson";
+// //const passwordWithRecipe = "passwordWithRecipe";
+// const recipe = "recipe";
 // const packagedSealedMessageFields = "packagedSealedMessageFields";
 // const exception = "exception";
 // const message = "message";
@@ -40,12 +40,12 @@
 // export const isMetaCommand = (str: string | undefined): str is MetaCommand =>
 //   str != null && str in MetaCommands;
 
-// const withDerivationOptions = {
-//   derivationOptionsJson
+// const withRecipe = {
+//   recipe
 // } as const;
 
 // const getObject = {
-//   ...withDerivationOptions
+//   ...withRecipe
 // } as const;
 
 // const unsealingInstructions = "unsealingInstructions";
@@ -66,12 +66,12 @@
 //     authToken,
 //   } as const,
 
-//   withDerivationOptions,
+//   withRecipe,
 //   unsealing,
 
 //   // For URL-based APIs, the command name and the https uri to respond to
 //   generateSignature: {
-//     ...withDerivationOptions,
+//     ...withRecipe,
 //     message: "message"
 //   } as const,
 
@@ -84,7 +84,7 @@
 //   getUnsealingKey: getObject,
 
 //   sealWithSymmetricKey: {
-//     ...withDerivationOptions,
+//     ...withRecipe,
 //     plaintext,
 //     unsealingInstructions
 //   } as const,
@@ -112,9 +112,9 @@
 //   } as const,
 
 //   getPassword: {
-//     derivationOptionsJson,
+//     recipe,
 //     password
-// //    passwordWithDerivationOptionsJson
+// //    passwordWithRecipe
 //   } as const,
 
 //   getSealingKey: {

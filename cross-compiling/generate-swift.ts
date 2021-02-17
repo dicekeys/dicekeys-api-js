@@ -27,7 +27,7 @@ enum Request {${ "\n" +
     Api.Commands.map( command =>
       `    case ${command}(` + 
       Object.keys(Api.ParameterNames[command]).sort().map(
-        parameterName => `${parameterName}: ${parameterName.indexOf("Json") >= 0 || parameterName == "UnsealingInstructions" ? "String" : "Data"}`
+        parameterName => `${parameterName}: ${parameterName.indexOf("Json") >= 0 || parameterName == "UnsealingInstructions" || parameterName.indexOf("recipe") >= 0 ? "String" : "Data"}`
       ).join(", ")
     ).join(")\n")
   })

@@ -1,10 +1,10 @@
 import {
-  InvalidDerivationOptionsTypeFieldException
+  InvalidRecipeTypeFieldException
 } from "./exceptions";
 import {
   DerivableObjectName,
-  SeededCryptoDerivationOptions
-} from "./seeded-crypto-derivation-options";
+  SeededCryptoRecipe
+} from "./seeded-crypto-recipe";
 
 
 /**
@@ -122,7 +122,7 @@ export interface AuthenticationRequirements {
   allowAndroidPrefixes?: string[];
 }
 
-interface DerivationOptionsSpecificToDiceKeysApi extends AuthenticationRequirements {
+interface RecipeSpecificToDiceKeysApi extends AuthenticationRequirements {
   /**
    * A string that may be added by the DiceKeys app to help users remember which
    * seed (DiceKey) they used to derive a key or secret.
@@ -144,11 +144,11 @@ interface DerivationOptionsSpecificToDiceKeysApi extends AuthenticationRequireme
    * The DiceKeys app will want to get a user's consent before deriving a
    * secret on behalf of an app.
    * 
-   * When a user approves a set of DerivationOptions, this field
+   * When a user approves a set of Recipe, this field
    * allows us to record that the options were, at least at one time, approved
    * by the holder of this DiceKey.
    * 
-   * Set this field to empty (two double quotes, ""), call DerivationOptions.derivePrimarySecret
+   * Set this field to empty (two double quotes, ""), call Recipe.derivePrimarySecret
    * with the seed (DiceKey) and these derivation options.  Take that primary secret,
    * turn it into url-safe base64, and then re-run derivePrimarySecret with that
    * base64 encoding as the seed. Insert the base64 encoding of the first 128 bits
@@ -200,41 +200,41 @@ interface DerivationOptionsSpecificToDiceKeysApi extends AuthenticationRequireme
 
 
 
-export type DerivationOptions<
+export type Recipe<
   TYPE extends DerivableObjectName = DerivableObjectName
-> = DerivationOptionsSpecificToDiceKeysApi & SeededCryptoDerivationOptions<TYPE>;
+> = RecipeSpecificToDiceKeysApi & SeededCryptoRecipe<TYPE>;
 
-export type PasswordDerivationOptions = DerivationOptions<"Password">;
-export type SecretDerivationOptions = DerivationOptions<"Secret">;
-export type SymmetricKeyDerivationOptions = DerivationOptions<"SymmetricKey">;
-export type UnsealingKeyDerivationOptions = DerivationOptions<"UnsealingKey">;
-export type SigningKeyDerivationOptions = DerivationOptions<"SigningKey">;
+export type PasswordRecipe = Recipe<"Password">;
+export type SecretRecipe = Recipe<"Secret">;
+export type SymmetricKeyRecipe = Recipe<"SymmetricKey">;
+export type UnsealingKeyRecipe = Recipe<"UnsealingKey">;
+export type SigningKeyRecipe = Recipe<"SigningKey">;
 
-const DerivationOptionsForDiceKeysApiFor = <
+const RecipeForDiceKeysApiFor = <
   TYPE extends DerivableObjectName
 >(  typeRequiredByOperation?: TYPE
 ) => (
-  derivationOptionsAsObjectOrJson?: string | null | (DerivationOptions<TYPE>),
+  recipeAsObjectOrJson?: string | null | (Recipe<TYPE>),
   optionsNotSpecifiedWithinThisStandard?: object
-): DerivationOptions<TYPE> => {
-  const derivationOptions: DerivationOptions<TYPE> = 
-    (derivationOptionsAsObjectOrJson == null || derivationOptionsAsObjectOrJson === "") ?
-      {} as DerivationOptions<TYPE> :
-    (typeof derivationOptionsAsObjectOrJson === "string") ?
-      (JSON.parse(derivationOptionsAsObjectOrJson) as DerivationOptions<TYPE>) :
-    derivationOptionsAsObjectOrJson;
+): Recipe<TYPE> => {
+  const recipe: Recipe<TYPE> = 
+    (recipeAsObjectOrJson == null || recipeAsObjectOrJson === "") ?
+      {} as Recipe<TYPE> :
+    (typeof recipeAsObjectOrJson === "string") ?
+      (JSON.parse(recipeAsObjectOrJson) as Recipe<TYPE>) :
+    recipeAsObjectOrJson;
 
-  if (typeRequiredByOperation && derivationOptions.type && derivationOptions.type !== typeRequiredByOperation) {
-    throw InvalidDerivationOptionsTypeFieldException.create(typeRequiredByOperation, derivationOptions.type);
+  if (typeRequiredByOperation && recipe.type && recipe.type !== typeRequiredByOperation) {
+    throw InvalidRecipeTypeFieldException.create(typeRequiredByOperation, recipe.type);
   }
   return optionsNotSpecifiedWithinThisStandard ?
-    Object.assign({...optionsNotSpecifiedWithinThisStandard, derivationOptions}) as DerivationOptions<TYPE> :
-    derivationOptions
+    Object.assign({...optionsNotSpecifiedWithinThisStandard, recipe}) as Recipe<TYPE> :
+    recipe
 }
 
-export const DerivationOptions = DerivationOptionsForDiceKeysApiFor<DerivableObjectName>();
-export const PasswordDerivationOptions = DerivationOptionsForDiceKeysApiFor("Password")
-export const SecretDerivationOptions = DerivationOptionsForDiceKeysApiFor("Secret")
-export const SymmetricKeyDerivationOptions = DerivationOptionsForDiceKeysApiFor("SymmetricKey")
-export const UnsealingKeyDerivationOptions = DerivationOptionsForDiceKeysApiFor("UnsealingKey")
-export const SigningKeyDerivationOptions = DerivationOptionsForDiceKeysApiFor("SigningKey")
+export const Recipe = RecipeForDiceKeysApiFor<DerivableObjectName>();
+export const PasswordRecipe = RecipeForDiceKeysApiFor("Password")
+export const SecretRecipe = RecipeForDiceKeysApiFor("Secret")
+export const SymmetricKeyRecipe = RecipeForDiceKeysApiFor("SymmetricKey")
+export const UnsealingKeyRecipe = RecipeForDiceKeysApiFor("UnsealingKey")
+export const SigningKeyRecipe = RecipeForDiceKeysApiFor("SigningKey")

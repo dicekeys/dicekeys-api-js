@@ -141,9 +141,10 @@ export const postMessageApiCallFactory = (
   // parameters, which can either be strings or byte arrays.
   const windowName = window.name;
   const metaParameters = {
+    command: request.command, // this line not necessary, but keeps TypeScript happy
     requestId,
     windowName,
-  }
+  } as PostMessageRequestMetadata;
   const requestObject: ApiCalls.RequestMessage<METHOD> & PostMessageRequestMetadata = {
     ...request,
     ...metaParameters,

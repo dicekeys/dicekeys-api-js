@@ -45,7 +45,7 @@ const callPostMessageApi = postMessageApiCallFactory();
 
 /**
   * Sign a message using a public/private signing key pair derived
-  * the user's DiceKey using the JSON-encoded [[SigningKeyDerivationOptions]].
+  * the user's DiceKey using the JSON-encoded [[SigningKeyRecipe]].
  * 
 */
 export const generateSignature: (params: GenerateSignatureParameters) => Promise<GenerateSignatureSuccessResponse> =
@@ -53,70 +53,70 @@ export const generateSignature: (params: GenerateSignatureParameters) => Promise
 
 /**
  * Derive a password from the user's DiceKey and the JSON encoded
- * [[PasswordDerivationOptions]].
+ * [[PasswordRecipe]].
  */
 export const getPassword: (params: GetPasswordParameters) => Promise<GetPasswordSuccessResponse> =
   apiCallFactory<GetPassword>("getPassword", callPostMessageApi);
 
 /**
  * Derive a SealingKey from the user's DiceKey and the JSON encoded
- * [[UnsealingKeyDerivationOptions]].
+ * [[UnsealingKeyRecipe]].
  */
 export const getSealingKey: (params: GetSealingKeyParameters) => Promise<GetSealingKeySuccessResponse> =
   apiCallFactory<GetSealingKey>("getSealingKey", callPostMessageApi);
 
 /**
  * Derive a binary Secret from the user's DiceKey and the JSON encoded
- * [[SecretDerivationOptions]].
+ * [[SecretRecipe]].
  */
 export const getSecret: (params: GetSecretParameters) => Promise<GetSecretSuccessResponse> =
 apiCallFactory<GetSecret>("getSecret", callPostMessageApi);
 
 /**
  * Derive a SignatureVerificationKey from the user's DiceKey and the JSON encoded
- * [[SigningKeyDerivationOptions]].
+ * [[SigningKeyRecipe]].
  */
 export const getSignatureVerificationKey: (params: GetSignatureVerificationKeyParameters) => Promise<GetSignatureVerificationKeySuccessResponse> =
   apiCallFactory<GetSignatureVerificationKey>("getSignatureVerificationKey", callPostMessageApi);
 
 /**
  * Derive a SigningKey from the user's DiceKey and the JSON encoded
- * [[SigningKeyDerivationOptions]].
+ * [[SigningKeyRecipe]].
  */
 export const getSigningKey: (params: GetSigningKeyParameters) => Promise<GetSigningKeySuccessResponse> =
   apiCallFactory<GetSigningKey>("getSigningKey", callPostMessageApi);
 
 /**
  * Derive a SymmetricKey from the user's DiceKey and the JSON encoded
- * [[SymmetricKeyDerivationOptions]].
+ * [[SymmetricKeyRecipe]].
  */
 export const getSymmetricKey: (params: GetSymmetricKeyParameters) => Promise<GetSymmetricKeySuccessResponse> =
   apiCallFactory<GetSymmetricKey>("getSymmetricKey", callPostMessageApi);
 
 /**
  * Derive an UnsealingKey from the user's DiceKey and the JSON encoded
- * [[UnsealingKeyDerivationOptions]].
+ * [[UnsealingKeyRecipe]].
  */
 export const getUnsealingKey: (params: GetUnsealingKeyParameters) => Promise<GetUnsealingKeySuccessResponse> =
   apiCallFactory<GetUnsealingKey>("getUnsealingKey", callPostMessageApi);
 
 /**
  * Seal a message with a SymmetricKey derived from from the user's DiceKey and the JSON encoded
- * [[SymmetricKeyDerivationOptions]].
+ * [[SymmetricKeyRecipe]].
  */
 export const sealWithSymmetricKey: (params: SealWithSymmetricKeyParameters) => Promise<SealWithSymmetricKeySuccessResponse> =
   apiCallFactory<SealWithSymmetricKey>("sealWithSymmetricKey", callPostMessageApi);
 
 /**
  * Unseal a message sealed with a SymmetricKey derived from from the user's DiceKey and the JSON encoded
- * [[SymmetricKeyDerivationOptions]].
+ * [[SymmetricKeyRecipe]].
  */
 export const unsealWithSymmetricKey: (params: UnsealWithSymmetricKeyParameters) => Promise<UnsealWithSymmetricKeySuccessResponse> =
   apiCallFactory<UnsealWithSymmetricKey>("unsealWithSymmetricKey", callPostMessageApi);
 
 /**
  * Unseal a message sealed with an UnsealingKey derived from from the user's DiceKey and the JSON encoded
- * [[UnsealingKeyDerivationOptions]].
+ * [[UnsealingKeyRecipe]].
  */
 export const unsealWithUnsealingKey: (params: UnsealWithUnsealingKeyParameters) => Promise<UnsealWithUnsealingKeySuccessResponse> =
   apiCallFactory<UnsealWithUnsealingKey>("unsealWithUnsealingKey", callPostMessageApi);

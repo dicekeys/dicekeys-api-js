@@ -1,6 +1,6 @@
 import {
     AuthenticationRequirements
-} from "./dicekeys-derivation-options";
+} from "./dicekeys-recipe";
 
 // export interface RequestForUsersConsent {
 //     question: string,

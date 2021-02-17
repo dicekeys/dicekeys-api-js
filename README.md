@@ -10,16 +10,16 @@ Your app can use this API to ask the user to user their DiceKey to:
   - Unseal (decrypt and authenticate) secrets encrypted with
     keys derived from the user's DiceKey
   - Sign messages with a signing key derived from the user's
-    Dicekey
+    DiceKey
 
 ```ts
 import {
-  DerivationOptions,
+  Recipe,
   getPassword
 } from "@dicekeys/dicekeys-api-js"
 
-// See https://dicekeys.github.io/seeded-crypto/derivation_options_format.html
-const derivationOptionsJson = JSON.stringify(DerivationOptions({
+// See https://dicekeys.github.io/seeded-crypto/recipe_format.html
+const recipe = JSON.stringify(Recipe({
   type: "Secret",
   mutable: true,
   wordLimit: 13,
@@ -28,7 +28,7 @@ const derivationOptionsJson = JSON.stringify(DerivationOptions({
 
 // Call the API to request a password specific to this host
 // derived from the user's DiceKey
-const {password} = await getPassword({derivationOptionsJson});
+const {password} = await getPassword({recipe});
 ```
 
 ## Installation
