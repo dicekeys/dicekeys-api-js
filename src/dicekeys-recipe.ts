@@ -132,13 +132,17 @@ interface RecipeSpecificToDiceKeysApi extends AuthenticationRequirements {
   seedHint?: string;
 
   /**
-   * A specific seed hint consisting of the letters at the four corners of
-   * the DiceKey, in clockwise order from wherever the user initially
-   * scanned as the top-left corner.
-   * 
-   * The array must be a string consisting of four uppercase characters
+   * An optional field used to convey what the creator of the recipe intended
+   * the secret generated from it to be used for.
    */
-  cornerLetters?: string;
+  purpose?: string;
+
+  /**
+   * A 2-3 character string container the letter, digit, and optionally the
+   * orientation of the center die used as a hint for which key should be
+   * paired with this recipe.
+   */
+  centerDie?: string;
 
   /**
    * The DiceKeys app will want to get a user's consent before deriving a
