@@ -138,6 +138,12 @@ interface RecipeSpecificToDiceKeysApi extends AuthenticationRequirements {
   purpose?: string;
 
   /**
+   * A sequence number for obtaining multiple derived values without changing
+   * any other field of the recipe.
+   */
+  "#"?: number;
+
+  /**
    * A 2-3 character string container the letter, digit, and optionally the
    * orientation of the center die used as a hint for which key should be
    * paired with this recipe.
