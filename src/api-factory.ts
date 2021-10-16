@@ -1,7 +1,4 @@
 import * as ApiCalls from "./api-calls";
-import {
-  randomBytes
-} from "crypto";
 
 
 /**
@@ -10,11 +7,11 @@ import {
  */
 export const generateRequestId = (): string => {
   var requestIdBytes: Uint8Array;
-  if (global.window && window.crypto) {
+  if (typeof window !== "undefined" && window.crypto) {
     requestIdBytes = new Uint8Array(20);
     crypto.getRandomValues(requestIdBytes);
   } else {
-    requestIdBytes = randomBytes(20);
+    throw "Need to mock window.crypto.getRandomValues()";
   }
   return [...requestIdBytes].map( byte => byte.toString(16) ).join("");
 }
