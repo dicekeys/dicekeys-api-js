@@ -133,6 +133,15 @@ export interface PasswordLengthAsBitsNeeded {
   lengthInBits: number
 }
 
+
+export interface PasswordLengthAsCharsNeeded {
+  /**
+   * Add characters until either the secret has been exhausted
+   * or the character length has been reached.
+   */  
+  lengthInChars: number
+}
+
 export interface PasswordWordList {
   /**
    * The name of the word list to use to convert a binary secret (a byte array)
@@ -158,6 +167,7 @@ export type PasswordOptions =
   (
     PasswordLengthAsWordsNeeded |
     PasswordLengthAsBitsNeeded |
+    PasswordLengthAsCharsNeeded |
     {}
   );
 
